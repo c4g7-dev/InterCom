@@ -10,3 +10,7 @@
 	path = element-x-android
 	url = https://github.com/c4g7-dev/intercom-element-x-android.git
 	branch = intercom
+[submodule "element-call-android"]
+	path = element-call-android
+	url = https://github.com/c4g7-dev/intercom-element-call-android.git
+	branch = intercom

@@ -7,9 +7,11 @@ Element Call:
   Element Web and Element Desktop   https://github.com/element-hq/element-web
   Element Call                      https://github.com/element-hq/element-call
 
-InterCom for Android is a modified version of Element X Android:
+InterCom for Android is a modified version of Element X Android and of
+Element Call Android:
 
   Element X Android                 https://github.com/element-hq/element-x-android
+  Element Call Android              https://github.com/element-hq/element-call-android
 
   Copyright (C) New Vector Ltd
   Copyright (C) Element Creations Ltd
@@ -20,8 +22,8 @@ choice, GPL-3.0-only for Element Web, or a commercial licence from Element).
 InterCom uses them under the GNU Affero General Public License, version 3, and
 the modifications made for InterCom are released under the same licence. See
 LICENSE for the full text. The upstream copyright and licence notices are kept
-in the source trees (the element-web, element-call and element-x-android
-submodules); each
+in the source trees (the element-web, element-call, element-x-android and
+element-call-android submodules); each
 modified file can be compared against its upstream release tag with git.
 
 Third-party components bundled with the applications keep their own licences,

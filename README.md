@@ -88,7 +88,16 @@ It is released separately from the desktop app: look for the newest `android-v�
 file manager to install apps when asked). It installs next to Element X and shares no data with it.
 
 - Calls use the native MatrixRTC stack instead of a web view, and can **share the phone's screen**
-  (up to 1280 px on the long edge at 15 fps for now; the phone's audio is not shared).
+  at its own resolution (up to 1440p on the long edge, 30 fps; 1080p, 720p and 15 fps can be chosen
+  in the sheet the share button opens).
+- **Share phone audio**: with the switch in that sheet on (the default, Android 10 or newer), viewers
+  also hear what the phone plays: music, videos, games. Apps that forbid being recorded (many
+  streaming and banking apps) and phone calls stay silent; that is Android's rule. On the desktop
+  the share's volume has its own slider. For now the audio is sent at speech-grade bitrate
+  (48 kbit/s Opus), and a share received on the phone is shown without its audio.
+- **Equal grid**: in a call, settings → Preferences → Layout → Equal grid shows every tile at the
+  same size, shared screens included and uncropped, as large as the screen allows in either
+  orientation. Double-tap a tile to fill the screen with it, as before.
 - Sign-in through Matrix Authentication Service works on servers whose MAS accepts the redirect
   scheme `com.c4g7.intercom.android` for the client URI `https://c4g7.com`, which is the default
   policy. Building for another domain: see the fork's README.
@@ -102,9 +111,11 @@ file manager to install apps when asked). It installs next to Element X and shar
 - Updates are installed by hand; every release is signed with the same key, so a newer APK
   installs over the old one.
 
-The source is the fork [intercom-element-x-android](https://github.com/c4g7-dev/intercom-element-x-android),
-branch `intercom`, included here as the submodule `element-x-android`. Build with JDK 21 and the
-Android SDK: `./gradlew :app:assembleFdroidRelease`.
+The source is the fork [intercom-element-x-android](https://github.com/c4g7-dev/intercom-element-x-android)
+with the call library fork
+[intercom-element-call-android](https://github.com/c4g7-dev/intercom-element-call-android), both on
+branch `intercom` and included here as the submodules `element-x-android` and
+`element-call-android`. Building is described in [docs/BUILDING.md](docs/BUILDING.md#android).
 
 ## Quick start
 

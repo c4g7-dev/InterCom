@@ -3,6 +3,30 @@
 Versions are `<Element Web version>-intercom.<n>`: the upstream release InterCom is based on,
 followed by the InterCom revision.
 
+## Android 26.11.1-intercom.2
+
+`android-v26.11.1-intercom.2`, based on Element X Android 26.11.1. The call library is now
+InterCom's own fork of element-call-android 0.1.2 (`0.1.2-intercom.1`), a new submodule.
+
+- **Phone audio in a screen share.** The sheet that now opens when you tap the share button has
+  a "Share phone audio" switch, on by default: viewers hear what the phone plays (music, videos,
+  games) as the share's own audio, with its own volume slider on the desktop. Android 10 or
+  newer. Apps that forbid being recorded, and phone calls, are silent in it by Android's design.
+- **Sharper screen share.** The screen is sent at its own resolution, up to 1440p on the long
+  edge, at 30 fps, as a single layer of up to 10 Mbit/s (about 8 for a 1080 × 2400 screen)
+  instead of 1280 px at 15 fps with simulcast. 1080p, 720p and 15 fps can be chosen in the same
+  sheet; the choice is remembered. VP8 unless another codec is chosen in the developer options.
+- **Equal grid layout.** Call settings → Preferences → Layout → Equal grid: every tile the same
+  size, cameras, avatars and shared screens alike, shares uncropped, nothing in the spotlight,
+  as large as the screen allows upright or sideways. Remembered. Double tap still fills the
+  screen with one tile.
+- The version name carries the InterCom revision and the version code grows with it.
+- Known limitations: the phone audio is sent with the RTC core's default audio settings (Opus at
+  up to 48 kbit/s, with silence suppression; stereo is not negotiated), not yet at music
+  bitrate, which needs a change in the Rust core; a share received on the phone has no sound;
+  no volume control per tile; a 1440p or 1080p share at 30 fps is demanding for a phone;
+  arm64 only; not tested on a device before release.
+
 ## Android 26.11.1-intercom.1
 
 First release of InterCom for Android (`android-v26.11.1-intercom.1`), based on Element X

@@ -81,9 +81,9 @@ The screen share egress budget is in `element-web/apps/web/res/intercom/element-
 
 ## Releases
 
-Releases are built by GitHub Actions ([release.yml](../.github/workflows/release.yml)): the Linux
-archive on a Linux runner, the Windows installer on a Windows runner (no wine), from the
-submodule commits the tag pins.
+Releases can be built by GitHub Actions ([release.yml](../.github/workflows/release.yml)): the
+Linux archive on a Linux runner, the Windows installer on a Windows runner (no wine), from the
+submodule commits the tag pins. This needs GitHub Actions to be usable for the repository's account.
 
 ```sh
 # CHANGELOG.md has a "## <version>" section, the forks' intercom branches are committed
@@ -97,7 +97,7 @@ that were added to the release by other means are kept. To build a tag again:
 `gh workflow run release.yml --ref v<version> -f version=<version>`.
 
 Without `--ci`, `tools/release.sh <version>` builds both targets on this machine (the Windows
-installer with wine) and publishes them itself. Run `tools/release.sh --help` for the options.
+installer with wine) and publishes them itself; the releases so far were made this way. Run `tools/release.sh --help` for the options.
 
 ## Keeping up with upstream
 

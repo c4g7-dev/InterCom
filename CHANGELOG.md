@@ -5,8 +5,8 @@ followed by the InterCom revision.
 
 ## 1.12.35-intercom.2
 
-A maintenance release: one visual fix, and the builds now come from GitHub Actions. Calls, audio
-and layout are the same as in 1.12.35-intercom.1.
+A maintenance release: one visual fix and new release tooling. Calls, audio and layout are the
+same as in 1.12.35-intercom.1.
 
 ### Fixes
 
@@ -15,10 +15,10 @@ and layout are the same as in 1.12.35-intercom.1.
 
 ### Builds
 
-- Releases are built by a GitHub Actions workflow from the tagged source: the Linux archive on
-  Linux, the Windows installer on Windows (it was cross-built with wine before). The installer
-  holds the same files as before and is still not code signed.
-- `SHA256SUMS` covers every file of the release.
+- New: a GitHub Actions workflow that builds a release from the tagged source, the Linux archive
+  on Linux and the Windows installer on Windows, and publishes it. The files of this release
+  were still built like those of the first one: on a Linux machine, the Windows installer
+  cross-built with wine. It is not code signed.
 - The two source forks say at the top of their README that they are the InterCom forks.
 
 ### Unchanged since 1.12.35-intercom.1

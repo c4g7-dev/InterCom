@@ -8,7 +8,7 @@
 #                  the InterCom revision. CHANGELOG.md must have a "## <version>" section.
 #   --ci           build nothing here: commit the submodule pointers, tag and push, and let the
 #                  release workflow (.github/workflows/release.yml) build both targets and
-#                  publish the GitHub release. The usual way to release.
+#                  publish the GitHub release. Needs GitHub Actions to be usable for the account.
 #   --skip-build   reuse the builds already in element-web/apps/desktop/{dist-release,dist-win}
 #   --no-publish   build and collect the assets in release/<version>/, then stop: no commit, no
 #                  tag, no push, no GitHub release
@@ -20,7 +20,8 @@
 #      SHA256SUMS in release/<version>/
 #   3. commits the submodule pointers, tags this repository v<version> and the two forks
 #      intercom-v<version>, and pushes branches and tags
-#   4. creates the GitHub release with the notes from CHANGELOG.md
+#   4. creates or updates the GitHub release with the notes from CHANGELOG.md; files already
+#      on it are kept, and SHA256SUMS covers all of them
 #
 # Needs: git, node and gh (logged in); for a local build also pnpm 12, wine (Windows installer)
 # and sha256sum.
@@ -181,8 +182,23 @@ if ((CI)); then
 fi
 
 step "GitHub release"
+# Files that are on the release already (put there by other means) are kept: every file is
+# uploaded on its own, and SHA256SUMS is written anew from all the files of the release.
 notes >"$OUT/notes.md"
-gh release create "$TAG" --repo "$REPO" --verify-tag \
-    --title "InterCom $VERSION" --notes-file "$OUT/notes.md" \
-    "$OUT/$LINUX_ASSET" "$OUT/$WIN_ASSET" "$OUT/SHA256SUMS"
+if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
+    gh release edit "$TAG" --repo "$REPO" --title "InterCom $VERSION" --notes-file "$OUT/notes.md"
+else
+    gh release create "$TAG" --repo "$REPO" --verify-tag \
+        --title "InterCom $VERSION" --notes-file "$OUT/notes.md"
+fi
+for asset in "$LINUX_ASSET" "$WIN_ASSET"; do
+    gh release upload "$TAG" --repo "$REPO" --clobber "$OUT/$asset"
+done
+ALL="$(mktemp -d)"
+trap 'rm -rf "$ALL"' EXIT
+gh release download "$TAG" --repo "$REPO" --dir "$ALL"
+rm -f "$ALL/SHA256SUMS"
+(cd "$ALL" && LC_ALL=C sha256sum -- * >"$OUT/SHA256SUMS")
+(cd "$OUT" && sha256sum -c SHA256SUMS --ignore-missing)
+gh release upload "$TAG" --repo "$REPO" --clobber "$OUT/SHA256SUMS"
 gh release view "$TAG" --repo "$REPO"

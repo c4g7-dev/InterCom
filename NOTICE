@@ -1,0 +1,35 @@
+InterCom
+Copyright (C) 2026 InterCom contributors
+
+InterCom is a modified version of Element Web / Element Desktop and of
+Element Call:
+
+  Element Web and Element Desktop   https://github.com/element-hq/element-web
+  Element Call                      https://github.com/element-hq/element-call
+
+  Copyright (C) New Vector Ltd
+  Copyright (C) Element Creations Ltd
+  and the other copyright holders named in the source files of those projects.
+
+The upstream projects are licensed under AGPL-3.0-only (or, at the licensee's
+choice, GPL-3.0-only for Element Web, or a commercial licence from Element).
+InterCom uses them under the GNU Affero General Public License, version 3, and
+the modifications made for InterCom are released under the same licence. See
+LICENSE for the full text. The upstream copyright and licence notices are kept
+in the source trees (the element-web and element-call submodules); each
+modified file can be compared against its upstream release tag with git.
+
+Third-party components bundled with the applications keep their own licences,
+as recorded in the respective source trees.
+
+Trademarks
+
+"Element" is a trademark of New Vector Ltd. "Matrix" is a trademark of The
+Matrix.org Foundation C.I.C. InterCom is an independent project. It is not
+affiliated with, endorsed by or supported by Element (New Vector Ltd / Element
+Creations Ltd) or The Matrix.org Foundation, and it is not an Element product.
+The names are used only to state what InterCom is based on and compatible with.
+
+The InterCom name, icon and logo are not derived from Element's branding. The
+logo artwork (docs/images/logo.svg) is original and dedicated to the public
+domain (CC0).

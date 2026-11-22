@@ -1,0 +1,8 @@
+[submodule "element-web"]
+	path = element-web
+	url = https://github.com/c4g7-dev/intercom-element-web.git
+	branch = intercom
+[submodule "element-call"]
+	path = element-call
+	url = https://github.com/c4g7-dev/intercom-element-call.git
+	branch = intercom

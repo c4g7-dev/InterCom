@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="760" viewBox="0 0 1280 760" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <!-- Illustration of the InterCom screen share options (Linux). Not a screenshot. CC0. -->
+  <rect width="1280" height="760" fill="#0d0f12"/>
+  <rect x="330" y="40" width="620" height="680" rx="16" fill="#15181d" stroke="#23272f"/>
+  <text x="362" y="88" fill="#ebeef2" font-size="22" font-weight="600">Share your screen</text>
+
+  <text x="362" y="128" fill="#9199a4" font-size="13">Optimise for</text>
+  <g font-size="14">
+    <rect x="362" y="140" width="180" height="62" rx="10" fill="#171a3a" stroke="#6875f5" stroke-width="2"/>
+    <text x="378" y="166" fill="#ebeef2" font-weight="600">Text / sharp</text><text x="378" y="186" fill="#9199a4" font-size="12">Crisp text, 30 fps</text>
+    <rect x="550" y="140" width="180" height="62" rx="10" fill="#111317" stroke="#23272f"/>
+    <text x="566" y="166" fill="#ebeef2">Motion / smooth</text><text x="566" y="186" fill="#9199a4" font-size="12">Video and games, 60 fps</text>
+    <rect x="738" y="140" width="180" height="62" rx="10" fill="#111317" stroke="#23272f"/>
+    <text x="754" y="166" fill="#ebeef2">Low bandwidth</text><text x="754" y="186" fill="#9199a4" font-size="12">720p at 15 fps</text>
+  </g>
+
+  <g font-size="14">
+    <text x="362" y="236" fill="#9199a4" font-size="13">Resolution</text>
+    <rect x="362" y="246" width="272" height="40" rx="8" fill="#111317" stroke="#23272f"/>
+    <text x="376" y="271" fill="#ebeef2">Auto (native, max 1440p)</text><path d="M612 263l5 5 5-5" fill="none" stroke="#9199a4" stroke-width="1.6"/>
+    <text x="646" y="236" fill="#9199a4" font-size="13">Video codec</text>
+    <rect x="646" y="246" width="272" height="40" rx="8" fill="#111317" stroke="#23272f"/>
+    <text x="660" y="271" fill="#ebeef2">Auto (AV1)</text><path d="M896 263l5 5 5-5" fill="none" stroke="#9199a4" stroke-width="1.6"/>
+  </g>
+
+  <text x="362" y="324" fill="#9199a4" font-size="13">Share audio from</text>
+  <text x="362" y="350" fill="#656d77" font-size="11" letter-spacing="0.6">APPS PLAYING INTO…</text>
+  <g font-size="14">
+    <!-- sink 1 selected -->
+    <rect x="362" y="360" width="556" height="64" rx="10" fill="#171a3a" stroke="#6875f5" stroke-width="2"/>
+    <rect x="378" y="382" width="18" height="18" rx="4" fill="#6875f5"/><path d="M382 391l4 4 7-8" fill="none" stroke="#fff" stroke-width="2"/>
+    <text x="410" y="386" fill="#ebeef2">Share output</text><text x="410" y="406" fill="#9199a4" font-size="12">Music player, Game</text>
+    <path d="M700 384h4l5-4v16l-5-4h-4z" fill="#ebeef2"/>
+    <rect x="718" y="390" width="130" height="4" rx="2" fill="#23272f"/><rect x="718" y="390" width="78" height="4" rx="2" fill="#6875f5"/><circle cx="796" cy="392" r="6" fill="#ebeef2"/>
+    <text x="902" y="396.5" fill="#9199a4" font-size="12" text-anchor="end">120%</text>
+    <!-- sink 2 selected -->
+    <rect x="362" y="432" width="556" height="64" rx="10" fill="#171a3a" stroke="#6875f5" stroke-width="2"/>
+    <rect x="378" y="454" width="18" height="18" rx="4" fill="#6875f5"/><path d="M382 463l4 4 7-8" fill="none" stroke="#fff" stroke-width="2"/>
+    <text x="410" y="458" fill="#ebeef2">Speakers</text><text x="410" y="478" fill="#9199a4" font-size="12">Browser</text>
+    <path d="M700 456h4l5-4v16l-5-4h-4z" fill="#ebeef2"/>
+    <rect x="718" y="462" width="130" height="4" rx="2" fill="#23272f"/><rect x="718" y="462" width="52" height="4" rx="2" fill="#6875f5"/><circle cx="770" cy="464" r="6" fill="#ebeef2"/>
+    <text x="902" y="468.5" fill="#9199a4" font-size="12" text-anchor="end">80%</text>
+    <!-- sink 3 own playback -->
+    <rect x="362" y="504" width="556" height="64" rx="10" fill="#111317" stroke="#23272f"/>
+    <rect x="378" y="526" width="18" height="18" rx="4" fill="none" stroke="#808994" stroke-width="1.5"/>
+    <text x="410" y="530" fill="#ebeef2">Headset</text><text x="410" y="550" fill="#e6b98a" font-size="12">this call plays here</text>
+  </g>
+  <text x="362" y="592" fill="#9199a4" font-size="12">Shares everything that plays into these outputs, in stereo and without voice processing.</text>
+
+  <path d="M362 624l5 5 5-5" fill="none" stroke="#9199a4" stroke-width="1.6"/>
+  <text x="382" y="631" fill="#9199a4" font-size="13">Advanced</text>
+
+  <rect x="694" y="660" width="100" height="40" rx="20" fill="none" stroke="#3a4049"/><text x="744" y="685" fill="#ebeef2" font-size="14" text-anchor="middle">Cancel</text>
+  <rect x="806" y="660" width="112" height="40" rx="20" fill="#6875f5"/><text x="862" y="685" fill="#fff" font-size="14" font-weight="600" text-anchor="middle">Share</text>
+  <text x="1248" y="716" fill="#4a515c" font-size="11" text-anchor="end">Illustration</text>
+</svg>

@@ -1,0 +1,269 @@
+# Builds InterCom for Linux and Windows and publishes the GitHub release.
+#
+# Runs when a tag v<version> is pushed (tools/release.sh <version> --ci does that), or by hand
+# for a version: `gh workflow run release.yml --ref v<version> -f version=<version>`
+# (with `-f publish=false` it only builds).
+#
+# The release notes are the section of CHANGELOG.md for the version. Assets other workflows or
+# people put on the same release are kept: every file is uploaded on its own, and SHA256SUMS is
+# written anew from all the assets of the release.
+name: Release
+
+on:
+    push:
+        tags: ["v*"]
+    workflow_dispatch:
+        inputs:
+            version:
+                description: "Version, e.g. 1.12.35-intercom.2 (builds the ref the workflow is run from)"
+                required: true
+                type: string
+            publish:
+                description: "Publish the GitHub release (off: build only, the files stay workflow artifacts)"
+                type: boolean
+                default: true
+
+permissions:
+    contents: read
+
+concurrency:
+    group: release-${{ inputs.version || github.ref_name }}
+    cancel-in-progress: false
+
+env:
+    PNPM_VERSION: "12.14.0"
+    NODE_VERSION: "24"
+    NODE_OPTIONS: --max-old-space-size=6144
+    INPUT_VERSION: ${{ inputs.version }}
+
+defaults:
+    run:
+        shell: bash
+
+jobs:
+    linux:
+        name: Linux x64
+        runs-on: ubuntu-latest
+        timeout-minutes: 60
+        outputs:
+            version: ${{ steps.version.outputs.version }}
+        steps:
+            - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
+
+            - name: Version
+              id: version
+              run: |
+                  version="${INPUT_VERSION:-${GITHUB_REF_NAME#v}}"
+                  if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+-intercom\.[0-9]+$ ]]; then
+                      echo "::error::'$version' is not a version like 1.12.35-intercom.2"
+                      exit 1
+                  fi
+                  if ! grep -qxF "## $version" CHANGELOG.md; then
+                      echo "::error::CHANGELOG.md has no section '## $version'"
+                      exit 1
+                  fi
+                  echo "version=$version" >>"$GITHUB_OUTPUT"
+
+            # Only the two forks the desktop app is built from, at the pinned commits
+            - name: Check out element-web and element-call
+              run: git submodule update --init --depth 1 element-web element-call
+
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+
+            # element-web pins this pnpm; in element-call it hands over to the one pinned there
+            - name: Set up pnpm
+              id: pnpm
+              run: |
+                  npm install --global "pnpm@$PNPM_VERSION"
+                  echo "web-store=$(cd element-web && pnpm store path)" >>"$GITHUB_OUTPUT"
+                  echo "call-store=$(cd element-call && pnpm store path)" >>"$GITHUB_OUTPUT"
+
+            - uses: actions/cache@v6
+              with:
+                  path: |
+                      ${{ steps.pnpm.outputs.web-store }}
+                      ${{ steps.pnpm.outputs.call-store }}
+                  key: pnpm-${{ runner.os }}-${{ hashFiles('element-web/pnpm-lock.yaml', 'element-call/pnpm-lock.yaml') }}
+                  restore-keys: pnpm-${{ runner.os }}-
+
+            - name: Element Call (embedded)
+              working-directory: element-call
+              run: |
+                  pnpm install --frozen-lockfile
+                  scripts/build-intercom-embedded.sh
+
+            - name: Install element-web
+              working-directory: element-web
+              run: pnpm install --frozen-lockfile
+
+            - name: Web app and Linux app
+              run: INTERCOM_DIST_DIR=dist-release element-web/apps/desktop/intercom/build.sh
+
+            - name: Collect
+              env:
+                  VERSION: ${{ steps.version.outputs.version }}
+              run: |
+                  base="$(node -p "require('./element-web/apps/desktop/package.json').version")"
+                  if [[ "$VERSION" != "$base"-intercom.* ]]; then
+                      echo "::error::version $VERSION does not match Element Web $base"
+                      exit 1
+                  fi
+                  mkdir -p out webapp-out
+                  cp "element-web/apps/desktop/dist-release/intercom-$base.tar.gz" \
+                      "out/InterCom-$VERSION-linux-x64.tar.gz"
+                  # The Windows job packages this same web app
+                  tar -C element-web/apps/web -czf webapp-out/webapp.tar.gz webapp
+                  ls -l out webapp-out
+
+            - uses: actions/upload-artifact@v7
+              with:
+                  name: linux
+                  path: out/
+                  if-no-files-found: error
+                  compression-level: 0
+                  retention-days: 7
+
+            - uses: actions/upload-artifact@v7
+              with:
+                  name: webapp
+                  path: webapp-out/
+                  if-no-files-found: error
+                  compression-level: 0
+                  retention-days: 1
+
+    windows:
+        name: Windows x64
+        needs: linux
+        runs-on: windows-latest
+        timeout-minutes: 60
+        steps:
+            - name: Configure git
+              run: |
+                  git config --global core.autocrlf false
+                  git config --global core.eol lf
+                  git config --global core.longpaths true
+
+            - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
+
+            - name: Check out element-web and element-call
+              run: git submodule update --init --depth 1 element-web element-call
+
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+
+            - name: Set up pnpm
+              id: pnpm
+              run: |
+                  npm install --global "pnpm@$PNPM_VERSION"
+                  echo "store=$(cd element-web && pnpm store path)" >>"$GITHUB_OUTPUT"
+
+            - uses: actions/cache@v6
+              with:
+                  path: ${{ steps.pnpm.outputs.store }}
+                  key: pnpm-${{ runner.os }}-${{ hashFiles('element-web/pnpm-lock.yaml') }}
+                  restore-keys: pnpm-${{ runner.os }}-
+
+            # The desktop app's dependencies only; the search index (seshat) comes prebuilt
+            - name: Install element-desktop
+              working-directory: element-web/apps/desktop
+              run: pnpm install --frozen-lockfile --filter element-desktop
+
+            - uses: actions/download-artifact@v8
+              with:
+                  name: webapp
+                  path: webapp-in
+
+            - name: Windows installer
+              run: |
+                  tar -C element-web/apps/web -xzf webapp-in/webapp.tar.gz
+                  INTERCOM_TARGET=win INTERCOM_DIST_DIR=dist-win \
+                      element-web/apps/desktop/intercom/build.sh --skip-web
+
+            - name: Collect
+              env:
+                  VERSION: ${{ needs.linux.outputs.version }}
+              run: |
+                  mkdir -p out
+                  cp element-web/apps/desktop/dist-win/InterCom-Setup-x64.exe \
+                      "out/InterCom-Setup-$VERSION-x64.exe"
+                  ls -l out
+
+            - uses: actions/upload-artifact@v7
+              with:
+                  name: windows
+                  path: out/
+                  if-no-files-found: error
+                  compression-level: 0
+                  retention-days: 7
+
+    publish:
+        name: Publish
+        needs: [linux, windows]
+        if: github.event_name == 'push' || inputs.publish
+        runs-on: ubuntu-latest
+        timeout-minutes: 20
+        permissions:
+            contents: write
+        env:
+            GH_TOKEN: ${{ github.token }}
+            GH_REPO: ${{ github.repository }}
+            VERSION: ${{ needs.linux.outputs.version }}
+        steps:
+            - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
+
+            - uses: actions/download-artifact@v8
+              with:
+                  name: linux
+                  path: built
+
+            - uses: actions/download-artifact@v8
+              with:
+                  name: windows
+                  path: built
+
+            - name: Release notes
+              run: |
+                  awk -v v="$VERSION" '
+                      /^## / { if (found) exit; if ($2 == v) { found = 1; next } }
+                      found { print }
+                  ' CHANGELOG.md | sed -e '/./,$!d' >notes.md
+                  test -s notes.md
+                  cat notes.md
+
+            - name: Create or update the release
+              run: |
+                  tag="v$VERSION"
+                  if gh release view "$tag" >/dev/null 2>&1; then
+                      gh release edit "$tag" --title "InterCom $VERSION" --notes-file notes.md
+                  elif [[ "$GITHUB_REF" == "refs/tags/$tag" ]]; then
+                      gh release create "$tag" --verify-tag --title "InterCom $VERSION" --notes-file notes.md
+                  else
+                      gh release create "$tag" --target "$GITHUB_SHA" --title "InterCom $VERSION" --notes-file notes.md
+                  fi
+
+            - name: Upload the builds
+              run: |
+                  ls -l built
+                  for file in built/*; do
+                      gh release upload "v$VERSION" "$file" --clobber
+                  done
+
+            # From every asset of the release, also those this workflow did not build
+            - name: SHA256SUMS
+              run: |
+                  mkdir all
+                  gh release download "v$VERSION" --dir all
+                  rm -f all/SHA256SUMS
+                  (cd all && LC_ALL=C sha256sum -- * >../SHA256SUMS)
+                  cat SHA256SUMS
+                  gh release upload "v$VERSION" SHA256SUMS --clobber
+                  gh release view "v$VERSION"

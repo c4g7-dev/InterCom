@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
 # Builds and publishes an InterCom release.
 #
+#   tools/release.sh <version> --ci
 #   tools/release.sh <version> [--skip-build] [--no-publish]
 #
 #   <version>      e.g. 1.12.35-intercom.1: the Element Web version InterCom is based on, then
 #                  the InterCom revision. CHANGELOG.md must have a "## <version>" section.
+#   --ci           build nothing here: commit the submodule pointers, tag and push, and let the
+#                  release workflow (.github/workflows/release.yml) build both targets and
+#                  publish the GitHub release. The usual way to release.
 #   --skip-build   reuse the builds already in element-web/apps/desktop/{dist-release,dist-win}
 #   --no-publish   build and collect the assets in release/<version>/, then stop: no commit, no
 #                  tag, no push, no GitHub release
 #
-# What it does:
+# What it does without --ci:
 #   1. builds Element Call (embedded), the web app, the Linux app and the Windows installer,
 #      one heavy step at a time
 #   2. collects InterCom-<version>-linux-x64.tar.gz, InterCom-Setup-<version>-x64.exe and
@@ -18,7 +22,8 @@
 #      intercom-v<version>, and pushes branches and tags
 #   4. creates the GitHub release with the notes from CHANGELOG.md
 #
-# Needs: pnpm 12, node, wine (Windows installer), gh (logged in), sha256sum.
+# Needs: git, node and gh (logged in); for a local build also pnpm 12, wine (Windows installer)
+# and sha256sum.
 # The built application is never started.
 #
 # Environment:
@@ -33,9 +38,11 @@ usage() { sed -n '2,/^set -euo/p' "$0" | sed '$d' | sed 's/^# \{0,1\}//'; }
 VERSION=""
 SKIP_BUILD=0
 PUBLISH=1
+CI=0
 for arg in "$@"; do
     case "$arg" in
         -h | --help) usage; exit 0 ;;
+        --ci) CI=1 ;;
         --skip-build) SKIP_BUILD=1 ;;
         --no-publish) PUBLISH=0 ;;
         -*) echo "Unknown option: $arg" >&2; exit 2 ;;
@@ -43,7 +50,11 @@ for arg in "$@"; do
     esac
 done
 if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-intercom\.[0-9]+$ ]]; then
-    echo "Usage: tools/release.sh <version> [--skip-build] [--no-publish]   (e.g. 1.12.35-intercom.1)" >&2
+    echo "Usage: tools/release.sh <version> [--ci | --skip-build | --no-publish]   (e.g. 1.12.35-intercom.1)" >&2
+    exit 2
+fi
+if ((CI && (SKIP_BUILD || !PUBLISH))); then
+    echo "--ci goes with neither --skip-build nor --no-publish" >&2
     exit 2
 fi
 
@@ -72,7 +83,9 @@ notes() {
 }
 
 step "Checks"
-for tool in git node pnpm sha256sum; do
+TOOLS=(git node)
+((CI)) || TOOLS+=(pnpm sha256sum)
+for tool in "${TOOLS[@]}"; do
     command -v "$tool" >/dev/null || die "$tool is not on the PATH"
 done
 [[ -n "$(notes)" ]] || die "CHANGELOG.md has no section '## $VERSION'"
@@ -96,7 +109,9 @@ fi
 
 export NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=6144}"
 
-if ((!SKIP_BUILD)); then
+if ((CI)); then
+    [[ -f .github/workflows/release.yml ]] || die "the release workflow is missing"
+elif ((!SKIP_BUILD)); then
     command -v wine >/dev/null || die "wine is not on the PATH (needed for the Windows installer)"
 
     step "Element Call (embedded)"
@@ -115,31 +130,33 @@ if ((!SKIP_BUILD)); then
         "$DESKTOP/intercom/build.sh" --skip-web
 fi
 
-step "Assets"
-LINUX_SRC="$DESKTOP/dist-release/intercom-$BASE.tar.gz"
-WIN_SRC="$DESKTOP/dist-win/InterCom-Setup-x64.exe"
-[[ -f "$LINUX_SRC" ]] || die "missing $LINUX_SRC"
-[[ -f "$WIN_SRC" ]] || die "missing $WIN_SRC"
-rm -rf "$OUT"
-mkdir -p "$OUT"
-LINUX_ASSET="InterCom-$VERSION-linux-x64.tar.gz"
-WIN_ASSET="InterCom-Setup-$VERSION-x64.exe"
-cp "$LINUX_SRC" "$OUT/$LINUX_ASSET"
-cp "$WIN_SRC" "$OUT/$WIN_ASSET"
-(cd "$OUT" && sha256sum "$LINUX_ASSET" "$WIN_ASSET" >SHA256SUMS)
-cat "$OUT/SHA256SUMS"
-ls -l "$OUT"
+if ((!CI)); then
+    step "Assets"
+    LINUX_SRC="$DESKTOP/dist-release/intercom-$BASE.tar.gz"
+    WIN_SRC="$DESKTOP/dist-win/InterCom-Setup-x64.exe"
+    [[ -f "$LINUX_SRC" ]] || die "missing $LINUX_SRC"
+    [[ -f "$WIN_SRC" ]] || die "missing $WIN_SRC"
+    rm -rf "$OUT"
+    mkdir -p "$OUT"
+    LINUX_ASSET="InterCom-$VERSION-linux-x64.tar.gz"
+    WIN_ASSET="InterCom-Setup-$VERSION-x64.exe"
+    cp "$LINUX_SRC" "$OUT/$LINUX_ASSET"
+    cp "$WIN_SRC" "$OUT/$WIN_ASSET"
+    (cd "$OUT" && sha256sum "$LINUX_ASSET" "$WIN_ASSET" >SHA256SUMS)
+    cat "$OUT/SHA256SUMS"
+    ls -l "$OUT"
 
-if ((!PUBLISH)); then
-    echo
-    echo "Assets are in $OUT. Nothing was committed, tagged or pushed (--no-publish)."
-    exit 0
+    if ((!PUBLISH)); then
+        echo
+        echo "Assets are in $OUT. Nothing was committed, tagged or pushed (--no-publish)."
+        exit 0
+    fi
 fi
 
 step "Submodule pointers"
-git add "${FORKS[@]}"
-if ! git diff --cached --quiet; then
-    git commit -m "Release $VERSION"
+# Only the two pointers, whatever else is staged
+if ! git diff --quiet HEAD -- "${FORKS[@]}"; then
+    git commit -m "Release $VERSION" -- "${FORKS[@]}"
 fi
 
 step "Tags"
@@ -154,6 +171,14 @@ for fork in "${FORKS[@]}"; do
     git -C "$fork" push "$remote" intercom "refs/tags/$FORK_TAG"
 done
 git push origin main "refs/tags/$TAG"
+
+if ((CI)); then
+    echo
+    echo "Pushed $TAG. The release workflow builds and publishes it; follow it with"
+    echo "  gh run watch --repo $REPO"
+    echo "  https://github.com/$REPO/actions/workflows/release.yml"
+    exit 0
+fi
 
 step "GitHub release"
 notes >"$OUT/notes.md"

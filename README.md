@@ -16,7 +16,9 @@
   <a href="CHANGELOG.md">Changelog</a>
 </p>
 
-![InterCom welcome screen](docs/images/welcome.png)
+| Welcome | Sign in |
+| --- | --- |
+| ![InterCom welcome screen](docs/images/welcome.png) | ![InterCom sign-in screen](docs/images/sign-in.png) |
 
 InterCom is a modified build of [Element Web / Desktop](https://github.com/element-hq/element-web)
 and [Element Call](https://github.com/element-hq/element-call). It keeps everything those do and

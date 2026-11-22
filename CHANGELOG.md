@@ -3,6 +3,37 @@
 Versions are `<Element Web version>-intercom.<n>`: the upstream release InterCom is based on,
 followed by the InterCom revision.
 
+## 1.12.35-intercom.2
+
+A maintenance release: one visual fix, and the builds now come from GitHub Actions. Calls, audio
+and layout are the same as in 1.12.35-intercom.1.
+
+### Fixes
+
+- Sign-in page: the side panel with the logo was a flat grey in the InterCom Dark theme. The
+  sign-in card is now one flat surface in the theme's colours, with a hairline border.
+
+### Builds
+
+- Releases are built by a GitHub Actions workflow from the tagged source: the Linux archive on
+  Linux, the Windows installer on Windows (it was cross-built with wine before). The installer
+  holds the same files as before and is still not code signed.
+- `SHA256SUMS` covers every file of the release.
+- The two source forks say at the top of their README that they are the InterCom forks.
+
+### Unchanged since 1.12.35-intercom.1
+
+For reference, the call features of the first release, all in this build as well:
+
+- Volume above 100 % per participant and per screen share, with the fixes for it: the volume no
+  longer jumps when a tile comes back below 100 %, and deafen silences boosted tiles too.
+- Equal grid layout: every tile the same size, screen shares included.
+- Linux: the share dialog lists the audio outputs (sinks) and the applications playing into
+  them; several sources are mixed into the share and can be changed while sharing.
+- Shortcuts in a call (Ctrl+Shift+M, Ctrl+Shift+D, Ctrl+Shift+V) and the same actions from the
+  command line (`--toggle-mute`, `--toggle-deafen`, `--toggle-camera`, `--leave-call`); global
+  on Windows while a call is on.
+
 ## 1.12.35-intercom.1
 
 First public release. Based on Element Web / Desktop 1.12.35 and Element Call 0.29.0-rc.2.

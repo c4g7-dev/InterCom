@@ -12,7 +12,7 @@ must sit next to each other, as they do in this repository.
 
 ## Requirements
 
-- Linux x64 (the Windows installer is cross-built from Linux)
+- Linux x64 (the Windows installer can be cross-built from Linux; releases build it on Windows)
 - Node.js 22.18 or newer, and pnpm 12 (`corepack enable` picks the version each fork pins)
 - A C/C++ toolchain and Python 3, in case a native module of Element Desktop has no prebuilt
 - About 8 GB of free memory for the web build; a few GB of disk for dependencies
@@ -81,9 +81,23 @@ The screen share egress budget is in `element-web/apps/web/res/intercom/element-
 
 ## Releases
 
-`tools/release.sh <version>` builds both targets, collects the assets with checksums, tags the
-three repositories and publishes a GitHub release with the notes from `CHANGELOG.md`.
-Run `tools/release.sh --help` for the options.
+Releases are built by GitHub Actions ([release.yml](../.github/workflows/release.yml)): the Linux
+archive on a Linux runner, the Windows installer on a Windows runner (no wine), from the
+submodule commits the tag pins.
+
+```sh
+# CHANGELOG.md has a "## <version>" section, the forks' intercom branches are committed
+tools/release.sh 1.12.35-intercom.2 --ci
+```
+
+That commits the submodule pointers, tags the three repositories and pushes. The workflow then
+publishes the GitHub release with the notes from `CHANGELOG.md`, `InterCom-<version>-linux-x64.tar.gz`,
+`InterCom-Setup-<version>-x64.exe` and a `SHA256SUMS` over every file of the release; files
+that were added to the release by other means are kept. To build a tag again:
+`gh workflow run release.yml --ref v<version> -f version=<version>`.
+
+Without `--ci`, `tools/release.sh <version>` builds both targets on this machine (the Windows
+installer with wine) and publishes them itself. Run `tools/release.sh --help` for the options.
 
 ## Keeping up with upstream
 

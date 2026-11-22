@@ -3,6 +3,23 @@
 Versions are `<Element Web version>-intercom.<n>`: the upstream release InterCom is based on,
 followed by the InterCom revision.
 
+## Android 26.11.1-intercom.1
+
+First release of InterCom for Android (`android-v26.11.1-intercom.1`), based on Element X
+Android 26.11.1 and element-call-android 0.1.2. Android versions are
+`<Element X Android version>-intercom.<n>`.
+
+- Own name, icon and application id (`com.c4g7.intercom.android`); installs next to Element X.
+- Native MatrixRTC calls by default instead of the Element Call web view, with screen sharing
+  (1280 px long edge, 15 fps: the preset of element-call-android, which has no option for it).
+- OAuth client registration that Matrix Authentication Service accepts for the app's own
+  redirect scheme.
+- Push notifications through UnifiedPush only (no Firebase); a distributor app such as ntfy is
+  required.
+- No analytics, no bug report upload.
+- Known limitations: the phone's audio is not part of a screen share; arm64 only; no automatic
+  updates; not tested on a device before release.
+
 ## 1.12.35-intercom.2
 
 A maintenance release: one visual fix and new release tooling. Calls, audio and layout are the

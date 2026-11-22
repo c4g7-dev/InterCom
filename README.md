@@ -79,6 +79,33 @@ sha256sum -c SHA256SUMS --ignore-missing
 
 There is no automatic update; new versions are announced on the releases page.
 
+## Android
+
+InterCom for Android is based on [Element X Android](https://github.com/element-hq/element-x-android).
+It is released separately from the desktop app: look for the newest `android-v…` entry on the
+[releases page](https://github.com/c4g7-dev/InterCom/releases) and install
+`InterCom-Android-<version>-arm64-v8a.apk` (Android 7 or newer, 64-bit ARM; allow your browser or
+file manager to install apps when asked). It installs next to Element X and shares no data with it.
+
+- Calls use the native MatrixRTC stack instead of a web view, and can **share the phone's screen**
+  (up to 1280 px on the long edge at 15 fps for now; the phone's audio is not shared).
+- Sign-in through Matrix Authentication Service works on servers whose MAS accepts the redirect
+  scheme `com.c4g7.intercom.android` for the client URI `https://c4g7.com`, which is the default
+  policy. Building for another domain: see the fork's README.
+- **Push notifications need a UnifiedPush distributor**, because the app contains no Google
+  Firebase: install [ntfy](https://f-droid.org/packages/io.heckel.ntfy/) (or another
+  [distributor](https://unifiedpush.org/users/distributors/)), open it once, then choose it in
+  InterCom under Settings → Notifications → Push notification provider. The homeserver must be able to reach the distributor's
+  Matrix gateway (for ntfy.sh: `https://ntfy.sh/_matrix/push/v1/notify`) over HTTPS. Without a
+  distributor, messages arrive only while the app is open.
+- No analytics and no bug report upload.
+- Updates are installed by hand; every release is signed with the same key, so a newer APK
+  installs over the old one.
+
+The source is the fork [intercom-element-x-android](https://github.com/c4g7-dev/intercom-element-x-android),
+branch `intercom`, included here as the submodule `element-x-android`. Build with JDK 21 and the
+Android SDK: `./gradlew :app:assembleFdroidRelease`.
+
 ## Quick start
 
 ```sh
@@ -157,7 +184,7 @@ Bugs in InterCom's changes belong in this repository's issues, not upstream.
 ## License and trademarks
 
 InterCom is free software under the [GNU Affero General Public License v3.0](LICENSE).
-It is based on Element Web, Element Desktop and Element Call, copyright New Vector Ltd and
+It is based on Element Web, Element Desktop, Element Call and Element X Android, copyright New Vector Ltd and
 Element Creations Ltd, used under AGPL-3.0; InterCom's modifications are released under the same
 license. See [NOTICE](NOTICE).
 

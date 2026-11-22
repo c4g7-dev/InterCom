@@ -32,6 +32,9 @@ Every run of the desktop app writes one file:
 - an `app_start` record: versions, operating system, Wayland or X11, feature switches, GPU status
 - the statistics of every track, every 2 seconds, and the events of the call (join, share start
   and stop, pop-out, fullscreen, device changes)
+- for every file sent: `upload_phase` records with the time each step took (decoding, thumbnail,
+  blurhash, reading, encrypting, the requests, the event), the file's size and type, and a
+  closing record with the total. The file's name is not written
 - console warnings and errors
 
 The logs are capped at 200 MB in total; the oldest files are deleted first. Snapshots taken from
@@ -55,7 +58,7 @@ tools/diag-summary.py ~/.config/InterCom/logs/diag-*.jsonl
 
 Per file and per call it reports whether the microphone was publishing with audio after the join,
 how the screen share was sent and received, whether its audio flowed, pop-out and fullscreen
-events, network outliers and errors. Given the logs of several participants of the same call, it
+events, network outliers, uploads (what each took and where the time went) and errors. Given the logs of several participants of the same call, it
 sets what one sent against what the others received.
 
 ```sh

@@ -406,6 +406,19 @@ def report_share_audio(report, call, args):
         by_sid[(record["dir"], record["sid"])].append(record)
     for (direction, sid), records in by_sid.items():
         measured = [r for r in records if "audioEnergyDelta" in r]
+        # A share the viewer muted for themselves is not played, and the browser measures no
+        # level for audio it does not play: those readings say nothing about the share
+        muted_here = [r for r in measured if direction == "recv" and r.get("playbackVolume") == 0]
+        if muted_here:
+            measured = [r for r in measured if r.get("playbackVolume") != 0]
+            if not measured:
+                report.verdict(
+                    INFO,
+                    "share-audio",
+                    f"{direction} {sid} ({records[-1].get('participant')}): muted by the viewer in all {len(muted_here)} readings, "
+                    f"bitrate med {mbps(statistics.median(values(records, 'bitrate') or [0]))}",
+                )
+                continue
         flowing = [r for r in measured if r["audioEnergyDelta"] > args.audio_threshold and not r.get("muted")]
         share = len(flowing) / len(measured) if measured else 0
         status = PASS if share >= 0.5 else WARN if flowing else FAIL
@@ -415,7 +428,8 @@ def report_share_audio(report, call, args):
             f"{direction} {sid} ({records[-1].get('participant')}): sound in {share * 100:.0f}% of {len(measured)} readings, "
             f"level max {max(values(records, 'audioLevel') or [0]):.3f}, bitrate med {mbps(statistics.median(values(records, 'bitrate') or [0]))}, "
             f"codec {records[-1].get('codec')}"
-            + (f", concealed max {max(values(records, 'concealedPct') or [0])}%" if direction == "recv" else ""),
+            + (f", concealed max {max(values(records, 'concealedPct') or [0])}%" if direction == "recv" else "")
+            + (f", muted by the viewer in {len(muted_here)} more" if muted_here else ""),
         )
 
 
@@ -467,6 +481,37 @@ def report_network(report, call, args):
         report.note(f"{clock(record['t'])} participation {record.get('state')} {record.get('reason', '')} {record.get('error', '')}")
     if reconnects:
         report.verdict(WARN, "connection", f"{len(reconnects)} reconnect/failure event(s)")
+
+
+def report_uploads(report, records, args):
+    """Where the time of each file sent went: the `upload_phase` records of the web app."""
+    phases = [r for r in records if r["type"] == "upload_phase"]
+    totals = [r for r in phases if r.get("phase") == "total"]
+    if not totals:
+        return
+    report.section("Uploads")
+    for total in totals[-args.max_events :]:
+        parts = total.get("phases") or {}
+        slowest = sorted(parts.items(), key=lambda item: -item[1])[:4]
+        size = total.get("bytes") or 0
+        http = parts.get("http")
+        rate = f", {size * 8 / http / 1000:.1f} Mbit/s in the request" if http and size else ""
+        report.note(
+            f"{clock(total['t'])} {total.get('mime')} {size / 1e6:.2f} MB {total.get('outcome')} in {total.get('ms', 0):.0f} ms{rate}: "
+            + ", ".join(f"{name} {ms:.0f}" for name, ms in slowest)
+        )
+    sent = [r for r in totals if r.get("outcome") == "sent"]
+    local = [
+        sum(ms for name, ms in (r.get("phases") or {}).items() if not name.endswith("http") and name not in ("send_event", "wait_previous"))
+        for r in sent
+    ]
+    slow = [ms for ms in local if ms > 1000]
+    report.verdict(
+        PASS if not slow else WARN,
+        "uploads",
+        f"{len(sent)}/{len(totals)} sent; time spent in the app before and beside the requests: {spread(local, ' ms')}"
+        + (f"; over 1 s in {len(slow)}" if slow else ""),
+    )
 
 
 def report_errors(report, records, args):
@@ -534,6 +579,7 @@ def main():
             report_share_audio(report, call, args)
             report_windows(report, call, args)
             report_network(report, call, args)
+        report_uploads(report, records, args)
         report_errors(report, records, args)
         output.append({"file": path, "verdicts": report.verdicts, "text": report.lines})
 

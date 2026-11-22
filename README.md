@@ -44,9 +44,16 @@ endorsed by Element.
 
 **Layout and windows**
 
-- Fullscreen for every tile
+- The call above the room's chat, with a divider to drag, or the call alone
+- Click a tile to see it large, double click for fullscreen
 - Pop-out: any tile in its own window
 - Equal grid: every tile the same size, screen shares included
+
+**Messages**
+
+- Pictures sent together are shown as one gallery, with a lightbox that steps through them
+- Several pictures are sent as one batch, with an optional caption
+- Pictures upload while their preview is made, not after it
 
 **App**
 

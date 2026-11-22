@@ -3,6 +3,70 @@
 Versions are `<Element Web version>-intercom.<n>`: the upstream release InterCom is based on,
 followed by the InterCom revision.
 
+## 1.12.35-intercom.4
+
+A call can share the room with its chat, pictures sent together are one gallery, and sending a
+picture no longer waits on its preview.
+
+### Calls
+
+- **Call over the chat.** The call of a room is now shown above the room's timeline and
+  composer, with a bar between them: drag it (or focus it and use the arrow keys, Home and End)
+  to give the call more or less of the room. The height is remembered. The chevron on the bar
+  folds the call away and brings it back (also: double click the bar, or Enter on it); the call
+  goes on playing either way. The button beside it, and the one in the room header, give the
+  call the whole room as before ("Call only"), and the header button brings the chat back. The
+  choice is remembered; pop-out and picture-in-picture are as they were.
+- **Click a tile to focus it.** One click on a tile shows it large with everybody in a strip
+  beside it; a click on it again, or Escape, returns to the layout that was chosen. Other
+  screen shares stay a page away in the large tile. A double click is still fullscreen, which
+  is why a single click takes a fifth of a second to act.
+- Diagnostics overlay: a screen share whose sound you muted for yourself (or turned to 0 %, or
+  while deafened) now reads "receiving … · muted by you" in grey instead of a red "no sound".
+  A browser measures no level for audio it does not play, so the check judges such a share by
+  what arrives. `tools/diag-summary.py` leaves those readings out as well.
+
+### Messages
+
+- **Galleries.** Pictures sent one after the other by the same person, within two minutes of
+  each other and with nothing between them, are shown as one grid of cropped previews, three
+  to a row, with "+N" on the last one when there are more than nine. A click opens the picture;
+  the lightbox then has previous and next buttons (and the arrow keys) for the whole gallery,
+  and shows "2 of 5". Every picture is still an ordinary image message, so other clients show
+  them as before, and reactions, replies and the menu of a single picture are reached from the
+  lightbox. A picture you are linked to keeps a tile of its own.
+- **Several pictures are sent as one batch.** Choosing, dropping or pasting more than one
+  picture asks once, shows them as the gallery they will be, and takes an optional caption,
+  which is sent with the first.
+- **Sending a picture is faster.** What happened before the upload of a 12 megapixel JPEG,
+  measured in the app's browser engine: about 100 ms to decode it, 475 ms to compute its
+  blurhash from the 800 × 600 thumbnail, then the thumbnail's upload, and only then the
+  picture's own. Now the picture's upload starts at once and the thumbnail is made beside it;
+  the blurhash is computed from a 64 pixel copy (3 ms); the picture is decoded off the main
+  thread; a PNG is no longer read whole and checksummed to find out whether it is a hi-dpi
+  screenshot; and a JPEG is no longer read to find out whether it is animated. A video or
+  audio file is no longer turned into a base64 copy in memory to read its length and first
+  frame. The events are what they were: `m.image` with `info`, thumbnail and blurhash.
+- A file that needs none of this (a .zip) was and is sent as it is. On a homeserver that makes
+  its thumbnails while it answers the upload (Synapse, for unencrypted pictures) that part of
+  the wait is the server's and stays.
+
+### Diagnostics
+
+- Every upload writes `upload_phase` records to the diagnostics log: how long decoding, the
+  thumbnail, the blurhash, reading, encrypting, each request and the event took, with the
+  file's size and type (never its name), and a closing record with the total.
+  `tools/diag-summary.py` lists them under "Uploads".
+
+### Builds
+
+- The web app no longer contains the paths of the machine it was built on.
+- Built like 1.12.35-intercom.3: on a Linux machine, the Windows installer cross-built with
+  wine. It is not code signed.
+- Not tested in a real call or against a real homeserver before release: the gallery, the
+  lightbox, the batch dialog and the call over the chat were looked at in the built app with
+  made-up data; focusing a tile and the overlay change are covered by unit tests only.
+
 ## 1.12.35-intercom.3
 
 The volume above 100 % is now clearly louder, and the diagnostics overlay judges share audio

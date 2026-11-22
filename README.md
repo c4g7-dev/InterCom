@@ -40,7 +40,7 @@ endorsed by Element.
 - Screen share audio in stereo, without voice processing
 - Linux: share any PipeWire / PulseAudio output, and mix several sources live
 - Windows: system audio with the share, without the call's own sound
-- Volume per participant and per stream, 0 to 200 %
+- Volume per participant and per stream, 0 to 200 % (above 100 %: up to +12 dB, with a limiter)
 
 **Layout and windows**
 

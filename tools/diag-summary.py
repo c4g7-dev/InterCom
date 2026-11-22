@@ -363,7 +363,17 @@ def report_received(report, call, senders, args):
         if last.get("source") != "screen_share":
             continue
         ticks = [r for r in call.of("tick") if records[0]["t"] <= r["t"] <= records[-1]["t"] + 2500]
-        low = [r for r in ticks if ((r.get("checks") or {}).get("top_layer") or {}).get("status") == "fail"]
+        # One verdict per sharing member since 1.12.35-intercom.3, one for all before
+        low = [
+            r
+            for r in ticks
+            if (
+                (r.get("checks") or {}).get(f"top_layer:{last.get('participant')}")
+                or (r.get("checks") or {}).get("top_layer")
+                or {}
+            ).get("status")
+            == "fail"
+        ]
         status = PASS if len(low) <= max(args.warmup, len(ticks) * 0.05) else FAIL
         report.verdict(status, "received-share", f"{sid}: below the top layer in {len(low)}/{len(ticks)} readings")
         sender = senders.get(sid)

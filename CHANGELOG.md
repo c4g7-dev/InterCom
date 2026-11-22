@@ -3,6 +3,42 @@
 Versions are `<Element Web version>-intercom.<n>`: the upstream release InterCom is based on,
 followed by the InterCom revision.
 
+## 1.12.35-intercom.3
+
+The volume above 100 % is now clearly louder, and the diagnostics overlay judges share audio
+per member.
+
+### Calls
+
+- **Volume above 100 % that is heard.** 200 % used to be twice the amplitude (+6 dB) with
+  nothing to stop the peaks from clipping, which was barely louder. The second half of the
+  slider is now 0 to +12 dB in even steps (150 % is +6 dB, 200 % is +12 dB, four times the
+  amplitude), played through a limiter so that loud passages are held back instead of
+  distorting. The same for a member's voice and for a screen share's audio, in the tile, in
+  the menus, in fullscreen and in the pop-out window.
+- The sliders show the gain beside the percentage above 100 %, e.g. "180% · +9.6 dB".
+- Below 100 % the slider is in steps the ear takes as even as well: half way is about half as
+  loud (−12 dB) rather than −6 dB. **A volume set below 100 % before this release is therefore
+  quieter than it was**; move the slider up a little where that matters.
+- Dragging the slider no longer rebuilds the audio path for every step, and boosted audio
+  follows the output device chosen in the call when it changes.
+
+### Diagnostics
+
+- A volume change is written to the diagnostics log with its gain in dB and whether the limiter
+  is in the path.
+- Overlay: "Share audio flowing" is now "My share audio sending" (the own share's bitrate and
+  level) and "Share audio received from <name>" for each member who is sharing a screen with
+  audio. A member who is not sharing no longer turns it red while your own share is fine.
+  "Receiving top layer" is per member too and is not shown where nobody shares. In the log the
+  checks are `share_audio_send`, `share_audio_recv:<member>` and `top_layer:<member>`;
+  `tools/diag-summary.py` reads both the new and the old form.
+
+### Builds
+
+- Built like 1.12.35-intercom.2: on a Linux machine, the Windows installer cross-built with
+  wine. It is not code signed.
+
 ## Android 26.11.1-intercom.2
 
 `android-v26.11.1-intercom.2`, based on Element X Android 26.11.1. The call library is now

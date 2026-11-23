@@ -100,8 +100,13 @@ file manager to install apps when asked). It installs next to Element X and shar
 - **Share phone audio**: with the switch in that sheet on (the default, Android 10 or newer), viewers
   also hear what the phone plays: music, videos, games. Apps that forbid being recorded (many
   streaming and banking apps) and phone calls stay silent; that is Android's rule. On the desktop
-  the share's volume has its own slider. For now the audio is sent at speech-grade bitrate
-  (48 kbit/s Opus), and a share received on the phone is shown without its audio.
+  the share's volume has its own slider. It is sent for music: stereo Opus at 160 kbit/s
+  (128 or 192 under "Audio quality" in the same sheet).
+- **Shared screens have sound**: the audio of a screen somebody else shares is played with the
+  voices, through the call's output (earpiece, speaker, headset).
+- **A volume for every tile**: press and hold somebody's tile for a slider from 0 to 200 % and
+  "Mute for me"; hold a shared screen's tile for the volume of its audio. Only your phone hears
+  it, and it is remembered per person, as on the desktop.
 - **Equal grid**: in a call, settings → Preferences → Layout → Equal grid shows every tile at the
   same size, shared screens included and uncropped, as large as the screen allows in either
   orientation. Double-tap a tile to fill the screen with it, as before.
@@ -120,9 +125,11 @@ file manager to install apps when asked). It installs next to Element X and shar
 
 The source is the fork [intercom-element-x-android](https://github.com/c4g7-dev/intercom-element-x-android)
 with the call library fork
-[intercom-element-call-android](https://github.com/c4g7-dev/intercom-element-call-android), both on
-branch `intercom` and included here as the submodules `element-x-android` and
-`element-call-android`. Building is described in [docs/BUILDING.md](docs/BUILDING.md#android).
+[intercom-element-call-android](https://github.com/c4g7-dev/intercom-element-call-android) and the
+RTC core fork [intercom-matrix-rust-rtc](https://github.com/c4g7-dev/intercom-matrix-rust-rtc), all
+on branch `intercom` and included here as the submodules `element-x-android`,
+`element-call-android` and `matrix-rust-rtc`. Building is described in
+[docs/BUILDING.md](docs/BUILDING.md#android).
 
 ## Quick start
 

@@ -3,6 +3,42 @@
 Versions are `<Element Web version>-intercom.<n>`: the upstream release InterCom is based on,
 followed by the InterCom revision.
 
+## Android 26.11.1-intercom.3
+
+`android-v26.11.1-intercom.3`, based on Element X Android 26.11.1. The call library is
+`0.1.2-intercom.2`, and the RTC core under it is now InterCom's own build as well: the fork
+[intercom-matrix-rust-rtc](https://github.com/c4g7-dev/intercom-matrix-rust-rtc) of
+matrix-rust-rtc 0.5.0 (`0.5.0-intercom.1`), a new submodule.
+
+- **Phone audio in a screen share at music quality.** What the phone plays is now sent as stereo
+  Opus at 160 kbit/s, every frame of it; 128 and 192 kbit/s can be chosen under "Audio quality"
+  in the share sheet. Before, it went out with the settings of a voice: 48 kbit/s in one
+  channel, with silence left out, which cut quiet passages. The microphone is sent as before.
+- **A shared screen's audio is played.** When somebody else shares a screen with audio, the phone
+  now plays it, in stereo where it was sent so, with the voices and through the same output:
+  earpiece, speaker or headset, with the call's volume keys.
+- **A volume for every tile.** Press and hold somebody's tile: a slider from 0 to 200 % and
+  "Mute for me", for that person's voice, and separately for the audio of the screen they share
+  when you hold the share's tile. Only your phone hears the difference. It is remembered per
+  person and per kind for later calls. The slider is the desktop's: half way is about half as
+  loud, and 100 to 200 % is 0 to +12 dB, held back by a limiter where it would distort.
+- arm64-v8a only, now by construction: the RTC core is built for that one ABI, and the build
+  makes no other APK.
+- What the self-built core changes for every call, compared with matrix-rust-rtc 0.5.0: nothing in
+  what is sent unless a track asks for it (only the share's audio does); on the receiving side,
+  a track that the media server offers as stereo is now answered and decoded as stereo, and a
+  screen share's audio is handed to the app in two channels. The library exports the same
+  symbols as 0.5.0 plus one record's metadata.
+- Known limitations: a shared screen's audio is played as part of the call, so over a Bluetooth
+  headset it is in the headset's call mode, mono and narrow. Stereo and the bitrate of the
+  phone's audio depend on the media server (a LiveKit SFU) granting what the track asks for,
+  which a current one does.
+- **Not tested on a device or in a call before release.** It builds, and the unit tests cover
+  what the encoder is asked for on both sides of the Rust boundary, the SDP change, the volume
+  curve, the limiter and the screens' logic. Whether a call sounds as intended is for the first
+  call to show. Android does not install an older version over a newer one: going back to
+  `android-v26.11.1-intercom.2` means uninstalling this one first, which signs the app out.
+
 ## 1.12.35-intercom.4
 
 A call can share the room with its chat, pictures sent together are one gallery, and sending a

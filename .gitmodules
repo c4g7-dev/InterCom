@@ -14,3 +14,7 @@
 	path = element-call-android
 	url = https://github.com/c4g7-dev/intercom-element-call-android.git
 	branch = intercom
+[submodule "matrix-rust-rtc"]
+	path = matrix-rust-rtc
+	url = https://github.com/c4g7-dev/intercom-matrix-rust-rtc.git
+	branch = intercom

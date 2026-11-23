@@ -1,6 +1,7 @@
 # Building InterCom
 
-InterCom is built from two forks, checked out as submodules of this repository:
+InterCom for the desktop is built from two forks, checked out as submodules of this repository
+(the three of InterCom for Android are under [Android](#android)):
 
 | Directory      | Fork of                                                       | Branch     |
 | -------------- | ------------------------------------------------------------- | ---------- |
@@ -73,42 +74,66 @@ Unsetting `DISPLAY` and `WAYLAND_DISPLAY` keeps wine off the desktop, and the se
 
 ## Android
 
-InterCom for Android is built from two submodules: `element-call-android` (the native call
+InterCom for Android is built from three submodules, each into the next: `matrix-rust-rtc` (the
+RTC core, a fork of element-hq/matrix-rust-rtc, in Rust), `element-call-android` (the native call
 library, a fork of element-hq/element-call-android) and `element-x-android` (the app, a fork of
-Element X Android). The library fork is not on Maven Central, so it is first published to the
-local Maven repository (`~/.m2/repository`), where the app's build looks for exactly the version
-named by `element_call` in `element-x-android/gradle/libs.versions.toml`.
+Element X Android). Neither fork of the first two is on Maven Central, so each is first published
+to the local Maven repository (`~/.m2/repository`), where the next build looks for exactly the
+version it names: `matrix_rtc` in `element-call-android/gradle/libs.versions.toml` for the core,
+`element_call` in `element-x-android/gradle/libs.versions.toml` for the library.
 
-Requirements: JDK 21, the Android SDK (platform 37, build tools 37.0.0) with `ANDROID_HOME` set.
-The Rust RTC core (`io.element.android:matrix-rtc-android`) comes prebuilt from Maven Central; no
-Rust toolchain or NDK is needed.
+Requirements:
+
+- JDK 21 (17 is enough for the core), the Android SDK (platforms 34 and 37, build tools 37.0.0)
+  with `ANDROID_HOME` set.
+- For the core: the Android NDK (`ANDROID_NDK_HOME`, or any version under `$ANDROID_HOME/ndk`), a
+  C++ toolchain, [rustup](https://rustup.rs/) with the stable toolchain and the
+  `aarch64-linux-android` target, and `cargo-ndk` (`cargo install cargo-ndk`). A distribution's
+  own Rust package has no Android target; rustup can be kept apart from it by setting
+  `RUSTUP_HOME` and `CARGO_HOME` to directories of their own and putting `$CARGO_HOME/bin` first
+  in `PATH` for these commands only. The first build downloads a prebuilt libwebrtc.
 
 ```sh
-git submodule update --init element-call-android element-x-android
+git submodule update --init matrix-rust-rtc element-call-android element-x-android
 
-# 1. The call library, into ~/.m2 as io.element.android:element-call-*:<version>-intercom.<n>
+# 1. The RTC core, into ~/.m2 as io.element.android:matrix-rtc-android:0.5.0-intercom.<n>
+(cd matrix-rust-rtc && scripts/build-intercom-android.sh)
+
+# 2. The call library, into ~/.m2 as io.element.android:element-call-*:<version>-intercom.<n>
 (cd element-call-android && ./gradlew publishToMavenLocal)
 
-# 2. The app
+# 3. The app
 (cd element-x-android && ./gradlew :app:assembleFdroidRelease)
 ```
 
-The APKs, one per ABI, are written to `element-x-android/app/build/outputs/apk/fdroid/release/`.
-They are signed with the key given by `INTERCOM_ANDROID_STOREFILE`,
+The APK is written to `element-x-android/app/build/outputs/apk/fdroid/release/`. There is one,
+for arm64-v8a: the core is built for that ABI only, and an APK for another would have no call
+library to load. It is signed with the key given by `INTERCOM_ANDROID_STOREFILE`,
 `INTERCOM_ANDROID_STOREPASSWORD`, `INTERCOM_ANDROID_KEYALIAS` and `INTERCOM_ANDROID_KEYPASSWORD`,
 or with the debug key when these are not set; an APK signed with another key does not install
 over a released one.
 
-Checks: `./gradlew test runQualityChecks` in `element-call-android`, and
+The core: `scripts/build-intercom-android.sh` builds the `matrix-rtc-ffi` crate with its `media`
+feature in the `mobile-release` profile (about five minutes and 3 GB of disk the first time),
+generates the Kotlin bindings from the built library, checks that libwebrtc's JNI symbols are
+exported, and packages the AAR. Paths of the build machine are remapped in the library. The
+`livekit` crate is a patched copy inside the fork (`vendor/`), so nothing but crates.io and the
+libwebrtc download is needed. What the fork changes is in its README.
+
+Checks: in `matrix-rust-rtc`, `cargo test -p matrix-rtc-transport -p matrix-rtc-livekit --lib`
+and `cargo test -p matrix-rtc-ffi --features media --lib` (they run on the build machine, and
+compile libwebrtc for it); `./gradlew test runQualityChecks` in `element-call-android`; and
 `./gradlew :features:callnative:impl:testDebugUnitTest` in `element-x-android`.
 
 Versions: the app is `<Element X version>-intercom.<n>` (`INTERCOM_REVISION` in
 `element-x-android/plugins/src/main/kotlin/Versions.kt`, also the last digit of the version
 code); the library is `<upstream version>-intercom.<n>` (`VERSION_NAME` in
-`element-call-android/gradle.properties`). When the library version changes, change `element_call`
-in the app's catalog with it. A release is the tag `android-v<app version>` on this repository
-with `InterCom-Android-<app version>-arm64-v8a.apk` and `SHA256SUMS`; the forks carry the tag
-`intercom-android-v<app version>`.
+`element-call-android/gradle.properties`); the core is `<upstream version>-intercom.<n>`
+(`INTERCOM_VERSION` in `matrix-rust-rtc/scripts/build-intercom-android.sh`). When the core's
+version changes, change `matrix_rtc` in the library's catalog with it, and when the library's
+changes, `element_call` in the app's. A release is the tag `android-v<app version>` on this
+repository with `InterCom-Android-<app version>-arm64-v8a.apk` and `SHA256SUMS`; the three forks
+carry the tag `intercom-android-v<app version>`.
 
 ## Configuration
 

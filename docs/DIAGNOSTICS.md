@@ -56,6 +56,16 @@ Every run of the desktop app writes one file:
 - `updater` records for what the updater did: `check`, `up_to_date` or `update_found`,
   `download_start`, `download_verified` (with the SHA-256), `staged`, `ready`, `install_linux` or
   `install_windows`, `manual` (the install cannot replace itself), `error`
+- an `update_on_launch` record for every start: `decision` (`skip`, `start`, `install`), `reason`,
+  the `current` and `target` versions, the `ms` the start spent on it, `hidden`, `lastAttempt`
+  (`none`, `installed`, `failed`) and `blocked` (a release no longer tried at a start). The
+  reasons for `skip` are `unpackaged`, `no-version`, `disabled-by-flag`, `platform`,
+  `setting-off`, `auto-check-off`, `not-writable`; for `start` they are `up-to-date`,
+  `check-failed`, `check-timeout`, `no-asset`, `failed-before`, `error`, `stalled`, `too-slow`,
+  `install-failed`; for `install` it is `ready`. No paths or names
+- a `sound_pack` record when the app starts and finds files named like a sound cue in the
+  profile's `sounds` directory: `files` (the names that are played) and `skipped`
+  (`<name>: not_a_file | empty | too_large | other_format_used`). Never the content
 - console warnings and errors
 
 The logs are capped at 200 MB in total; the oldest files are deleted first. Snapshots taken from

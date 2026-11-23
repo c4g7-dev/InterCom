@@ -3,6 +3,113 @@
 Versions are `<Element Web version>-intercom.<n>`: the upstream release InterCom is based on,
 followed by the InterCom revision.
 
+## 1.12.35-intercom.7
+
+InterCom looks and works like a place with channels: a rail of spaces, text and voice channels,
+grouped messages, a near-black dark theme. Voice channels are dropped into with one click,
+with sounds for coming and going, and a new release is installed when the app starts.
+
+| A space with text and voice channels | Direct messages |
+| --- | --- |
+| ![A space open in InterCom 1.12.35-intercom.7](docs/images/app-channels.png) | ![Direct messages in InterCom 1.12.35-intercom.7](docs/images/app-direct-messages.png) |
+
+| In a voice channel | The light theme |
+| --- | --- |
+| ![A voice channel with the people in its call and the panel of the call](docs/images/app-voice-channel.png) | ![The same space in InterCom Light](docs/images/app-light.png) |
+
+<sub>Taken against a made-up homeserver: the people and rooms do not exist.</sub>
+
+### Design
+
+- **InterCom Dark is neutral and nearly black**, in three layers: the rail of spaces `#0a0a0c`,
+  the room list `#101013`, the timeline `#151518`, with raised surfaces (composer, hover, menus)
+  a step lighter each and hairlines `#202025` between them. The greys have no blue in them any
+  more. The accent stays `#6875f5`. InterCom Light keeps its colours and gets the same layout.
+- **The rail of spaces**: round 40 px icons that turn into rounded squares for the space that is
+  open or pointed at, and a marker at the rail's edge (a dot for unread, longer when pointed at,
+  full for the open space). The expanded panel is as before.
+- **The room list is a list of channels**: the space's name on top, the search under it, quiet
+  filter chips, small section labels, 34 px rows. A room has a `#`, a voice channel a speaker,
+  a conversation with one person their avatar with its presence dot. Unread rooms have a bold
+  name and a marker at the edge; the open room is marked by its surface.
+- **Messages**: a sender's first message has a 40 px avatar and the time beside the name; the
+  following ones keep the time in the gutter, shown when pointed at. Days are parted by a
+  hairline with the date in small type. The actions of a message are a small rounded bar on its
+  top edge.
+- **The composer** is one rounded bar, with the upload button ("+") before the text and emoji
+  and the menu after it.
+- **Dialogs** have a hairline and a 16 px radius instead of the wide translucent frame, the
+  members of a room are rows without rules between them, the panel under the room list is a
+  card without a frame.
+- **Calls**: the call's surface is the darkest, tiles have a 12 px radius, the name on a tile
+  is a dark pill, and the ring around who speaks is green, like the ring in the room list.
+- Radii: 6 px for small controls, 8 px for rows, buttons and menus, 12 px for cards, tiles and
+  the composer, 16 px for dialogs.
+- Checked on screenshots of the web app against a made-up homeserver, in both themes: the space
+  and room list, direct messages, the timeline with grouped messages and the action bar, the
+  composer, a voice channel with people in it, the member list, menus and settings. **Not
+  looked at: the call view itself and the tiles** (the made-up server has no media server), and
+  nothing was tried in the installed app.
+
+### Voice channels
+
+- **Made in a space.** A space's "+" menu and its context menu offer "New text channel" and
+  "New voice channel". A voice channel can be joined by every member of the space (by anyone,
+  if the space is public) and needs no invitation.
+- **One click joins, without the lobby.** It did show the lobby before, despite what
+  1.12.35-intercom.5 said. Pointing at a voice channel says "Join voice", or "Connected" for the
+  one you are in. Opening it any other way shows the lobby as before.
+- **One call at a time.** Joining another voice channel leaves the one you were in, also when
+  that was a call in a normal room. Calls started from a room or a direct message ring as
+  before.
+- **Nobody is rung when somebody drops in.** InterCom sends no call notification when it joins
+  a voice channel and shows no incoming-call toast for one. Known limitation: other clients
+  (Element, Element X) still send Matrix's call notification when they are the first to join.
+- **Coming and going in the room list.** Somebody who joins a voice channel slides in, somebody
+  who leaves stays for a moment, dimmed, before the row fades. With reduced motion nothing
+  moves.
+- Android (InterCom / Element X): a voice channel appears as an ordinary room with a call
+  button; joining works the usual way, without the channel view, the list of people or the
+  automatic leave. Read from the source, not tried on a device.
+
+### Sounds
+
+- **Join and leave sounds.** A soft rising chime when you join a voice channel or call and a
+  falling one when you leave; the same pair, played by the call, when somebody else joins or
+  leaves the call you are in. Changing channel plays the join chime only. Deafened, you hear
+  your own and nobody else's. Several people arriving within a second and a half are one
+  chime; calls with more than eight people make none for others.
+- **Mute, unmute, deafen and undeafen each have their own cue**, in place of the two tones of
+  1.12.35-intercom.6.
+- **The sounds are InterCom's own**, worked out from sine waves by a script in the repository
+  (`apps/desktop/intercom/gen-sounds.py` in the web fork, `scripts/intercom-sounds.py` in the
+  call fork); none is taken from another product.
+- **Custom sound pack.** Files named `join`, `leave`, `mute`, `unmute`, `deafen`, `undeafen`
+  (`.ogg`, `.mp3`, `.wav`, 2 MB at most) in `~/.config/InterCom/sounds/` (Windows
+  `%APPDATA%\InterCom\sounds\`) replace the built-in sounds after a restart. Nothing from that
+  folder leaves the machine.
+- Known limits: your own cues are played at a fixed volume on the default output, not on the
+  call's output device or at its sound-effect volume; a call that is reloaded or popped out
+  counts as leaving and joining. **Not listened to before release.**
+
+### Updates
+
+- **Updates when it starts.** A newer release is now installed before the window opens: a small
+  window shows "Checking for updates…", "Downloading update · 42 %", "Installing…",
+  "Starting…", and InterCom comes up as the new version with no click. Finding nothing costs a
+  moment at most (GitHub gets two seconds, the start three in all); offline or on a stalled
+  download InterCom starts as it is and offers the update in the app as before. Settings →
+  InterCom → "Update automatically on launch" turns it off; it also needs "Check for updates
+  automatically". With `--hidden` it happens without the window.
+- A release that does not install at a start is not tried at a start again; it stays behind
+  "Restart to update".
+- Every start writes an `update_on_launch` record to the diagnostics log.
+- **Not tried on a real install before release**: the unit tests cover the decisions and a swap
+  in a temporary directory, not the small window, the Windows installer or a real restart. The
+  first start after the release that follows this one is the test. 1.12.35-intercom.5 and .6
+  take this release with their own updater ("Restart to update"). On Windows a hidden start
+  that updates comes back with its window shown.
+
 ## 1.12.35-intercom.6
 
 Uploads no longer fail when the sign-in token has run out, mute and deafen are one state that

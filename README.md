@@ -16,9 +16,15 @@
   <a href="CHANGELOG.md">Changelog</a>
 </p>
 
+| A space with text and voice channels | Direct messages |
+| --- | --- |
+| ![InterCom with a space open: the rail of spaces, text and voice channels, a conversation](docs/images/app-channels.png) | ![InterCom's list of direct messages and a conversation](docs/images/app-direct-messages.png) |
+
 | Welcome | Sign in |
 | --- | --- |
 | ![InterCom welcome screen](docs/images/welcome.png) | ![InterCom sign-in screen](docs/images/sign-in.png) |
+
+<sub>The two screenshots at the top were taken against a made-up homeserver: the people and rooms in them do not exist.</sub>
 
 InterCom is a modified build of [Element Web / Desktop](https://github.com/element-hq/element-web)
 and [Element Call](https://github.com/element-hq/element-call). It keeps everything those do and
@@ -58,16 +64,34 @@ endorsed by Element.
 
 **Channels**
 
-- Voice channels (rooms that are their call) have a section of their own in the room list, with
-  the people in the call listed under them: who is talking, who is muted, who is sharing
-- One click joins a voice channel
+- A space reads as a place: its rooms are text channels (`#`) and voice channels (a speaker) in
+  the room list, conversations with one person keep their face and presence
+- Voice channels are rooms that are their call, with a section of their own and the people in
+  the call listed under them: who is talking, who is muted, who is sharing, who just came or went
+- A space's "+" menu makes a text channel or a voice channel; every member of the space can
+  join it (anyone, if the space is public)
+- One click joins a voice channel, without a lobby and without ringing anybody; joining another
+  leaves the one you were in
 - A panel under the room list with your microphone, deafen and settings buttons, and the camera,
   screen share and leave buttons of the call you are in
+- Sound cues, InterCom's own: a short chime when you join or leave a voice channel or call, when
+  somebody else joins or leaves the one you are in, and when you mute, unmute, deafen or
+  undeafen. While deafened you hear only your own. When several people join at once there is
+  one chime, and in calls with more than eight people there are none for joining and leaving
+- Your own sounds: put files named `join`, `leave`, `mute`, `unmute`, `deafen` or `undeafen`
+  (`.ogg`, `.mp3` or `.wav`, up to 2 MB each) into `~/.config/InterCom/sounds/` (Windows:
+  `%APPDATA%\InterCom\sounds\`) and restart InterCom; each replaces the built-in sound of that
+  name. The files stay on your machine: they are not bundled, uploaded or logged (the
+  diagnostics log only names them)
 
 **App**
 
-- Updates itself from the GitHub releases, with a status bar while it does
-- Flat dark and light themes
+- A near-black dark theme in layers (the rail of spaces darkest, the room list, the timeline), a
+  light one beside it; rounded surfaces, hairlines instead of shadows, one accent colour
+- Messages of one sender under one name with the time beside it, days parted by a hairline, the
+  composer as one rounded bar with the upload button first
+- Updates itself from the GitHub releases: when it starts, before the window opens, and while
+  it runs, with a status bar while it does
 - Hardware video decoding on Linux (VA-API)
 - Built-in call diagnostics: live overlay, logs, and a summary tool
 - Own profile and URL scheme: installs next to Element without sharing data with it
@@ -94,8 +118,15 @@ then *Run anyway*. Check the download against `SHA256SUMS` from the same release
 sha256sum -c SHA256SUMS --ignore-missing
 ```
 
-InterCom updates itself from these releases: it looks for a new one when it starts and every six
-hours, downloads it, checks it against `SHA256SUMS` and offers "Restart to update". The switch
+InterCom updates itself from these releases. When it starts, before the window opens, it asks
+GitHub whether a newer release is out (two seconds at most), and if so downloads it, checks it
+against `SHA256SUMS`, installs it and starts as the new version, with a small window saying
+what it is doing. A start that finds nothing is held up for a moment at most; offline, or when
+the download stalls, InterCom starts as it is and the update is offered in the app later. The
+switch is Settings → InterCom → "Update automatically on launch" (on by default; it needs
+"Check for updates automatically"). Started with `--hidden` it does the same without the
+window. While it runs it looks again every six hours, downloads a new release, checks it and
+offers "Restart to update". The switch
 and a "Check now" button are in Settings → InterCom. On Linux the unpacked directory is replaced
 (the previous one is kept beside it as `<directory>.old`); it has to be writable for that,
 otherwise the app points to the release page. If you start InterCom through a script of your
@@ -269,6 +300,11 @@ InterCom is an independent community fork, published as is.
 - macOS is not built.
 - Builds are not code signed. Updates are checked against the checksums of the release they come from, which is no proof of who made them.
 - Sharing an output's audio on Linux needs `pactl` and PipeWire (with `pipewire-pulse`) or PulseAudio.
+- Voice channels are InterCom's reading of rooms of the type `org.matrix.msc3417.call`. Other
+  clients (Element, Element X, InterCom for Android) show such a room as an ordinary room with a
+  call button: joining works there, without the channel view, the list of people in the call,
+  the one-click join or the automatic leave. The first person to join from another client still
+  sends Matrix's call notification; InterCom desktop sends none and shows none.
 
 Bugs in InterCom's changes belong in this repository's issues, not upstream.
 

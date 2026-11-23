@@ -136,14 +136,18 @@ does not install, see [below](#if-the-apk-does-not-install).
   Matrix gateway (for ntfy.sh: `https://ntfy.sh/_matrix/push/v1/notify`) over HTTPS. Without a
   distributor, messages arrive only while the app is open.
 - No analytics and no bug report upload.
-- **Updates itself** (from 26.11.1-intercom.4): the app looks for a newer release when it starts
-  and every twelve hours, on Wi-Fi unless you allow mobile data, and offers it in a notification
-  and under Settings → InterCom updates. It downloads the APK, checks its SHA-256 and that it
-  is signed with the key of the installed app, and hands it to Android's installer. The first
-  update needs you once: Android asks to allow InterCom to install apps, and may ask to
-  confirm. On Android 12 or newer, later updates install without a question. The app closes
-  while it is replaced, and a notification says when it is done. Looking for updates can be
-  switched off in the same place; it is a request to GitHub for this repository's releases.
+- **Updates itself** (from 26.11.1-intercom.4; as described here from 26.11.1-intercom.5): the
+  app looks for a newer release every time it is opened, at most every half hour, and
+  downloads and installs it by itself: on Wi-Fi unless you allow mobile data, and not during a
+  call. It checks the APK's SHA-256 and that it is signed with the key of the installed app,
+  and hands it to Android's installer. The first update needs you once: a dialog says
+  "InterCom <version> is available", and Android asks to allow InterCom to install apps and may
+  ask to confirm. On Android 12 or newer, later updates install without a question; on older
+  versions Android asks for one tap. The app closes while it is replaced and cannot open
+  itself again: a notification says when it is done, and a tap on it opens the app. With
+  "Install updates automatically" off under Settings → InterCom updates, the dialog asks every
+  time ("Update now" or "Later", which waits a day). Looking for updates can be switched off
+  in the same place; it is a request to GitHub for this repository's releases.
 - Every release is signed with the same key, so a newer APK also installs over the old one by
   hand.
 

@@ -80,6 +80,38 @@ longer flash sections that do not belong there.
   (a placeholder is), the addresses are not even asked for, and the answer is fetched when the
   app starts, so the tab normally opens complete. The sessions tab uses the same answer.
 
+## Android 26.11.1-intercom.5
+
+`android-v26.11.1-intercom.5`, based on Element X Android 26.11.1. Call library and RTC core as
+in 26.11.1-intercom.4.
+
+- **InterCom looks for an update every time it is opened**, at most once in half an hour, on
+  any connection: the check is small. "Use mobile data" is now about downloads only.
+- **"InterCom <version> is available" when you open the app**, with "Update now", "Later" and
+  "Release notes". "Update now" downloads on whatever connection there is, mobile data
+  included (the dialog says so when you are on it), shows the progress ("Cancel" there only
+  closes the dialog; the update goes on), and hands the APK to
+  Android's installer at once: without a question where Android allows that, otherwise with
+  its confirmation. "Later" keeps the dialog away for 24 hours for that release; the dot in the
+  settings stays. A newer release is offered at once.
+- **Install updates automatically** (Settings → InterCom updates, on by default): a release
+  is downloaded as soon as it is found, on Wi-Fi unless "Use mobile data" is on, and installed
+  right away, with no dialog. It needs Android's permission for InterCom to install apps, so
+  the first time the dialog asks for that instead; and on Android 12 or newer the system
+  installs without a question, on older versions it asks for one tap, from a notification
+  when InterCom is not on screen.
+- An automatic update does not end a call: it waits until the call is over. One that you
+  start yourself does not wait. An automatic installation that Android refused is not tried
+  again by itself; the release is offered in the dialog instead.
+- **The app does not come back by itself after an update.** Android closes an app to replace
+  it and does not let it open a screen from the background afterwards, so a notification says
+  "InterCom was updated", and a tap on it opens the app.
+- 26.11.1-intercom.4 finds this release with its own updater: a notification when it next
+  checks, or Settings → InterCom updates → Check now, then "Download and install".
+- **Not tested on a device before release**, like the updater of 26.11.1-intercom.4, which
+  this release is the first to exercise. Unit tests cover when opening the app checks, the
+  snooze, the decision between installing and asking, and the wait for a call's end.
+
 ## Android 26.11.1-intercom.4
 
 `android-v26.11.1-intercom.4`, based on Element X Android 26.11.1. The call library is

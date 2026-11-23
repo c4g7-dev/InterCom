@@ -21,7 +21,12 @@
 #   3. commits the submodule pointers, tags this repository v<version> and the two forks
 #      intercom-v<version>, and pushes branches and tags
 #   4. creates or updates the GitHub release with the notes from CHANGELOG.md; files already
-#      on it are kept, and SHA256SUMS covers all of them
+#      on it are kept, and SHA256SUMS covers all of them. A new release is a draft until its
+#      files are on it.
+#
+# The app updates itself from these releases (element-web/apps/desktop/src/intercom-updater.ts):
+# it needs the tag v<version>, the two files under the names given here and SHA256SUMS, and it
+# knows its own version from INTERCOM_VERSION, which this script sets for the build.
 #
 # Needs: git, node and gh (logged in); for a local build also pnpm 12, wine (Windows installer)
 # and sha256sum.
@@ -109,6 +114,9 @@ if ((PUBLISH)); then
 fi
 
 export NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=6144}"
+# Written into the app's package.json: what the built app compares with the releases on GitHub
+# when it looks for an update. A build without it never updates itself.
+export INTERCOM_VERSION="$VERSION"
 
 if ((CI)); then
     [[ -f .github/workflows/release.yml ]] || die "the release workflow is missing"
@@ -185,11 +193,16 @@ step "GitHub release"
 # Files that are on the release already (put there by other means) are kept: every file is
 # uploaded on its own, and SHA256SUMS is written anew from all the files of the release.
 notes >"$OUT/notes.md"
+# A new release stays a draft until its files and SHA256SUMS are on it: the apps that are out
+# there look for a release with this platform's file and its checksum, and a release without
+# them would be offered as one to fetch by hand.
+DRAFT=0
 if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
     gh release edit "$TAG" --repo "$REPO" --title "InterCom $VERSION" --notes-file "$OUT/notes.md"
 else
-    gh release create "$TAG" --repo "$REPO" --verify-tag \
+    gh release create "$TAG" --repo "$REPO" --verify-tag --draft \
         --title "InterCom $VERSION" --notes-file "$OUT/notes.md"
+    DRAFT=1
 fi
 for asset in "$LINUX_ASSET" "$WIN_ASSET"; do
     gh release upload "$TAG" --repo "$REPO" --clobber "$OUT/$asset"
@@ -201,4 +214,7 @@ rm -f "$ALL/SHA256SUMS"
 (cd "$ALL" && LC_ALL=C sha256sum -- * >"$OUT/SHA256SUMS")
 (cd "$OUT" && sha256sum -c SHA256SUMS --ignore-missing)
 gh release upload "$TAG" --repo "$REPO" --clobber "$OUT/SHA256SUMS"
+if ((DRAFT)); then
+    gh release edit "$TAG" --repo "$REPO" --draft=false --latest
+fi
 gh release view "$TAG" --repo "$REPO"

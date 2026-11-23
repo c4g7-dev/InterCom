@@ -39,6 +39,100 @@ matrix-rust-rtc 0.5.0 (`0.5.0-intercom.1`), a new submodule.
   call to show. Android does not install an older version over a newer one: going back to
   `android-v26.11.1-intercom.2` means uninstalling this one first, which signs the app out.
 
+## 1.12.35-intercom.5
+
+Uploads no longer crawl over HTTP/3, InterCom updates itself, and the room list has voice
+channels with the people in them and a panel for your call.
+
+### Uploads
+
+- **HTTP/3 is off by default.** Uploading several pictures failed with "Upload Failed" on a
+  homeserver behind Traefik, which offers HTTP/3, in a GRE tunnel. Measured there: an upload over
+  HTTP/3 (QUIC) ran at about 10 KB/s until it timed out; the same upload over HTTP/2 ran at 0.7 to
+  3.7 MB/s. Chromium keeps using HTTP/3 once a server has offered it and does not fall back when it
+  is slow, so InterCom now starts with `--disable-quic`. `--enable-quic` or
+  `INTERCOM_ENABLE_QUIC=1` turns it back on. Nothing else changes: downloads, sync and calls
+  (which are WebRTC, not HTTP) were not affected.
+- An upload that fails without an answer from the server, or with a 5xx, 408 or 429, is tried once
+  more after 1.5 s before "Upload Failed" is shown. What the server refused (too large, not
+  allowed) and what you cancelled is not tried again.
+- **Galleries: two cases in which pictures sent together were not grouped.** With the developer
+  option "Show hidden events in timeline" on, no gallery was formed at all; that is fixed. And pictures whose uploads ended more than two minutes apart, as they did on the slow
+  connection above, were shown one by one: pictures confirmed together in the batch dialog are
+  now marked as one batch (`io.intercom.gallery` in the event, ignored by other clients) and
+  grouped however long they took. Pictures sent before this release are grouped by time as
+  before. In an encrypted room a batch was, and is, grouped while sending, once sent and after a
+  restart; that is now covered by tests.
+
+### Updates
+
+- **InterCom updates itself** from the releases of this repository. It looks 30 seconds after it
+  starts and every six hours, downloads the new version, checks it against the release's
+  `SHA256SUMS` and then shows "InterCom <version> is available" with a "Restart to update" button
+  and a link to the release notes. Nothing is installed before you click. Settings → InterCom has
+  the switch for the automatic check, "Check now" and what the updater is doing.
+- Linux: the downloaded archive is unpacked beside the install directory, and on restart the two
+  are swapped; the previous version stays beside it as `<directory>.old`. InterCom then starts
+  again with the options it was started with. The directory and the one above it must be writable;
+  where they are not, the toast leads to the release page instead.
+- If you start InterCom through a script of your own, let it export `INTERCOM_LAUNCHER` (its own
+  path) so that the update starts the script again rather than the program behind it; see
+  "Updates" in `element-web/apps/desktop/intercom/README`. `run-intercom.sh` does.
+- Windows: the installer is downloaded and checked, and run silently on restart; it starts
+  InterCom again.
+- **1.12.35-intercom.4 and older do not know about updates**: install this version by hand once.
+- The builds are not code signed. The checksum catches a broken download; it comes from the same
+  release as the file, so it is no proof of who made it.
+- `--no-update` turns the updater off. A build that is not a release never updates.
+
+### Voice channels
+
+- Rooms that are their call (video rooms and call rooms) are **voice channels**: they have a
+  "Voice channels" section in the room list, after the "Text channels" (which used to be
+  "Rooms"), and a speaker in place of the avatar. Favourites, People, low priority and your own
+  sections are as they were, and a voice channel you move into one of those stays there.
+- **Who is in the call is listed under the channel**, whether or not you are in it yourself. Once
+  you are in it the list also shows who is talking (a ring around the avatar), whose microphone
+  is off, who is sharing a screen ("LIVE") and whether you are deafened. Other people's
+  deafening is not known to the call and not shown.
+- **One click joins**: clicking a voice channel, or somebody in its list, opens it and joins
+  without the lobby.
+- **A panel under the room list**: your avatar, name and presence, and buttons for the
+  microphone, deafen and the settings. While you are in a call, a strip above it says "Voice
+  connected" (or "Reconnecting…") with the room, which is a button back to the call, and has the
+  camera, screen share and leave buttons. They do what Ctrl+Shift+M, Ctrl+Shift+D and
+  Ctrl+Shift+V do; starting a screen share shows the call first, where the screen is chosen. The
+  bars beside "Voice connected" show connected or reconnecting, not a measured signal quality.
+- The room list no longer folds away when you join a call.
+
+### Look
+
+- InterCom Dark has three layers: the space bar darkest, the room list between, the timeline
+  lightest. Corners are 8 px. The search bar of the room list and the room header are 52 px
+  high and line up. Messages of one sender sit closer together, and a new sender starts 12 px
+  further down instead of 18. InterCom Light keeps its colours and gets the same layout.
+
+### Diagnostics
+
+- The `app_start` record says whether HTTP/3 was on (`quic`) and which InterCom release is running
+  (`intercomVersion`).
+- A failed upload writes an `upload_failed` record: the try, the HTTP status, the kind of error,
+  the protocol the request went over (h2, h3, http/1.1) and whether it is tried again. Never a
+  file name or a URL.
+- The updater writes `updater` records for every step: the check, what was found, the download
+  and its checksum, the swap or the installer, and errors.
+
+### Builds
+
+- Built like 1.12.35-intercom.4: on a Linux machine, the Windows installer cross-built with
+  wine. It is not code signed.
+- Not tested before release: an update from start to finish (there is no newer release to
+  update to yet; the version comparison, the choice of release, the checksum and the directory
+  swap are covered by tests with made-up releases and temporary directories), the Windows
+  installer run by the updater, and everything above in a real call or against a real
+  homeserver. The room list, the panel and both themes were looked at in the built web app with
+  made-up data, with the call's messages to the app played by hand.
+
 ## 1.12.35-intercom.4
 
 A call can share the room with its chat, pictures sent together are one gallery, and sending a

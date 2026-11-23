@@ -101,6 +101,9 @@ jobs:
               run: pnpm install --frozen-lockfile
 
             - name: Web app and Linux app
+              env:
+                  # What the app compares with the releases when it looks for an update
+                  INTERCOM_VERSION: ${{ steps.version.outputs.version }}
               run: INTERCOM_DIST_DIR=dist-release element-web/apps/desktop/intercom/build.sh
 
             - name: Collect
@@ -181,6 +184,8 @@ jobs:
                   path: webapp-in
 
             - name: Windows installer
+              env:
+                  INTERCOM_VERSION: ${{ needs.linux.outputs.version }}
               run: |
                   tar -C element-web/apps/web -xzf webapp-in/webapp.tar.gz
                   INTERCOM_TARGET=win INTERCOM_DIST_DIR=dist-win \

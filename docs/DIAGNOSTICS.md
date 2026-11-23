@@ -29,12 +29,19 @@ Every run of the desktop app writes one file:
 
 *Help > Open diagnostics folder* (also in the tray menu) opens it. Each line is one JSON record:
 
-- an `app_start` record: versions, operating system, Wayland or X11, feature switches, GPU status
+- an `app_start` record: versions (also the InterCom release, `intercomVersion`), operating
+  system, Wayland or X11, feature switches, whether HTTP/3 was on (`quic`), GPU status
 - the statistics of every track, every 2 seconds, and the events of the call (join, share start
   and stop, pop-out, fullscreen, device changes)
 - for every file sent: `upload_phase` records with the time each step took (decoding, thumbnail,
   blurhash, reading, encrypting, the requests, the event), the file's size and type, and a
   closing record with the total. The file's name is not written
+- for every upload request that failed: an `upload_failed` record with the HTTP status (none if
+  the server did not answer), the kind of error, the protocol the request went over (h2, h3,
+  http/1.1) and whether it was tried again
+- `updater` records for what the updater did: `check`, `up_to_date` or `update_found`,
+  `download_start`, `download_verified` (with the SHA-256), `staged`, `ready`, `install_linux` or
+  `install_windows`, `manual` (the install cannot replace itself), `error`
 - console warnings and errors
 
 The logs are capped at 200 MB in total; the oldest files are deleted first. Snapshots taken from

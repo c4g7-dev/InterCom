@@ -55,7 +55,17 @@ endorsed by Element.
 - Several pictures are sent as one batch, with an optional caption
 - Pictures upload while their preview is made, not after it
 
+**Channels**
+
+- Voice channels (rooms that are their call) have a section of their own in the room list, with
+  the people in the call listed under them: who is talking, who is muted, who is sharing
+- One click joins a voice channel
+- A panel under the room list with your microphone, deafen and settings buttons, and the camera,
+  screen share and leave buttons of the call you are in
+
 **App**
+
+- Updates itself from the GitHub releases
 
 - Flat dark and light themes
 - Hardware video decoding on Linux (VA-API)
@@ -84,7 +94,12 @@ then *Run anyway*. Check the download against `SHA256SUMS` from the same release
 sha256sum -c SHA256SUMS --ignore-missing
 ```
 
-There is no automatic update; new versions are announced on the releases page.
+InterCom updates itself from these releases: it looks for a new one when it starts and every six
+hours, downloads it, checks it against `SHA256SUMS` and offers "Restart to update". The switch
+and a "Check now" button are in Settings → InterCom. On Linux the unpacked directory is replaced
+(the previous one is kept beside it as `<directory>.old`); it has to be writable for that,
+otherwise the app points to the release page. If you start InterCom through a script of your
+own, see "Updates" in the [desktop README](element-web/apps/desktop/intercom/README).
 
 ## Android
 
@@ -143,7 +158,8 @@ Sign in with any Matrix account. The default homeserver is matrix.org; choose *E
 sign-in screen to use your own. Settings and sessions are stored in `~/.config/InterCom`
 (`%APPDATA%\InterCom` on Windows).
 
-Useful options: `--no-hw-video` turns off hardware video, `--profile <name>` uses a separate
+HTTP/3 is off by default, because uploads stall with it behind some proxies; `--enable-quic` turns
+it on. Useful options: `--no-hw-video` turns off hardware video, `--profile <name>` uses a separate
 profile, `--help` lists the rest. In a call, Ctrl+Shift+M mutes, Ctrl+Shift+D deafens and
 Ctrl+Shift+V toggles the camera; `intercom --toggle-mute` (also `--toggle-deafen`,
 `--toggle-camera`, `--leave-call`) does the same from outside the window, for example from a
@@ -201,7 +217,7 @@ InterCom is an independent community fork, published as is.
 - No hardware video encoding on Linux with NVIDIA GPUs: Chromium has no NVENC backend there, so
   calls and screen shares are encoded in software. Decoding works with `nvidia-vaapi-driver`.
 - macOS is not built.
-- Builds are not code signed and do not update themselves.
+- Builds are not code signed. Updates are checked against the checksums of the release they come from, which is no proof of who made them.
 - Sharing an output's audio on Linux needs `pactl` and PipeWire (with `pipewire-pulse`) or PulseAudio.
 
 Bugs in InterCom's changes belong in this repository's issues, not upstream.

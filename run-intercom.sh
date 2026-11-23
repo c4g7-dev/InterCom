@@ -19,4 +19,9 @@ if [[ -z "$BIN" ]]; then
     echo "Build it with element-web/apps/desktop/intercom/build.sh" >&2
     exit 1
 fi
+# For the updater: after an update the app starts this script again, with these arguments,
+# rather than its executable (see "Updates" in element-web/apps/desktop/intercom/README).
+INTERCOM_LAUNCHER="$(readlink -f "$0")"
+INTERCOM_LAUNCHER_ARGS="$(printf '%s\n' "$@")"
+export INTERCOM_LAUNCHER INTERCOM_LAUNCHER_ARGS
 exec "$BIN" --ozone-platform-hint=auto --password-store=basic "$@"

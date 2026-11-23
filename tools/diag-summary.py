@@ -487,9 +487,29 @@ def report_uploads(report, records, args):
     """Where the time of each file sent went: the `upload_phase` records of the web app."""
     phases = [r for r in records if r["type"] == "upload_phase"]
     totals = [r for r in phases if r.get("phase") == "total"]
-    if not totals:
+    failures = [r for r in records if r["type"] == "upload_failed"]
+    if not totals and not failures:
         return
     report.section("Uploads")
+    # A request that failed: what the server said (or that it said nothing) and over which protocol
+    for failure in failures[-args.max_events :]:
+        status = failure.get("status")
+        report.note(
+            f"{clock(failure['t'])} try {failure.get('attempt')} failed: "
+            + (f"HTTP {status}" if status else "no answer")
+            + f" ({failure.get('error')}), protocol {failure.get('protocol') or 'unknown'}, "
+            + ("tried again" if failure.get("willRetry") else "given up")
+        )
+    if failures:
+        over_h3 = sum(1 for r in failures if r.get("protocol") == "h3")
+        report.verdict(
+            WARN,
+            "upload requests",
+            f"{len(failures)} failed, {sum(1 for r in failures if not r.get('willRetry'))} given up"
+            + (f"; {over_h3} over HTTP/3 (off by default since 1.12.35-intercom.5, see --enable-quic)" if over_h3 else ""),
+        )
+    if not totals:
+        return
     for total in totals[-args.max_events :]:
         parts = total.get("phases") or {}
         slowest = sorted(parts.items(), key=lambda item: -item[1])[:4]

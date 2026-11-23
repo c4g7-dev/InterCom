@@ -11,11 +11,11 @@ with sounds for coming and going, and a new release is installed when the app st
 
 | A space with text and voice channels | Direct messages |
 | --- | --- |
-| ![A space open in InterCom 1.12.35-intercom.7](docs/images/app-channels.png) | ![Direct messages in InterCom 1.12.35-intercom.7](docs/images/app-direct-messages.png) |
+| ![A space open in InterCom 1.12.35-intercom.7](https://raw.githubusercontent.com/c4g7-dev/InterCom/v1.12.35-intercom.7/docs/images/app-channels.png) | ![Direct messages in InterCom 1.12.35-intercom.7](https://raw.githubusercontent.com/c4g7-dev/InterCom/v1.12.35-intercom.7/docs/images/app-direct-messages.png) |
 
 | In a voice channel | The light theme |
 | --- | --- |
-| ![A voice channel with the people in its call and the panel of the call](docs/images/app-voice-channel.png) | ![The same space in InterCom Light](docs/images/app-light.png) |
+| ![A voice channel with the people in its call and the panel of the call](https://raw.githubusercontent.com/c4g7-dev/InterCom/v1.12.35-intercom.7/docs/images/app-voice-channel.png) | ![The same space in InterCom Light](https://raw.githubusercontent.com/c4g7-dev/InterCom/v1.12.35-intercom.7/docs/images/app-light.png) |
 
 <sub>Taken against a made-up homeserver: the people and rooms do not exist.</sub>
 

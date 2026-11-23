@@ -34,6 +34,7 @@ endorsed by Element.
 - Codec choice (VP9, AV1), custom bitrate and frame rate
 - The microphone stays on when you join a call
 - Mute, deafen and camera shortcuts, also from the command line for global key bindings
+- Mute and deafen hold for the whole app, with or without a call, and over restarts
 
 **Audio**
 
@@ -65,8 +66,7 @@ endorsed by Element.
 
 **App**
 
-- Updates itself from the GitHub releases
-
+- Updates itself from the GitHub releases, with a status bar while it does
 - Flat dark and light themes
 - Hardware video decoding on Linux (VA-API)
 - Built-in call diagnostics: live overlay, logs, and a summary tool
@@ -107,7 +107,8 @@ InterCom for Android is based on [Element X Android](https://github.com/element-
 It is released separately from the desktop app: look for the newest `android-v…` entry on the
 [releases page](https://github.com/c4g7-dev/InterCom/releases) and install
 `InterCom-Android-<version>-arm64-v8a.apk` (Android 7 or newer, 64-bit ARM; allow your browser or
-file manager to install apps when asked). It installs next to Element X and shares no data with it.
+file manager to install apps when asked). It installs next to Element X and shares no data with it. If it
+does not install, see [below](#if-the-apk-does-not-install).
 
 - Calls use the native MatrixRTC stack instead of a web view, and can **share the phone's screen**
   at its own resolution (up to 1440p on the long edge, 30 fps; 1080p, 720p and 15 fps can be chosen
@@ -135,8 +136,53 @@ file manager to install apps when asked). It installs next to Element X and shar
   Matrix gateway (for ntfy.sh: `https://ntfy.sh/_matrix/push/v1/notify`) over HTTPS. Without a
   distributor, messages arrive only while the app is open.
 - No analytics and no bug report upload.
-- Updates are installed by hand; every release is signed with the same key, so a newer APK
-  installs over the old one.
+- **Updates itself** (from 26.11.1-intercom.4): the app looks for a newer release when it starts
+  and every twelve hours, on Wi-Fi unless you allow mobile data, and offers it in a notification
+  and under Settings → InterCom updates. It downloads the APK, checks its SHA-256 and that it
+  is signed with the key of the installed app, and hands it to Android's installer. The first
+  update needs you once: Android asks to allow InterCom to install apps, and may ask to
+  confirm. On Android 12 or newer, later updates install without a question. The app closes
+  while it is replaced, and a notification says when it is done. Looking for updates can be
+  switched off in the same place; it is a request to GitHub for this repository's releases.
+- Every release is signed with the same key, so a newer APK also installs over the old one by
+  hand.
+
+### If the APK does not install
+
+Android's "App not installed" does not say why. The usual reasons, most likely first:
+
+- **A 32-bit phone.** The APK is for 64-bit ARM (arm64-v8a) only. Some inexpensive phones run
+  a 32-bit Android on a 64-bit processor; an app such as "Device Info HW" shows "Supported
+  ABIs", which must include `arm64-v8a`. There is no build for other processors.
+- **Too little free storage.** The APK is about 125 MB and Android needs room for a copy of it
+  and for the installed app: keep about 500 MB free.
+- **An incomplete download.** Compare the file with `SHA256SUMS` of the release, or download
+  it again; a file cut short installs as "package appears to be invalid" or not at all.
+- **Play Protect or Advanced Protection.** Play Protect can block or silently stop the
+  installation of an app it does not know: in the Play Store, tap your picture → Play Protect
+  → settings, and try with "Scan apps with Play Protect" off, or choose "Install anyway" when
+  it asks. With Google's Advanced Protection on (Android 16), or on a phone managed by an
+  employer, installing from outside a store is forbidden altogether.
+- **The app that opens the APK may not install apps.** Allow it when asked ("Install unknown
+  apps"), or open the APK from the Files app instead of the browser.
+- **Another build of InterCom is installed**, signed with another key (one you built
+  yourself, for instance): uninstall it first. Element X itself is not in the way; InterCom
+  has its own package name, `com.c4g7.intercom.android`.
+- **A newer InterCom is installed.** Android does not install an older version over a newer
+  one.
+
+To read the reason itself, install from a computer with
+[adb](https://developer.android.com/tools/adb) (USB debugging on, under the developer options):
+
+```sh
+adb install -r InterCom-Android-<version>-arm64-v8a.apk
+```
+
+It answers with the installer's code, for instance `INSTALL_FAILED_NO_MATCHING_ABIS` (32-bit
+phone), `INSTALL_FAILED_INSUFFICIENT_STORAGE`, `INSTALL_FAILED_UPDATE_INCOMPATIBLE` (another
+key), `INSTALL_FAILED_VERSION_DOWNGRADE` or `INSTALL_PARSE_FAILED_NO_CERTIFICATES`. Please put
+that line, the phone and its Android version into an
+[issue](https://github.com/c4g7-dev/InterCom/issues).
 
 The source is the fork [intercom-element-x-android](https://github.com/c4g7-dev/intercom-element-x-android)
 with the call library fork

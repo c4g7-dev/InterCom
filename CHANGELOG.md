@@ -3,6 +3,119 @@
 Versions are `<Element Web version>-intercom.<n>`: the upstream release InterCom is based on,
 followed by the InterCom revision.
 
+## 1.12.35-intercom.6
+
+Uploads no longer fail when the sign-in token has run out, mute and deafen are one state that
+holds with or without a call, the updater says what it is doing, and the account settings no
+longer flash sections that do not belong there.
+
+### Uploads
+
+- **"Upload Failed" after a few minutes on a server that signs in through Matrix Authentication
+  Service.** There the access token lives for some minutes and is renewed with a refresh token.
+  Ordinary requests did that; a file upload was sent with whatever token there was, and with an
+  expired one the server answered 401 `M_UNKNOWN_TOKEN`: the upload failed at once, until
+  something else (sending a message) had renewed the token. An upload now renews the token
+  itself: before it starts when the token has less than a minute left, and after a 401, followed
+  by one more try. If the token cannot be renewed, the message says so instead of blaming the
+  file. Each renewal is an `upload_token_refresh` record in the diagnostics log.
+
+### Galleries
+
+- **Pictures sent together that were shown one below the other: not reproduced, now logged.**
+  A batch of four sent in an encrypted room during a call was reported as not grouped on
+  intercom.5. The same case groups here in every variation tried against a made-up homeserver
+  (encrypted, a call on in the room and joined, the chat beside the call, hidden events shown,
+  the server's echo before and after the answer, with and without thumbnails), so the cause is
+  not known. From this release the diagnostics log has a `gallery_decision` record for every run
+  of pictures: for each picture whether it joined the one before, or why not, and what lay
+  between them. It holds no text, names, URLs or IDs. If it happens again, that record says why.
+- With the developer option "Show hidden events in timeline" on, what has a tile only because
+  of that option (a call's membership events, reactions, edits) no longer parts two pictures.
+
+### Mute and deafen
+
+- **One state for the whole app**, as in Discord. The microphone and headphones buttons of the
+  panel under the room list work at any time, also with no call on, and show how things stand:
+  struck through in red when muted or deafened. The state is kept over restarts, and every call
+  is joined with it: muted joins muted, deafened joins deafened (nothing is heard, shared screens
+  included). A fresh install starts unmuted, so joining is as before.
+- Deafening also mutes; undeafening puts the microphone back as it was before; unmuting while
+  deafened ends the deafening.
+- The buttons in the call, Ctrl+Shift+M and Ctrl+Shift+D, `--toggle-mute`, `--mute`, `--unmute`
+  and `--toggle-deafen` on the command line and two new entries in the tray menu all change the
+  same state. The cue sound is played once per change, for your own changes only.
+- Ctrl+Shift+D deafens only while a call is on (without one it opens the space panel, as before),
+  and on Windows the global shortcuts are still registered only during a call.
+- **Not tried in a real call before release.** The state, its rules and the messages between the
+  app and the call are covered by unit tests; that a call really joins muted before the
+  microphone is published is for the first call to show. Every change is a `voice_state` record
+  in the diagnostics log with where it came from.
+
+### Updates
+
+- **A check is quick, and says what it does.** "Check now" took 6 to 9 seconds in one report.
+  Here the same request takes 0.03 to 0.4 s, so what was slow there is not known; the check now
+  asks for five releases instead of thirty, sends the ETag of the last answer (GitHub then
+  answers "not modified" without a body), gives up after 8 seconds with a message, and shows
+  "Checking…" at once. How long each check took is an `update_check` record in the diagnostics
+  log.
+- **A bar over the user panel** while an update is on its way: a thin progress line and one line
+  of text ("Downloading 1.12.35-intercom.7 · 42 % · 78 MB / 186 MB · 12 MB/s", "Verifying
+  checksum…", "Unpacking…", "Ready" with a Restart button). A click on it shows the last ten
+  steps with their times. It is gone when there is nothing to do; an error stays, with "Retry"
+  and "Details".
+- When an update is ready there is a dot on the settings button of the user panel, and "Restart
+  to update" in the tray menu; either restarts into the new version. The toast is as before and
+  can be dismissed without losing them.
+- A check that the app made on its own and that failed (no network) is logged and no longer
+  shown as an error.
+
+### Settings
+
+- **Account settings no longer show sections for a moment that are then taken away.** Whether
+  the account is managed elsewhere (Matrix Authentication Service) is an answer of the server.
+  Until it was there, the e-mail addresses, phone numbers, the password and "Deactivate account"
+  were drawn, and removed a moment later. Now nothing of the account is drawn before the answer
+  (a placeholder is), the addresses are not even asked for, and the answer is fetched when the
+  app starts, so the tab normally opens complete. The sessions tab uses the same answer.
+
+## Android 26.11.1-intercom.4
+
+`android-v26.11.1-intercom.4`, based on Element X Android 26.11.1. The call library is
+`0.1.2-intercom.3` and the RTC core `0.5.0-intercom.2`; neither changes how a call works.
+
+- **InterCom updates itself.** Settings → InterCom updates: the app looks for a newer release
+  when it starts and every twelve hours, on Wi-Fi unless "Use mobile data" is on, and tells you
+  with a notification and a dot in the settings. "Update" in the notification, or "Download and
+  install" in the settings, downloads the APK (about 125 MB) and installs it; "Check now" looks
+  at once. Looking for updates can be switched off, and pre-releases can be asked for.
+- What you will see the first time: Android asks you to allow InterCom to install apps
+  ("Install unknown apps"), once, and may ask you to confirm the update. On Android 12 or
+  newer, later updates install without a question. InterCom closes while it is replaced; a
+  notification says when it is done, and a tap opens the app again.
+- A download is installed only if it has the SHA-256 the release names and is signed with the
+  same key as the app that is running; anything else is deleted, and the settings say why. When
+  Android refuses an update, the screen says which of its reasons it gave (no space, blocked by
+  a policy or Play Protect, conflict with the installed app, not for this device) and shows
+  the system's own message below it.
+- The check is a request to GitHub for the list of this repository's releases. Nothing about
+  you or your account is in it; GitHub sees the phone's IP address, as with any download.
+- **The APK is now also signed with the v1 and v3 schemes**, with the same key; before, with v2
+  alone. One phone answered "App not installed" to 26.11.1-intercom.2, for a reason that is
+  not known; signing with every scheme removes one possible cause, and the README has a new
+  section "If the APK does not install" for finding the others.
+- **No path of the build machine in InterCom's native library.** `libmatrix_rtc_ffi.so` of
+  26.11.1-intercom.3 named the home directory it was built in, twice. The core's build now
+  maps all of them away, gives the library a soname, and fails if `/home/` is still in it.
+- Still arm64-v8a only. An APK for 32-bit phones would be another 125 MB per release and a
+  second build of the core that nobody could try; it is not made.
+- **Not tested on a device before release.** It builds, and unit tests cover the choice of the
+  release, the version comparison, the checksum and certificate checks and the updater's
+  states. The download, the installer's dialogue and the silent later update have not run on
+  a phone: the first update, to the release after this one, is the test. Installing this
+  version is by hand, once more; it installs over 26.11.1-intercom.3 and keeps the session.
+
 ## Android 26.11.1-intercom.3
 
 `android-v26.11.1-intercom.3`, based on Element X Android 26.11.1. The call library is

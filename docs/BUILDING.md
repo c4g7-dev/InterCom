@@ -109,21 +109,25 @@ git submodule update --init matrix-rust-rtc element-call-android element-x-andro
 The APK is written to `element-x-android/app/build/outputs/apk/fdroid/release/`. There is one,
 for arm64-v8a: the core is built for that ABI only, and an APK for another would have no call
 library to load. It is signed with the key given by `INTERCOM_ANDROID_STOREFILE`,
-`INTERCOM_ANDROID_STOREPASSWORD`, `INTERCOM_ANDROID_KEYALIAS` and `INTERCOM_ANDROID_KEYPASSWORD`,
-or with the debug key when these are not set; an APK signed with another key does not install
-over a released one.
+`INTERCOM_ANDROID_STOREPASSWORD`, `INTERCOM_ANDROID_KEYALIAS` and `INTERCOM_ANDROID_KEYPASSWORD`
+(schemes v1, v2 and v3), or with the debug key when these are not set; an APK signed with
+another key does not install over a released one, and the app's updater refuses it.
 
 The core: `scripts/build-intercom-android.sh` builds the `matrix-rtc-ffi` crate with its `media`
 feature in the `mobile-release` profile (about five minutes and 3 GB of disk the first time),
 generates the Kotlin bindings from the built library, checks that libwebrtc's JNI symbols are
-exported, and packages the AAR. Paths of the build machine are remapped in the library. The
+exported, and packages the AAR. Paths of the build machine are mapped away in the library
+(`--remap-path-prefix` for Rust, `-ffile-prefix-map` for the C++ that crates compile, and a
+soname for the linker), and the script fails if `/home/` is still in it. The other native
+libraries of the APK are other projects' builds and name their own build machines. The
 `livekit` crate is a patched copy inside the fork (`vendor/`), so nothing but crates.io and the
 libwebrtc download is needed. What the fork changes is in its README.
 
 Checks: in `matrix-rust-rtc`, `cargo test -p matrix-rtc-transport -p matrix-rtc-livekit --lib`
 and `cargo test -p matrix-rtc-ffi --features media --lib` (they run on the build machine, and
 compile libwebrtc for it); `./gradlew test runQualityChecks` in `element-call-android`; and
-`./gradlew :features:callnative:impl:testDebugUnitTest` in `element-x-android`.
+`./gradlew :features:callnative:impl:testDebugUnitTest :features:intercomupdate:impl:testDebugUnitTest`
+in `element-x-android`.
 
 Versions: the app is `<Element X version>-intercom.<n>` (`INTERCOM_REVISION` in
 `element-x-android/plugins/src/main/kotlin/Versions.kt`, also the last digit of the version
@@ -131,9 +135,52 @@ code); the library is `<upstream version>-intercom.<n>` (`VERSION_NAME` in
 `element-call-android/gradle.properties`); the core is `<upstream version>-intercom.<n>`
 (`INTERCOM_VERSION` in `matrix-rust-rtc/scripts/build-intercom-android.sh`). When the core's
 version changes, change `matrix_rtc` in the library's catalog with it, and when the library's
-changes, `element_call` in the app's. A release is the tag `android-v<app version>` on this
-repository with `InterCom-Android-<app version>-arm64-v8a.apk` and `SHA256SUMS`; the three forks
-carry the tag `intercom-android-v<app version>`.
+changes, `element_call` in the app's.
+
+### Releasing
+
+```sh
+# CHANGELOG.md has a "## Android <app version>" section, the three forks are committed,
+# the APK is built with the release key
+tools/android-release.sh 26.11.1-intercom.4
+```
+
+It checks the APK (package, version name and code, the certificate of every release so far,
+signature schemes v2 and v3, arm64-v8a alone, no path of the build machine in the core), tags
+the three forks `intercom-android-v<app version>` and this repository `android-v<app version>`,
+pushes, and publishes the GitHub release with `InterCom-Android-<app version>-arm64-v8a.apk`,
+`android-update.json` and `SHA256SUMS`. The release is a draft until its files are on it, and
+is never marked "latest": that is the desktop's. `--no-publish` stops after collecting the
+files in `release/android-<app version>/`; `--prerelease` publishes a pre-release, which the
+app offers only where "Offer pre-releases" is on. `tools/android-release.sh --help` has the rest.
+
+The app updates itself from these releases (`element-x-android/features/intercomupdate`). It
+lists the repository's releases, keeps the tags `android-v<app version>` (the desktop's are
+`v<version>`), leaves out drafts and, unless asked, pre-releases, and reads `android-update.json`
+of the newest one that is newer than itself:
+
+```json
+{
+  "schema": 1,
+  "package": "com.c4g7.intercom.android",
+  "versionCode": 2026110124,
+  "versionName": "26.11.1-intercom.4",
+  "abi": "arm64-v8a",
+  "minSdk": 24,
+  "apk": "InterCom-Android-26.11.1-intercom.4-arm64-v8a.apk",
+  "size": 130000000,
+  "sha256": "<SHA-256 of the APK>",
+  "notes": "<plain text, shown in the app>"
+}
+```
+
+`versionCode` is what the app compares with its own; the script reads it from the APK. The
+version code derived from the tag, `((2000 + yy) * 10000 + mm * 100 + n) * 100 + 20 + revision`
+(20 is the ABI digit of arm64-v8a), only orders the list, and stands in for a release without
+the file, whose checksum the app then takes from `SHA256SUMS`. The app installs an APK only
+if it has that SHA-256 and the signing certificate of the running app, so **every release must
+be signed with the same key**; the script refuses an APK that is not. A release the app should
+not offer yet stays a draft or a pre-release.
 
 ## Configuration
 

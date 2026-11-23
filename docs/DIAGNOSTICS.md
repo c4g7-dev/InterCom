@@ -39,6 +39,20 @@ Every run of the desktop app writes one file:
 - for every upload request that failed: an `upload_failed` record with the HTTP status (none if
   the server did not answer), the kind of error, the protocol the request went over (h2, h3,
   http/1.1) and whether it was tried again
+- `upload_token_refresh` records when an upload renewed the access token: before the upload
+  because the token was about to run out (`expiring`) or after the server refused it
+  (`refused`), and whether that worked
+- for every run of pictures that follow each other closely in a timeline: a `gallery_decision`
+  record, written when the run is first drawn and when the decision changes. It says how many
+  galleries were made of the run and, for each picture, whether it joined the picture before it
+  or why not (`sender`, `gap`, `thread`, `caption`, `reply`, `tile_between`, …), the time since
+  the picture before, whether it is a local echo, encrypted, edited, has a caption, the names of
+  the fields of its content, and the types of the events that lay between (with whether each has
+  a tile). No text, file name, URL, user or event ID is written; senders are numbered
+- `voice_state` records when mute or deafen changed, with where the change came from (`panel`,
+  `hotkey`, `cli`, `call`, `tray`)
+- an `update_check` record for every look for an update: how long it took (`ms`, `headersMs`),
+  the HTTP status, whether GitHub answered "not modified" (`cached`) and the bytes read
 - `updater` records for what the updater did: `check`, `up_to_date` or `update_found`,
   `download_start`, `download_verified` (with the SHA-256), `staged`, `ready`, `install_linux` or
   `install_windows`, `manual` (the install cannot replace itself), `error`

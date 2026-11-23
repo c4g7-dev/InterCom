@@ -534,6 +534,44 @@ def report_uploads(report, records, args):
     )
 
 
+def report_galleries(report, records, args):
+    """What became of pictures sent together: the `gallery_decision` records of the web app."""
+    decisions = [r for r in records if r["type"] == "gallery_decision"]
+    refreshes = [r for r in records if r["type"] == "upload_token_refresh"]
+    if refreshes:
+        report.section("Access token")
+        for record in refreshes[-args.max_events :]:
+            report.note(
+                f"{clock(record['t'])} renewed for an upload ({record.get('reason')}): "
+                + ("ok" if record.get("ok") else f"failed ({record.get('error') or record.get('outcome')})")
+                + f" in {record.get('ms', 0):.0f} ms"
+            )
+        failed = sum(1 for r in refreshes if not r.get("ok"))
+        report.verdict(PASS if not failed else WARN, "token renewal", f"{len(refreshes)} for uploads, {failed} failed")
+    if not decisions:
+        return
+    report.section("Galleries")
+    # The last record of a run is what the timeline ended up showing; runs are told apart by their first time
+    parted = 0
+    for record in decisions[-args.max_events :]:
+        items = record.get("items") or []
+        outcomes = [item.get("outcome") for item in items]
+        why = [o for o in outcomes[1:] if o != "joined"]
+        parted += bool(why)
+        between = sorted({b for item in items for b in item.get("between") or [] if b.endswith(":tile")})
+        report.note(
+            f"{clock(record['t'])} {record.get('pictures')} pictures -> galleries {record.get('galleries')}"
+            + f" (layout {record.get('layout')}, timeline {record.get('timeline')}, hidden shown {record.get('hiddenShown')},"
+            + f" grouping {record.get('grouping')}): {' '.join(str(o) for o in outcomes)}"
+            + (f"; tiles between: {', '.join(between)}" if between else "")
+        )
+    report.verdict(
+        PASS if not parted else WARN,
+        "galleries",
+        f"{len(decisions)} decision(s) logged" + (f", {parted} of the last with pictures that did not join" if parted else ""),
+    )
+
+
 def report_errors(report, records, args):
     report.section("Errors")
     console = [r for r in records if r["type"] == "console"]
@@ -600,6 +638,7 @@ def main():
             report_windows(report, call, args)
             report_network(report, call, args)
         report_uploads(report, records, args)
+        report_galleries(report, records, args)
         report_errors(report, records, args)
         output.append({"file": path, "verdicts": report.verdicts, "text": report.lines})
 

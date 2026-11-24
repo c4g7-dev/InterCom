@@ -11,8 +11,8 @@ quality limitations, packet loss and round-trip time, together with a few checks
 
 - microphone publishing with audio
 - screen share at the expected resolution
-- share audio flowing
-- receiving the top layer
+- my share audio sending, and share audio received from each member who shares a screen
+- receiving the top layer, for each member who shares a screen
 - no quality limitation
 
 The overlay can also save the frame currently shown as a PNG ("Snapshot") and show a sharpness

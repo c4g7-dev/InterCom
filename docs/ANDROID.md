@@ -1,0 +1,138 @@
+# InterCom for Android
+
+InterCom for Android is based on [Element X Android](https://github.com/element-hq/element-x-android)
+26.11.1. It is released separately from the desktop app, as `android-v…` entries on the
+[releases page](https://github.com/c4g7-dev/InterCom/releases), and installs next to Element X
+without sharing data with it.
+
+## Install
+
+Download `InterCom-Android-<version>-arm64-v8a.apk` from the newest `android-v…` release and open
+it; allow your browser or file manager to install apps when Android asks. Android 7 or newer, on
+64-bit ARM. Check the file against the release's `SHA256SUMS` if you like:
+
+```sh
+sha256sum -c SHA256SUMS --ignore-missing
+```
+
+After that the app [updates itself](UPDATES.md#android).
+
+## What it does
+
+- **Native calls.** Calls use the native MatrixRTC stack instead of a web view.
+- **Screen share** at the phone's own resolution: up to 1440p on the long edge at 30 fps; 1080p,
+  720p and 15 fps can be chosen in the sheet the share button opens. The choice is remembered.
+- **Share phone audio** (Android 10 or newer, on by default): viewers also hear what the phone
+  plays, music, videos, games, as stereo Opus at 160 kbit/s (128 or 192 under *Audio quality*).
+  Apps that forbid being recorded (many streaming and banking apps) and phone calls stay silent;
+  that is Android's rule. On the desktop the share's sound has its own volume slider.
+- **Shared screens have sound**: the audio of a screen somebody else shares is played with the
+  voices, through the call's output (earpiece, speaker, headset).
+- **A volume for every tile**: press and hold a tile for a slider from 0 to 200 % and *Mute for
+  me*; hold a shared screen's tile for the volume of its audio. Only your phone hears the
+  difference, and it is remembered per person, as on the desktop.
+- **Equal grid**: in a call, settings → Preferences → Layout → *Equal grid* shows every tile at
+  the same size, shared screens included and uncropped, as large as the screen allows in either
+  orientation. A double tap still fills the screen with one tile.
+- **No Firebase, no analytics, no bug report upload.**
+- **Logs for calls**: warnings, errors and everything about calls are mirrored to logcat with
+  access tokens and other secrets taken out, so a release build can be followed with
+  `adb logcat -s InterComCall matrix-rtc InterCom`. Developer options → *Share logs* zips the
+  app's logs for the share sheet; nothing is uploaded by the app.
+
+Voice channels of the desktop app are rooms of the type `org.matrix.msc3417.call`; the Android
+app shows them as ordinary rooms with a call button. Joining works, without the channel view or
+the list of people in the call.
+
+## Push notifications
+
+The app contains no Google Firebase, so push needs a
+[UnifiedPush distributor](https://unifiedpush.org/users/distributors/):
+
+1. Install [ntfy](https://f-droid.org/packages/io.heckel.ntfy/) (or another distributor) and open
+   it once.
+2. In InterCom: Settings → Notifications → *Push notification provider*, and choose it.
+
+The homeserver must reach the distributor's Matrix gateway over HTTPS (for ntfy.sh:
+`https://ntfy.sh/_matrix/push/v1/notify`). Without a distributor, messages arrive only while the
+app is open.
+
+## Sign-in
+
+Sign-in through Matrix Authentication Service works on servers whose MAS accepts the redirect
+scheme `com.c4g7.intercom.android` for the client URI `https://c4g7.com`, which is MAS's default
+policy. To build the app for another domain, see the README of the
+[Android fork](https://github.com/c4g7-dev/intercom-element-x-android).
+
+## Calls and the server
+
+The native call path publishes on an advertised LiveKit transport that has a JWT service
+(`livekit_service_url`, served by [lk-jwt-service](https://github.com/element-hq/lk-jwt-service)).
+A server that advertises only an `m.livekit` transport with the SFU's URL alone (its token would
+come from the homeserver's MSC4195 `get_token`, which the SDK's bindings cannot ask for) is not
+supported by it: calls cannot connect. Advertise a `livekit` transport with
+`livekit_service_url`, alone or next to the other.
+
+## If the APK does not install
+
+Android's "App not installed" does not say why. The usual reasons, most likely first:
+
+### Samsung Auto Blocker
+
+On Samsung Galaxy phones (One UI 6 and newer), **Auto Blocker** blocks apps from outside the
+Galaxy Store and Play Store: the APK from the browser does not install, and neither do
+InterCom's own updates. Turn it off under **Settings → Security and privacy → Auto Blocker**,
+install, and leave it off if InterCom should keep updating itself.
+
+### Other reasons
+
+- **A 32-bit phone.** The APK is for 64-bit ARM (arm64-v8a) only. Some inexpensive phones run a
+  32-bit Android on a 64-bit processor; an app such as "Device Info HW" shows "Supported ABIs",
+  which must include `arm64-v8a`. There is no build for other processors.
+- **Too little free storage.** The APK is about 125 MB and Android needs room for a copy of it
+  and for the installed app: keep about 500 MB free.
+- **An incomplete download.** Compare the file with `SHA256SUMS` of the release, or download it
+  again; a file cut short installs as "package appears to be invalid" or not at all.
+- **Play Protect or Advanced Protection.** Play Protect can block or silently stop the
+  installation of an app it does not know: in the Play Store, tap your picture → Play Protect →
+  settings, and try with "Scan apps with Play Protect" off, or choose "Install anyway" when it
+  asks. With Google's Advanced Protection on (Android 16), or on a phone managed by an employer,
+  installing from outside a store is not allowed at all.
+- **The app that opens the APK may not install apps.** Allow it when asked ("Install unknown
+  apps"), or open the APK from the Files app instead of the browser.
+- **Another build of InterCom is installed**, signed with another key (one you built yourself,
+  for instance): uninstall it first. Element X is not in the way; InterCom has its own package
+  name, `com.c4g7.intercom.android`.
+- **A newer InterCom is installed.** Android does not install an older version over a newer
+  one; going back means uninstalling first, which signs the app out.
+
+To read the reason itself, install from a computer with
+[adb](https://developer.android.com/tools/adb) (USB debugging on, under the developer options):
+
+```sh
+adb install -r InterCom-Android-<version>-arm64-v8a.apk
+```
+
+It answers with the installer's code, for instance `INSTALL_FAILED_NO_MATCHING_ABIS` (32-bit
+phone), `INSTALL_FAILED_INSUFFICIENT_STORAGE`, `INSTALL_FAILED_UPDATE_INCOMPATIBLE` (another
+key), `INSTALL_FAILED_VERSION_DOWNGRADE` or `INSTALL_PARSE_FAILED_NO_CERTIFICATES`. Please put
+that line, the phone and its Android version into an
+[issue](https://github.com/c4g7-dev/InterCom/issues).
+
+## Known limitations
+
+- arm64-v8a only.
+- A call joins without a "dead man's switch" (MSC4140 delayed events are not in the SDK's
+  bindings): a phone that loses its connection mid-call stays listed in the call until its
+  membership expires.
+- A shared screen's audio is played as part of the call, so over a Bluetooth headset it is in
+  the headset's call mode, mono and narrow.
+- A 1440p or 1080p share at 30 fps is demanding for a phone.
+
+## Source
+
+The app is the fork [intercom-element-x-android](https://github.com/c4g7-dev/intercom-element-x-android),
+with the call library fork [intercom-element-call-android](https://github.com/c4g7-dev/intercom-element-call-android)
+and the RTC core fork [intercom-matrix-rust-rtc](https://github.com/c4g7-dev/intercom-matrix-rust-rtc),
+all on branch `intercom` and included here as the submodules `element-x-android`,
+`element-call-android` and `matrix-rust-rtc`. Building: [BUILDING.md](BUILDING.md#android).

@@ -5,228 +5,112 @@
 <h1 align="center">InterCom</h1>
 
 <p align="center">
-  A Matrix desktop client based on Element, with crisp screen sharing, shared audio and better calls.
+  A Matrix client based on Element: Discord-like channels, crisp screen sharing with audio and
+  better calls, for the desktop and Android.
 </p>
 
 <p align="center">
-  <a href="https://github.com/c4g7-dev/InterCom/releases/latest">Download</a> ·
+  <a href="https://github.com/c4g7-dev/InterCom/releases/latest"><b>Download</b></a> ·
+  <a href="docs/CHANGES-FROM-ELEMENT.md">What's different from Element</a> ·
   <a href="docs/BUILDING.md">Build</a> ·
-  <a href="docs/AUDIO-LINUX.md">Audio on Linux</a> ·
-  <a href="docs/DIAGNOSTICS.md">Diagnostics</a> ·
   <a href="CHANGELOG.md">Changelog</a>
 </p>
 
-| A space with text and voice channels | Direct messages |
+![InterCom in a voice channel: the rail of spaces, text and voice channels with the people in the call, a LIVE badge, the Voice connected panel and a shared screen](docs/images/voice-channel.png)
+
+| Text and voice channels | The call above the chat |
 | --- | --- |
-| ![InterCom with a space open: the rail of spaces, text and voice channels, a conversation](docs/images/app-channels.png) | ![InterCom's list of direct messages and a conversation](docs/images/app-direct-messages.png) |
+| ![A space with text and voice channels and a gallery of pictures](docs/images/overview.png) | ![A room with its call above the timeline](docs/images/call-over-chat.png) |
+| **A received screen share** | **Equal grid** |
+| ![A shared code editor large, the participants beside it](docs/images/screen-share.png) | ![Every tile the same size, screen shares included](docs/images/equal-grid.png) |
+| **Screen share options and audio sources** | **Pictures as one gallery** |
+| ![The Share your screen dialog with presets and audio sources](docs/images/share-dialog.png) | ![Five pictures shown as one gallery](docs/images/gallery.png) |
 
-| Welcome | Sign in |
-| --- | --- |
-| ![InterCom welcome screen](docs/images/welcome.png) | ![InterCom sign-in screen](docs/images/sign-in.png) |
+<sub>Screenshots of the real interface against a made-up homeserver: the people, rooms, pictures
+and screens in them do not exist. More, with every change: [docs/CHANGES-FROM-ELEMENT.md](docs/CHANGES-FROM-ELEMENT.md).</sub>
 
-<sub>The two screenshots at the top were taken against a made-up homeserver: the people and rooms in them do not exist.</sub>
+InterCom is a modified build of [Element Web / Desktop](https://github.com/element-hq/element-web),
+[Element Call](https://github.com/element-hq/element-call) and
+[Element X Android](https://github.com/element-hq/element-x-android). It keeps what they do and
+changes how calls look, sound and behave, and how rooms are arranged. It is an independent
+project, not affiliated with or endorsed by Element.
 
-InterCom is a modified build of [Element Web / Desktop](https://github.com/element-hq/element-web)
-and [Element Call](https://github.com/element-hq/element-call). It keeps everything those do and
-changes how calls look, sound and behave. It is an independent project, not affiliated with or
-endorsed by Element.
+## Highlights
 
-## Features
-
-**Calls and screen share**
-
-- Screen share at native resolution, with presets for text (sharp), motion (60 fps) and low bandwidth
-- High bitrates for screen share (about 10 Mbps at 1080p, 15 Mbps at 1440p) within a server egress budget
-- Codec choice (VP9, AV1), custom bitrate and frame rate
-- The microphone stays on when you join a call
-- Mute, deafen and camera shortcuts, also from the command line for global key bindings
-- Mute and deafen hold for the whole app, with or without a call, and over restarts
+**Calls & screen share**
+- Screen share at the screen's own resolution, with presets for text, motion and low bandwidth,
+  about 10 Mbit/s at 1080p and 15 Mbit/s at 1440p, codec, bitrate and frame rate to choose
+- The microphone stays on when you join; mute, deafen and camera on Ctrl+Shift+M / D / V and
+  from the command line
+- A diagnostics overlay (Ctrl+Alt+D) and a log per run that a script turns into a verdict
 
 **Audio**
-
 - Screen share audio in stereo, without voice processing
-- Linux: share any PipeWire / PulseAudio output, and mix several sources live
-- Windows: system audio with the share, without the call's own sound
-- Volume per participant and per stream, 0 to 200 % (above 100 %: up to +12 dB, with a limiter)
+- Linux: share any PipeWire / PulseAudio output and mix several sources live; Windows: the
+  system's sound
+- Volume per person and per share from 0 to 200 %, with a limiter above 100 %, remembered
+- Mute and deafen for the whole app, with or without a call; InterCom's own sounds, or yours
 
-**Layout and windows**
-
-- The call above the room's chat, with a divider to drag, or the call alone
-- Click a tile to see it large, double click for fullscreen
-- Pop-out: any tile in its own window
-- Equal grid: every tile the same size, screen shares included
+**Channels & layout**
+- Spaces as places: text channels, voice channels with the people in them (who speaks, who is
+  muted, who is live), a user panel at the bottom left
+- One click drops you into a voice channel, without a lobby and without ringing anybody
+- The call above the chat, an equal grid, one click to focus a tile, fullscreen and pop-out for
+  every video tile
 
 **Messages**
+- Pictures sent together are one gallery with a lightbox, sent from one dialog with a caption
+- Pictures start uploading at once; a failed upload is tried once more
 
-- Pictures sent together are shown as one gallery, with a lightbox that steps through them, in
-  the classic timeline and in the labs "New timeline"
-- Several pictures are sent as one batch, with an optional caption
-- Pictures upload while their preview is made, not after it
+**App & updates**
+- Updates itself from these releases, before the window opens or with one click
+- A near-black theme in layers and a light one; own profile, installs next to Element
 
-**Channels**
+**Android**
+- Native calls with screen sharing up to 1440p at 30 fps and the phone's audio in stereo
+- Shared screens with sound, a volume for every tile, an equal grid; updates itself; no Firebase
 
-- A space reads as a place: its rooms are text channels (`#`) and voice channels (a speaker) in
-  the room list, conversations with one person keep their face and presence
-- Voice channels are rooms that are their call, with a section of their own and the people in
-  the call listed under them: who is talking, who is muted, who is sharing, who just came or went
-- A space's "+" menu makes a text channel or a voice channel; every member of the space can
-  join it (anyone, if the space is public)
-- One click joins a voice channel, without a lobby and without ringing anybody; joining another
-  leaves the one you were in
-- A panel under the room list with your microphone and deafen buttons, the camera, screen share
-  and leave buttons of the call you are in, and a button for an update that waits to be installed
-- Sound cues, InterCom's own: a short chime when you join or leave a voice channel or call, when
-  somebody else joins or leaves the one you are in, and when you mute, unmute, deafen or
-  undeafen. While deafened you hear only your own. When several people join at once there is
-  one chime, and in calls with more than eight people there are none for joining and leaving
-- Your own sounds: put files named `join`, `leave`, `mute`, `unmute`, `deafen` or `undeafen`
-  (`.ogg`, `.mp3` or `.wav`, up to 2 MB each) into `~/.config/InterCom/sounds/` (Windows:
-  `%APPDATA%\InterCom\sounds\`) and restart InterCom; each replaces the built-in sound of that
-  name. The files stay on your machine: they are not bundled, uploaded or logged (the
-  diagnostics log only names them)
+## What InterCom changes compared to Element
 
-**App**
+| | Element | InterCom |
+| --- | --- | --- |
+| Screen share | 1080p at most, 5 Mbit/s, simulcast with a half-size layer | Native resolution (up to 1440p by default), presets, about 10–15 Mbit/s, egress budget |
+| Share audio (desktop) | None | Linux: PipeWire / PulseAudio outputs, mixed live; Windows: system sound |
+| Volume | 0–100 % in a menu, forgotten | 0–200 % on the tile, +12 dB through a limiter, remembered |
+| Layouts and windows | Grid and spotlight | Equal grid, click to focus, fullscreen and pop-out per tile, the call above the chat |
+| Voice | Video rooms with a lobby; mute per call | Voice channels: one click, no ringing, who is in them; mute and deafen for the whole app, with shortcuts |
+| Pictures | One tile per picture | Galleries with a lightbox, one dialog for several, faster uploads |
+| Look | Element's themes | Near-black layers, one accent, no shadows, a Discord-like arrangement |
+| Desktop app | Squirrel updates on Windows and macOS | Self-updater on Linux and Windows, call diagnostics, VA-API video on Linux |
+| Android | Calls in a web view; the native path (off) shares 1280 px / 15 fps without audio | Native calls, 1440p / 30 fps share with phone audio, per-tile volume, self-updater |
 
-- A near-black dark theme in layers (the rail of spaces darkest, the room list, the timeline), a
-  light one beside it; rounded surfaces, hairlines instead of shadows, one accent colour
-- Messages of one sender under one name with the time beside it, days parted by a hairline, the
-  composer as one rounded bar with the upload button first
-- Updates itself from the GitHub releases: when it starts, before the window opens, and while
-  it runs, with a status bar while it does
-- Hardware video decoding on Linux (VA-API)
-- Built-in call diagnostics: live overlay, logs, and a summary tool
-- Own profile and URL scheme: installs next to Element without sharing data with it
-
-| Call view | Screen share options |
-| --- | --- |
-| ![Illustration of the call view: equal grid, tile controls, pop-out window and diagnostics](docs/images/call-layout.png) | ![Illustration of the screen share options with the audio output picker](docs/images/share-dialog.png) |
-
-<sub>The two images above are illustrations of the call interface, not screenshots.</sub>
+Every change, with screenshots and the release that brought it:
+[docs/CHANGES-FROM-ELEMENT.md](docs/CHANGES-FROM-ELEMENT.md).
 
 ## Download
 
-Get the latest build from the [releases page](https://github.com/c4g7-dev/InterCom/releases/latest).
+From the [releases page](https://github.com/c4g7-dev/InterCom/releases/latest):
 
-| Platform | File | Notes |
+| Platform | File | |
 | --- | --- | --- |
 | Linux x64 | `InterCom-<version>-linux-x64.tar.gz` | Unpack and run `./intercom` |
-| Windows x64 | `InterCom-Setup-<version>-x64.exe` | Per-user installer |
+| Windows x64 | `InterCom-Setup-<version>-x64.exe` | Per-user installer, not code signed: SmartScreen asks once (*More info* → *Run anyway*) |
+| Android (arm64) | `InterCom-Android-<version>-arm64-v8a.apk` | In the newest `android-v…` release; see [docs/ANDROID.md](docs/ANDROID.md) |
 
-The Windows installer is not code signed. SmartScreen warns on first start: choose *More info*,
-then *Run anyway*. Check the download against `SHA256SUMS` from the same release:
+Check a download against `SHA256SUMS` from the same release with
+`sha256sum -c SHA256SUMS --ignore-missing`. Both apps then update themselves:
+[docs/UPDATES.md](docs/UPDATES.md).
 
-```sh
-sha256sum -c SHA256SUMS --ignore-missing
-```
+## Design
 
-InterCom updates itself from these releases. When it starts, before the window opens, it asks
-GitHub whether a newer release is out (two seconds at most), and if so downloads it, checks it
-against `SHA256SUMS`, installs it and starts as the new version, with a small window saying
-what it is doing. A start that finds nothing is held up for a moment at most; offline, or when
-the download stalls, InterCom starts as it is and the update is offered in the app later. The
-switch is Settings → InterCom → "Update automatically on launch" (on by default; it needs
-"Check for updates automatically"). Started with `--hidden` it does the same without the
-window. While it runs it looks again every six hours, downloads a new release, checks it and
-offers "Restart to update". The switch
-and a "Check now" button are in Settings → InterCom. On Linux the unpacked directory is replaced
-(the previous one is kept beside it as `<directory>.old`); it has to be writable for that,
-otherwise the app points to the release page. If you start InterCom through a script of your
-own, see "Updates" in the [desktop README](element-web/apps/desktop/intercom/README).
-
-## Android
-
-InterCom for Android is based on [Element X Android](https://github.com/element-hq/element-x-android).
-It is released separately from the desktop app: look for the newest `android-v…` entry on the
-[releases page](https://github.com/c4g7-dev/InterCom/releases) and install
-`InterCom-Android-<version>-arm64-v8a.apk` (Android 7 or newer, 64-bit ARM; allow your browser or
-file manager to install apps when asked). It installs next to Element X and shares no data with it. If it
-does not install, see [below](#if-the-apk-does-not-install).
-
-- Calls use the native MatrixRTC stack instead of a web view, and can **share the phone's screen**
-  at its own resolution (up to 1440p on the long edge, 30 fps; 1080p, 720p and 15 fps can be chosen
-  in the sheet the share button opens).
-- **Share phone audio**: with the switch in that sheet on (the default, Android 10 or newer), viewers
-  also hear what the phone plays: music, videos, games. Apps that forbid being recorded (many
-  streaming and banking apps) and phone calls stay silent; that is Android's rule. On the desktop
-  the share's volume has its own slider. It is sent for music: stereo Opus at 160 kbit/s
-  (128 or 192 under "Audio quality" in the same sheet).
-- **Shared screens have sound**: the audio of a screen somebody else shares is played with the
-  voices, through the call's output (earpiece, speaker, headset).
-- **A volume for every tile**: press and hold somebody's tile for a slider from 0 to 200 % and
-  "Mute for me"; hold a shared screen's tile for the volume of its audio. Only your phone hears
-  it, and it is remembered per person, as on the desktop.
-- **Equal grid**: in a call, settings → Preferences → Layout → Equal grid shows every tile at the
-  same size, shared screens included and uncropped, as large as the screen allows in either
-  orientation. Double-tap a tile to fill the screen with it, as before.
-- Sign-in through Matrix Authentication Service works on servers whose MAS accepts the redirect
-  scheme `com.c4g7.intercom.android` for the client URI `https://c4g7.com`, which is the default
-  policy. Building for another domain: see the fork's README.
-- **Push notifications need a UnifiedPush distributor**, because the app contains no Google
-  Firebase: install [ntfy](https://f-droid.org/packages/io.heckel.ntfy/) (or another
-  [distributor](https://unifiedpush.org/users/distributors/)), open it once, then choose it in
-  InterCom under Settings → Notifications → Push notification provider. The homeserver must be able to reach the distributor's
-  Matrix gateway (for ntfy.sh: `https://ntfy.sh/_matrix/push/v1/notify`) over HTTPS. Without a
-  distributor, messages arrive only while the app is open.
-- No analytics and no bug report upload.
-- **Updates itself** (from 26.11.1-intercom.4; as described here from 26.11.1-intercom.5): the
-  app looks for a newer release every time it is opened, at most every half hour, and
-  downloads and installs it by itself: on Wi-Fi unless you allow mobile data, and not during a
-  call. It checks the APK's SHA-256 and that it is signed with the key of the installed app,
-  and hands it to Android's installer. The first update needs you once: a dialog says
-  "InterCom <version> is available", and Android asks to allow InterCom to install apps and may
-  ask to confirm. On Android 12 or newer, later updates install without a question; on older
-  versions Android asks for one tap. The app closes while it is replaced and cannot open
-  itself again: a notification says when it is done, and a tap on it opens the app. With
-  "Install updates automatically" off under Settings → InterCom updates, the dialog asks every
-  time ("Update now" or "Later", which waits a day). Looking for updates can be switched off
-  in the same place; it is a request to GitHub for this repository's releases.
-- Every release is signed with the same key, so a newer APK also installs over the old one by
-  hand.
-
-### If the APK does not install
-
-Android's "App not installed" does not say why. The usual reasons, most likely first:
-
-- **A 32-bit phone.** The APK is for 64-bit ARM (arm64-v8a) only. Some inexpensive phones run
-  a 32-bit Android on a 64-bit processor; an app such as "Device Info HW" shows "Supported
-  ABIs", which must include `arm64-v8a`. There is no build for other processors.
-- **Too little free storage.** The APK is about 125 MB and Android needs room for a copy of it
-  and for the installed app: keep about 500 MB free.
-- **An incomplete download.** Compare the file with `SHA256SUMS` of the release, or download
-  it again; a file cut short installs as "package appears to be invalid" or not at all.
-- **Play Protect or Advanced Protection.** Play Protect can block or silently stop the
-  installation of an app it does not know: in the Play Store, tap your picture → Play Protect
-  → settings, and try with "Scan apps with Play Protect" off, or choose "Install anyway" when
-  it asks. With Google's Advanced Protection on (Android 16), or on a phone managed by an
-  employer, installing from outside a store is forbidden altogether.
-- **The app that opens the APK may not install apps.** Allow it when asked ("Install unknown
-  apps"), or open the APK from the Files app instead of the browser.
-- **Another build of InterCom is installed**, signed with another key (one you built
-  yourself, for instance): uninstall it first. Element X itself is not in the way; InterCom
-  has its own package name, `com.c4g7.intercom.android`.
-- **A newer InterCom is installed.** Android does not install an older version over a newer
-  one.
-
-To read the reason itself, install from a computer with
-[adb](https://developer.android.com/tools/adb) (USB debugging on, under the developer options):
-
-```sh
-adb install -r InterCom-Android-<version>-arm64-v8a.apk
-```
-
-It answers with the installer's code, for instance `INSTALL_FAILED_NO_MATCHING_ABIS` (32-bit
-phone), `INSTALL_FAILED_INSUFFICIENT_STORAGE`, `INSTALL_FAILED_UPDATE_INCOMPATIBLE` (another
-key), `INSTALL_FAILED_VERSION_DOWNGRADE` or `INSTALL_PARSE_FAILED_NO_CERTIFICATES`. Please put
-that line, the phone and its Android version into an
-[issue](https://github.com/c4g7-dev/InterCom/issues).
-
-The source is the fork [intercom-element-x-android](https://github.com/c4g7-dev/intercom-element-x-android)
-with the call library fork
-[intercom-element-call-android](https://github.com/c4g7-dev/intercom-element-call-android) and the
-RTC core fork [intercom-matrix-rust-rtc](https://github.com/c4g7-dev/intercom-matrix-rust-rtc), all
-on branch `intercom` and included here as the submodules `element-x-android`,
-`element-call-android` and `matrix-rust-rtc`. Building is described in
-[docs/BUILDING.md](docs/BUILDING.md#android).
+InterCom is meant to be calm to sit in and easy to read when somebody shares text. The surfaces
+are near black and neutral, in three layers a step apart: the rail of spaces `#0a0a0c`, the room
+list `#101013`, the timeline `#151518`, with hairlines `#202025` between them instead of shadows.
+One accent, `#6875f5`, marks what is selected or unread; green marks who speaks. Surfaces are
+rounded, 8 px for rows and menus, 12 px for tiles, cards and the composer. The arrangement is the
+one people know from Discord: a rail of spaces, text and voice channels, grouped messages, the
+voice panel at the bottom left. The sounds are InterCom's own, made from sine waves. More, with
+the full set of tokens: [docs/DESIGN.md](docs/DESIGN.md).
 
 ## Quick start
 
@@ -236,85 +120,75 @@ cd intercom-*/
 ./intercom
 ```
 
-Sign in with any Matrix account. The default homeserver is matrix.org; choose *Edit* on the
-sign-in screen to use your own. Settings and sessions are stored in `~/.config/InterCom`
-(`%APPDATA%\InterCom` on Windows).
+Sign in with any Matrix account; choose *Edit* on the sign-in screen for your own homeserver.
+Settings and sessions are kept in `~/.config/InterCom` (`%APPDATA%\InterCom` on Windows).
 
-HTTP/3 is off by default, because uploads stall with it behind some proxies; `--enable-quic` turns
-it on. Useful options: `--no-hw-video` turns off hardware video, `--profile <name>` uses a separate
-profile, `--help` lists the rest. In a call, Ctrl+Shift+M mutes, Ctrl+Shift+D deafens and
-Ctrl+Shift+V toggles the camera; `intercom --toggle-mute` (also `--toggle-deafen`,
-`--toggle-camera`, `--leave-call`) does the same from outside the window, for example from a
-Wayland compositor's key binding.
+- In a call: **Ctrl+Shift+M** mutes, **Ctrl+Shift+D** deafens, **Ctrl+Shift+V** toggles the
+  camera, **Ctrl+Alt+D** shows the diagnostics.
+- `intercom --toggle-mute` (also `--toggle-deafen`, `--toggle-camera`, `--leave-call`) does the
+  same from outside, for example from a Wayland compositor's key binding.
+- `--no-hw-video` turns off hardware video, `--enable-quic` turns HTTP/3 back on, `--profile
+  <name>` uses a separate profile, `--help` lists the rest.
 
-## Build from source
-
-```sh
-git clone --recurse-submodules https://github.com/c4g7-dev/InterCom.git
-cd InterCom
-(cd element-call && pnpm install --frozen-lockfile && scripts/build-intercom-embedded.sh)
-(cd element-web && pnpm install --frozen-lockfile)
-element-web/apps/desktop/intercom/build.sh
-./run-intercom.sh
-```
-
-Requirements, the Windows cross-build and the release process are in
-[docs/BUILDING.md](docs/BUILDING.md). The source lives in two forks, included here as submodules:
-[intercom-element-web](https://github.com/c4g7-dev/intercom-element-web) and
-[intercom-element-call](https://github.com/c4g7-dev/intercom-element-call), branch `intercom`.
-
-## Diagnostics
-
-Press **Ctrl+Alt+D** in a call for live statistics of every track. Each run also writes a
-JSON-lines log to `~/.config/InterCom/logs/`, which `tools/diag-summary.py` turns into a verdict
-per feature:
-
-```sh
-tools/diag-summary.py ~/.config/InterCom/logs/diag-*.jsonl
-```
-
-Logs stay on your machine. See [docs/DIAGNOSTICS.md](docs/DIAGNOSTICS.md).
+Building from source: [docs/BUILDING.md](docs/BUILDING.md).
 
 ## Server requirements
 
-InterCom talks to standard Matrix servers; nothing InterCom-specific is needed. Group calls have
-the same requirements as Element Call:
+InterCom talks to standard Matrix servers; nothing InterCom-specific is needed. Calls have the
+requirements of Element Call:
 
-- a homeserver such as [Synapse](https://github.com/element-hq/synapse), with the MatrixRTC
-  settings Element Call documents
-- [Matrix Authentication Service](https://github.com/element-hq/matrix-authentication-service)
-  where the homeserver uses it for sign-in
+- a homeserver such as [Synapse](https://github.com/element-hq/synapse) with the MatrixRTC
+  settings Element Call documents, and
+  [Matrix Authentication Service](https://github.com/element-hq/matrix-authentication-service)
+  where the homeserver signs in through it
 - a [LiveKit](https://github.com/livekit/livekit) SFU with
-  [lk-jwt-service](https://github.com/element-hq/lk-jwt-service), announced in the homeserver's
-  `.well-known/matrix/client`
+  [lk-jwt-service](https://github.com/element-hq/lk-jwt-service), **advertised as a LiveKit
+  transport with `livekit_service_url`** (in `.well-known/matrix/client` or the homeserver's
+  MatrixRTC transports). A server that advertises only an `m.livekit` transport
+  with the SFU's URL alone is not supported by the Android app's native calls.
 
-Recommended: enable VP9 and AV1 in LiveKit (`room.enabled_codecs` in `livekit.yaml`). Screen
-shares of text need far fewer bits with them. Give the SFU enough uplink for the screen share
-bitrates above.
+Recommended: enable VP9 and AV1 in LiveKit (`room.enabled_codecs` in `livekit.yaml`), which need
+far fewer bits for shared text, and give the SFU enough uplink for the share bitrates above.
 
 ## Status and known limitations
 
 InterCom is an independent community fork, published as is.
 
-- No hardware video encoding on Linux with NVIDIA GPUs: Chromium has no NVENC backend there, so
-  calls and screen shares are encoded in software. Decoding works with `nvidia-vaapi-driver`.
+- No hardware video encoding on Linux with NVIDIA GPUs: Chromium has no NVENC backend there.
+  Decoding works with `nvidia-vaapi-driver`.
+- The builds are not code signed; updates are checked against the checksums of the release they
+  come from, which is no proof of who made them.
 - macOS is not built.
-- Builds are not code signed. Updates are checked against the checksums of the release they come from, which is no proof of who made them.
-- Sharing an output's audio on Linux needs `pactl` and PipeWire (with `pipewire-pulse`) or PulseAudio.
+- Sharing an output's audio on Linux needs `pactl` and PipeWire (with `pipewire-pulse`) or
+  PulseAudio. See [docs/AUDIO-LINUX.md](docs/AUDIO-LINUX.md).
 - Voice channels are InterCom's reading of rooms of the type `org.matrix.msc3417.call`. Other
-  clients (Element, Element X, InterCom for Android) show such a room as an ordinary room with a
-  call button: joining works there, without the channel view, the list of people in the call,
-  the one-click join or the automatic leave. The first person to join from another client still
-  sends Matrix's call notification; InterCom desktop sends none and shows none.
+  clients (Element, Element X, InterCom for Android) show them as ordinary rooms with a call
+  button: joining works, without the channel view, the list of people or the one-click join. The
+  first person to join from another client still sends Matrix's call notification.
+- On Samsung Galaxy phones, **Auto Blocker** blocks installing the APK and InterCom's own
+  updates until it is switched off (Settings → Security and privacy → Auto Blocker). See
+  [docs/ANDROID.md](docs/ANDROID.md#if-the-apk-does-not-install).
 
-Bugs in InterCom's changes belong in this repository's issues, not upstream.
+Bugs in InterCom's changes belong in this repository's
+[issues](https://github.com/c4g7-dev/InterCom/issues), not upstream.
+
+## Documentation
+
+- [What's different from Element](docs/CHANGES-FROM-ELEMENT.md): every change, with screenshots
+- [Design](docs/DESIGN.md): the reasoning and the tokens
+- [Updates](docs/UPDATES.md): how both apps update themselves
+- [Android](docs/ANDROID.md): features, push notifications, installing and troubleshooting
+- [Sharing audio on Linux](docs/AUDIO-LINUX.md)
+- [Call diagnostics](docs/DIAGNOSTICS.md)
+- [Building](docs/BUILDING.md): desktop, Android and releases
+- [Changelog](CHANGELOG.md)
 
 ## License and trademarks
 
 InterCom is free software under the [GNU Affero General Public License v3.0](LICENSE).
-It is based on Element Web, Element Desktop, Element Call and Element X Android, copyright New Vector Ltd and
-Element Creations Ltd, used under AGPL-3.0; InterCom's modifications are released under the same
-license. See [NOTICE](NOTICE).
+It is based on Element Web, Element Desktop, Element Call and Element X Android, copyright New
+Vector Ltd and Element Creations Ltd, used under AGPL-3.0; InterCom's modifications are released
+under the same license. See [NOTICE](NOTICE).
 
 "Element" is a trademark of New Vector Ltd and "Matrix" is a trademark of The Matrix.org
 Foundation C.I.C. InterCom is not an Element product and is not affiliated with, endorsed by or

@@ -3,6 +3,16 @@
 Versions are `<Element Web version>-intercom.<n>`: the upstream release InterCom is based on,
 followed by the InterCom revision.
 
+## 1.12.35-intercom.10
+
+- **The Linux self-update installs.** After .8 fixed removing install directories, the next check
+  failed with "The archive does not hold an InterCom install": the updater checked that the new
+  `resources/app.asar` is readable through Electron's file system, which treats `app.asar` as a
+  directory and answers ENOENT. The check now goes through `original-fs` as well. The whole path
+  (unpack, check, swap, replacing an older backup) was run under Electron 44's own `fs` against
+  the real release archive before this release. Installs of .5 to .9 on Linux need this release
+  installed by hand once; Windows was not affected.
+
 ## 1.12.35-intercom.9
 
 - **Pictures sent together are one gallery again, in the new timeline too.** Pictures sent as one

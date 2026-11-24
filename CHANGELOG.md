@@ -3,6 +3,24 @@
 Versions are `<Element Web version>-intercom.<n>`: the upstream release InterCom is based on,
 followed by the InterCom revision.
 
+## 1.12.35-intercom.11
+
+- **A message you send stays in the timeline.** With the labs option "New timeline" on, a
+  message could vanish from your own timeline the moment it was delivered (the other side got
+  it), and nothing that arrived afterwards was shown until you left the room and came back.
+  Cause: a sync with a gap (after some time offline or asleep, or when more arrived at once
+  than one sync carries) replaces a room's live timeline, and the new timeline's view model
+  did not follow: it stayed on the old one. A message being sent is drawn from the list of
+  messages on their way, which held it, until its echo from the server moved it into the new
+  live timeline, which the view model did not show. The gallery of .9 and the look of .7 had
+  no part in it; the classic timeline handles the gap and was not affected. Found by sending
+  into an encrypted conversation of a made-up homeserver after a sync with a gap: the message
+  was drawn, then gone 0.2 s later when its echo arrived; with the fix it stays, in both
+  timelines, as do pictures and galleries.
+- The new timeline now loads the newest messages again after such a sync, or, when you are
+  scrolled up reading history, stays where you are and lets you scroll on to what is new, as
+  the classic timeline does.
+
 ## 1.12.35-intercom.10
 
 - **The Linux self-update installs.** After .8 fixed removing install directories, the next check

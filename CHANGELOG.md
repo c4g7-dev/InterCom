@@ -3,6 +3,29 @@
 Versions are `<Element Web version>-intercom.<n>`: the upstream release InterCom is based on,
 followed by the InterCom revision.
 
+## 1.12.35-intercom.9
+
+- **Pictures sent together are one gallery again, in the new timeline too.** Pictures sent as one
+  batch were shown one under the other. The gallery was only ever made by the classic timeline
+  (`MessagePanel`); with the labs option "New timeline" on, rooms are drawn by a different
+  component (`NewTimelinePanel` with its own view model), which knew nothing of galleries, so
+  every picture got a row of its own and no `gallery_decision` was ever written to the
+  diagnostics log. The new timeline now groups pictures the same way: while they are sent (local
+  echo, then sent), after a reload, when older history is loaded and in encrypted rooms, also
+  when a picture joins its gallery only once it is decrypted. The picture a link points at, or
+  that is being edited, keeps a row of its own; the unread marker on a picture inside a gallery
+  goes after the gallery.
+- **The diagnostics say which timeline decided.** `gallery_decision` records have `panel`
+  (`legacy` or `new`) and, where pictures are never grouped, the reason (`groupingOff`). A run of
+  pictures is no longer cut in two in the log by the events without a tile that a call puts
+  between them (only tiles count), and the list of what lay between is capped.
+- **Mute and deafen sound softer**: their cues are an octave lower and quieter.
+- **The user panel under the room list has no settings button any more**: the settings are on the
+  rail of spaces. The button comes back, with its dot, only while an update waits to be installed.
+- **"Move to" in a room's menu fits its content**: the submenu had a full menu's padding (20 px
+  above, 16 px below) around its single "New section" row. It is padded to its rows now, and its
+  first row is level with "Move to".
+
 ## 1.12.35-intercom.8
 
 - **The self-updater works on Linux.** Every update from 1.12.35-intercom.5 on stopped after the

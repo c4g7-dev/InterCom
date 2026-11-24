@@ -561,8 +561,10 @@ def report_galleries(report, records, args):
         between = sorted({b for item in items for b in item.get("between") or [] if b.endswith(":tile")})
         report.note(
             f"{clock(record['t'])} {record.get('pictures')} pictures -> galleries {record.get('galleries')}"
-            + f" (layout {record.get('layout')}, timeline {record.get('timeline')}, hidden shown {record.get('hiddenShown')},"
-            + f" grouping {record.get('grouping')}): {' '.join(str(o) for o in outcomes)}"
+            + f" ({record.get('panel', 'legacy')} timeline {record.get('timeline')}, layout {record.get('layout')},"
+            + f" hidden shown {record.get('hiddenShown')}, grouping {record.get('grouping')}"
+            + (f" ({record.get('groupingOff')})" if record.get("groupingOff") else "")
+            + f"): {' '.join(str(o) for o in outcomes)}"
             + (f"; tiles between: {', '.join(between)}" if between else "")
         )
     report.verdict(

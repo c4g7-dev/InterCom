@@ -58,7 +58,8 @@ endorsed by Element.
 
 **Messages**
 
-- Pictures sent together are shown as one gallery, with a lightbox that steps through them
+- Pictures sent together are shown as one gallery, with a lightbox that steps through them, in
+  the classic timeline and in the labs "New timeline"
 - Several pictures are sent as one batch, with an optional caption
 - Pictures upload while their preview is made, not after it
 
@@ -72,8 +73,8 @@ endorsed by Element.
   join it (anyone, if the space is public)
 - One click joins a voice channel, without a lobby and without ringing anybody; joining another
   leaves the one you were in
-- A panel under the room list with your microphone, deafen and settings buttons, and the camera,
-  screen share and leave buttons of the call you are in
+- A panel under the room list with your microphone and deafen buttons, the camera, screen share
+  and leave buttons of the call you are in, and a button for an update that waits to be installed
 - Sound cues, InterCom's own: a short chime when you join or leave a voice channel or call, when
   somebody else joins or leaves the one you are in, and when you mute, unmute, deafen or
   undeafen. While deafened you hear only your own. When several people join at once there is

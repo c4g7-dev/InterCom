@@ -48,7 +48,9 @@ Every run of the desktop app writes one file:
   or why not (`sender`, `gap`, `thread`, `caption`, `reply`, `tile_between`, …), the time since
   the picture before, whether it is a local echo, encrypted, edited, has a caption, the names of
   the fields of its content, and the types of the events that lay between (with whether each has
-  a tile). No text, file name, URL, user or event ID is written; senders are numbered
+  a tile). It also says which timeline drew it (`panel`: `legacy`, or `new` for the labs
+  "New timeline") and, where pictures are never grouped (search results, notifications, …), why
+  (`groupingOff`). No text, file name, URL, user or event ID is written; senders are numbered
 - `voice_state` records when mute or deafen changed, with where the change came from (`panel`,
   `hotkey`, `cli`, `call`, `tray`)
 - an `update_check` record for every look for an update: how long it took (`ms`, `headersMs`),

@@ -248,6 +248,37 @@ longer flash sections that do not belong there.
   (a placeholder is), the addresses are not even asked for, and the answer is fetched when the
   app starts, so the tab normally opens complete. The sessions tab uses the same answer.
 
+## Android 26.11.1-intercom.7
+
+`android-v26.11.1-intercom.7`, based on Element X Android 26.11.1. Call library
+0.1.2-intercom.5, RTC core 0.5.0-intercom.4. 26.11.1-intercom.6 was a test build and was not
+released; what it brought is part of this release.
+
+- **Native calls connect.** Every call on the native call screen ended about half a second
+  after it opened, with the ringback just started and nothing said. Synapse advertises two
+  transports in `matrix_rtc.transports`: first `m.livekit` with the SFU's `url` alone, then the
+  legacy `livekit` one with the JWT service. The Rust SDK hands both over as `livekit`, so the
+  call took the first, whose token can only come from the homeserver's MSC4195 `get_token`,
+  which the SDK's bindings cannot ask for; the media connection was given up at once. A call
+  now publishes on the advertised transport that has a JWT service (`/sfu/get`, as the WebView
+  call and Element Call on the desktop do, so they see each other's media), and on one
+  without only when there is no other.
+- **A call that cannot connect says so instead of vanishing.** A call to one person whose own
+  connection to the media server was given up ended as if you had hung up: the call screen
+  closed without a word. It now ends as a lost connection with its reason, which the call
+  screen shows.
+- **Calls can be followed with adb in a release build.** Warnings and errors of the whole app,
+  and everything about calls from debug up (the call library, the app's side of it, its
+  Matrix backend and the RTC core's own records), are mirrored to logcat, with access tokens,
+  JWTs and other secrets taken out: `adb logcat -s InterComCall matrix-rtc InterCom`. Nothing
+  is mirrored twice when "Print logs to logcat" is on. The core's records also reach the app's
+  log files now.
+- **Developer options → Share logs** zips the app's log files and a dump of its logcat, with
+  the same secrets taken out, and opens the share sheet. Nothing is uploaded by the app.
+- Still to come: a call joins without a "dead man's switch" (MSC4140 delayed events are not in
+  the SDK's bindings), so a phone that loses its connection mid-call stays listed in the call
+  until its membership expires.
+
 ## Android 26.11.1-intercom.5
 
 `android-v26.11.1-intercom.5`, based on Element X Android 26.11.1. Call library and RTC core as

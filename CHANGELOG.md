@@ -3,6 +3,16 @@
 Versions are `<Element Web version>-intercom.<n>`: the upstream release InterCom is based on,
 followed by the InterCom revision.
 
+## 1.12.35-intercom.8
+
+- **The self-updater works on Linux.** Every update from 1.12.35-intercom.5 on stopped after the
+  download with `ENOTEMPTY: directory not empty, rmdir '…/intercom.new/resources'`: Electron's
+  file system treats `app.asar` as a folder, so removing a staged or backed-up install failed.
+  The updater now removes and moves install directories through Electron's unpatched
+  `original-fs`. Installs of .5, .6 and .7 on Linux cannot take this release by themselves
+  (their updater has the bug): install it once by hand, the updates after it work. Windows was
+  not affected (its installer replaces the files).
+
 ## 1.12.35-intercom.7
 
 InterCom looks and works like a place with channels: a rail of spaces, text and voice channels,

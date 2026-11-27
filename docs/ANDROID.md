@@ -1,13 +1,22 @@
-# InterCom for Android
+# Lattice for Android
 
-InterCom for Android is based on [Element X Android](https://github.com/element-hq/element-x-android)
-26.11.1. It is released separately from the desktop app, as `android-v…` entries on the
+Lattice for Android is based on [Element X Android](https://github.com/element-hq/element-x-android)
+26.11.1. It is released together with the desktop app, as `android-v…` entries on the
 [releases page](https://github.com/c4g7-dev/InterCom/releases), and installs next to Element X
 without sharing data with it.
 
+It was called InterCom for Android up to 26.11.1-intercom.14. [The same app under a new
+name](#from-intercom-to-lattice): an update, not a new installation.
+
+| The icon | Alone in a call | Loading |
+| --- | --- | --- |
+| ![The Lattice icon as a launcher icon, round, and as a themed icon](images/android-lattice-icon.png) | ![A call with the notice "You're alone in this call · disconnecting in 5:00", Stay and Leave now](images/android-call-alone.png) | ![The loading animation standing still, dark and light, and below it the ring of dots of a connecting call and the bars of somebody speaking](images/android-lattice-loading.png) |
+
+<sub>The icon is drawn from the icon set, the rest from the app's own previews, with made-up people.</sub>
+
 ## Install
 
-Download `InterCom-Android-<version>-arm64-v8a.apk` from the newest `android-v…` release and open
+Download `Lattice-Android-<version>-arm64-v8a.apk` from the newest `android-v…` release and open
 it; allow your browser or file manager to install apps when Android asks. Android 7 or newer, on
 64-bit ARM. Check the file against the release's `SHA256SUMS` if you like:
 
@@ -37,14 +46,25 @@ After that the app [updates itself](UPDATES.md#android).
 - **Deafen**, next to the microphone in a call: nobody is heard, voices and shared screens
   alike, and the microphone is muted with it; undeafen brings it back as it was. Mute and deafen
   are kept across calls: the next one is joined as the last was left.
-- **InterCom's own sounds**: the chimes for joining and leaving, cues for mute and deafen, the
+- **Alone in a private call, you stay for five minutes.** When the other person leaves a call in
+  a direct chat, the call goes on with "You're alone in this call · disconnecting in 4:59",
+  *Stay* (which starts the time over) and *Leave now*. If they come back the countdown goes
+  away; if nobody does you are disconnected and told so the next time you look at the app. Only
+  in direct chats: a room's call or a voice channel is never left for you.
+- **The camera button says when the camera cannot be used**: a small red badge on it when
+  Android refused the permission (a tap asks again or leads to the settings) or the phone has no
+  camera.
+- **Lattice's own sounds**: the chimes for joining and leaving, cues for mute and deafen, the
   ringback of a call you start, and the ringtone of one that comes in (Settings →
   Notifications → *Call ringtone* also offers the phone's own). They are the desktop's.
-- **InterCom's look**: the desktop's near-black surfaces, hairlines and single accent, and a
+- **Lattice's look**: the desktop's near-black surfaces, hairlines and single accent, and a
   light variant.
+- **Lattice's own animations**: the icon's bars rise and fall while the app starts and a room
+  loads, its ring of dots turns while a call connects, and somebody speaking has three moving
+  bars beside their name. They stand still when Android's animations are turned off.
 - **Pictures sent together are one gallery**, as on the desktop: a grid of up to five tiles
   with "+N", and a tap pages through them. Several pictures can be chosen at once; they are
-  sent as a message each, marked as one batch, so every client shows them and InterCom shows
+  sent as a message each, marked as one batch, so every client shows them and Lattice shows
   them together.
 - **No Firebase, no analytics, no bug report upload.**
 - **Logs for calls**: warnings, errors and everything about calls are mirrored to logcat with
@@ -52,9 +72,9 @@ After that the app [updates itself](UPDATES.md#android).
   `adb logcat -s InterComCall matrix-rtc InterCom`. Developer options → *Share logs* zips the
   app's logs for the share sheet; nothing is uploaded by the app.
 
-| InterCom's look | Pictures sent together | The message field |
+| Lattice's look | Pictures sent together | The message field |
 | --- | --- | --- |
-| ![The chat list in InterCom's dark theme](images/android-theme.png) | ![Three pictures as one grid in a message bubble](images/android-gallery.png) | ![The message field with one line and with several](images/android-composer.png) |
+| ![The chat list in Lattice's dark theme](images/android-theme.png) | ![Three pictures as one grid in a message bubble](images/android-gallery.png) | ![The message field with one line and with several](images/android-composer.png) |
 
 <sub>Drawn from the app's own previews, with made-up people and text.</sub>
 
@@ -69,7 +89,7 @@ The app contains no Google Firebase, so push needs a
 
 1. Install [ntfy](https://f-droid.org/packages/io.heckel.ntfy/) (or another distributor) and open
    it once.
-2. In InterCom: Settings → Notifications → *Push notification provider*, and choose it.
+2. In Lattice: Settings → Notifications → *Push notification provider*, and choose it.
 
 The homeserver must reach the distributor's Matrix gateway over HTTPS (for ntfy.sh:
 `https://ntfy.sh/_matrix/push/v1/notify`). Without a distributor, messages arrive only while the
@@ -99,14 +119,14 @@ Android's "App not installed" does not say why. The usual reasons, most likely f
 
 On Samsung Galaxy phones (One UI 6 and newer), **Auto Blocker** blocks apps from outside the
 Galaxy Store and Play Store: the APK from the browser does not install, and neither do
-InterCom's own updates. Turn it off under **Settings → Security and privacy → Auto Blocker**,
-install, and leave it off if InterCom should keep updating itself.
+Lattice's own updates. Turn it off under **Settings → Security and privacy → Auto Blocker**,
+install, and leave it off if Lattice should keep updating itself.
 
 From 26.11.1-intercom.14 the app says so itself when an update does not install on a Samsung
 phone, with a button that opens Auto Blocker where the phone gives a way in, and the security
 settings otherwise:
 
-<p><img src="images/android-auto-blocker.png" width="280" alt="The dialog InterCom update failed, with the hint about Samsung Auto Blocker and the button Open security settings"></p>
+<p><img src="images/android-auto-blocker.png" width="280" alt="The dialog Lattice update failed, with the hint about Samsung Auto Blocker and the button Open security settings"></p>
 
 ### Other reasons
 
@@ -124,17 +144,17 @@ settings otherwise:
   installing from outside a store is not allowed at all.
 - **The app that opens the APK may not install apps.** Allow it when asked ("Install unknown
   apps"), or open the APK from the Files app instead of the browser.
-- **Another build of InterCom is installed**, signed with another key (one you built yourself,
-  for instance): uninstall it first. Element X is not in the way; InterCom has its own package
-  name, `com.c4g7.intercom.android`.
-- **A newer InterCom is installed.** Android does not install an older version over a newer
+- **Another build of Lattice or InterCom is installed**, signed with another key (one you built
+  yourself, for instance): uninstall it first. Element X is not in the way; Lattice has its own
+  package name, `com.c4g7.intercom.android`, the same as InterCom's, which it replaces.
+- **A newer version is installed.** Android does not install an older version over a newer
   one; going back means uninstalling first, which signs the app out.
 
 To read the reason itself, install from a computer with
 [adb](https://developer.android.com/tools/adb) (USB debugging on, under the developer options):
 
 ```sh
-adb install -r InterCom-Android-<version>-arm64-v8a.apk
+adb install -r Lattice-Android-<version>-arm64-v8a.apk
 ```
 
 It answers with the installer's code, for instance `INSTALL_FAILED_NO_MATCHING_ABIS` (32-bit
@@ -149,14 +169,41 @@ that line, the phone and its Android version into an
 - A gallery made of several picture messages is its first picture for everything you do to it:
   a reaction, a reply and removing it apply to that picture. The pictures of a batch appear in
   the chat when their upload is done, not while it runs.
-- A microphone that is not permitted ends the call with a way to the settings; there is no
-  state of its own for a missing or refused microphone or camera yet.
+- A microphone that is not permitted ends the call with a way to the settings: a call without
+  a microphone needs another kind of background service on Android 14, which is not done yet.
+  The camera has states of its own.
+- How long you stay alone in a private call (five minutes) cannot be changed on Android yet. With
+  another device of your own in the same call, being alone is noticed once the call's media
+  shows only your devices.
 - A call joins without a "dead man's switch" (MSC4140 delayed events are not in the SDK's
   bindings): a phone that loses its connection mid-call stays listed in the call until its
   membership expires.
 - A shared screen's audio is played as part of the call, so over a Bluetooth headset it is in
   the headset's call mode, mono and narrow.
 - A 1440p or 1080p share at 30 fps is demanding for a phone.
+
+## From InterCom to Lattice
+
+26.11.1-intercom.15 is the first version called Lattice. It is an ordinary update of InterCom:
+
+- **What changed** is what you see: the name, the icon (launcher, round, themed, and the small
+  one of notifications), the splash screen, the logo of the first screens, and the texts that
+  named the app.
+- **What did not**: the package name `com.c4g7.intercom.android`, the signing key, the sign-in
+  (the redirect scheme `com.c4g7.intercom.android` for `https://c4g7.com`), the accounts and
+  everything stored. So the update installs over InterCom and you stay signed in; nothing has to
+  be set up again. New sign-ins show "Lattice" as the client's name on the server. The version
+  still reads `26.11.1-intercom.<n>`, and `adb logcat -s InterComCall matrix-rtc InterCom` still
+  names the logs.
+- **The releases** are still at `github.com/c4g7-dev/InterCom`, and each carries the APK twice,
+  as `Lattice-Android-…` and as `InterCom-Android-…`. InterCom 26.11.1-intercom.14 and older
+  take a release only if it has the APK under the old name, named by `android-update.json`, at
+  an address below `https://github.com/c4g7-dev/InterCom/releases/download/`. GitHub answers
+  for a renamed repository under its new name, which those versions would refuse, so the
+  repository keeps its name until they are gone. From 26.11.1-intercom.15 on the app accepts
+  both names of the APK and both `c4g7-dev/InterCom` and `c4g7-dev/Lattice`, so that the
+  repository can be renamed then without cutting anybody off. More in
+  [UPDATES.md](UPDATES.md#from-intercom-to-lattice).
 
 ## Source
 

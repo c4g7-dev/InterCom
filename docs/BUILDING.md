@@ -134,7 +134,7 @@ Versions: the app is `<Element X version>-intercom.<n>` (`INTERCOM_REVISION` in
 of the same round, 1 to 79. The version code is
 `((2000 + yy) * 10000 + mm * 100 + r) * 100 + 20 + n` for Element X `yy.mm.r`: 20 is the ABI
 digit of arm64-v8a, the one APK there is, and `<n>` is added to it, so 2026110127 for
-26.11.1-intercom.7 and 2026110134 for 26.11.1-intercom.14. A revision of two digits runs into
+26.11.1-intercom.7 and 2026110135 for 26.11.1-intercom.15. A revision of two digits runs into
 the ABI's digit; the codes keep rising with `<n>` up to 79, where the next Element X version's
 begin; the library is `<upstream version>-intercom.<n>` (`VERSION_NAME` in
 `element-call-android/gradle.properties`); the core is `<upstream version>-intercom.<n>`
@@ -147,15 +147,17 @@ changes, `element_call` in the app's.
 ```sh
 # CHANGELOG.md has a "## Android <app version>" section, the three forks are committed,
 # the APK is built with the release key
-tools/android-release.sh 26.11.1-intercom.4
+tools/android-release.sh 26.11.1-intercom.15
 ```
 
 It checks the APK (package, version name and code, the certificate of every release so far,
 signature schemes v2 and v3, arm64-v8a alone, no path of the build machine in the core), tags
 the three forks `intercom-android-v<app version>` and this repository `android-v<app version>`,
-pushes, and publishes the GitHub release with `InterCom-Android-<app version>-arm64-v8a.apk`,
-`android-update.json` and `SHA256SUMS`. The release is a draft until its files are on it, and
-is never marked "latest": that is the desktop's. `--no-publish` stops after collecting the
+pushes, and publishes the GitHub release "[Android] Lattice <app version> · arm64" with the APK
+under two names, `Lattice-Android-<app version>-arm64-v8a.apk` and
+`InterCom-Android-<app version>-arm64-v8a.apk`, with `android-update.json` and `SHA256SUMS`.
+The release is a draft until its files are on it, and is never marked "latest": that is the
+desktop's. `--no-publish` stops after collecting the
 files in `release/android-<app version>/`; `--prerelease` publishes a pre-release, which the
 app offers only where "Offer pre-releases" is on. `tools/android-release.sh --help` has the rest.
 
@@ -185,6 +187,14 @@ the file, whose checksum the app then takes from `SHA256SUMS`. The app installs 
 if it has that SHA-256 and the signing certificate of the running app, so **every release must
 be signed with the same key**; the script refuses an APK that is not. A release the app should
 not offer yet stays a draft or a pre-release.
+
+The APK has two names since the app is called Lattice (26.11.1-intercom.15). 26.11.1-intercom.14
+and older take a release only if it has `InterCom-Android-<app version>-arm64-v8a.apk`, if
+`apk` in `android-update.json` is that name, and if the files' addresses begin with
+`https://github.com/c4g7-dev/InterCom/releases/download/`; so the file keeps being published
+under the old name, the manifest keeps naming it (the script checks that), and this repository
+keeps its name. Later versions take the file `apk` names, under either name, from this
+repository or from `c4g7-dev/Lattice` (`ReleaseSelector.DOWNLOAD_PREFIXES` and `apkNames`).
 
 26.11.1-intercom.7 and older read a revision of one digit only: they do not see a tag such as
 `android-v26.11.1-intercom.14`. `tools/android-release.sh 26.11.1-intercom.14 --bridge

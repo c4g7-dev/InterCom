@@ -215,6 +215,12 @@ The pictures are drawn from the app's own previews, with made-up people and text
 | Sounds | Element's chimes; the phone's ringtone | **InterCom's own**: join and leave, cues for mute and deafen, the ringback, and the ringtone for incoming calls (the phone's can be chosen) | A.14 |
 | The message field's buttons | Lifted by a fixed distance: below the text's line with a larger font | On the line of the text whatever the font, 48 dp each | A.14 |
 | Version | — | The same revision as the desktop release of the round, from 14 on | A.14 |
+| Name and icon | Element X | **Lattice** (InterCom up to A.14): its own icon, also themed and as the notification's, an animated splash screen; the package and the sign-in are unchanged, so it updates in place | A.15 |
+| Loading | A spinner; an empty screen while the session is restored | The icon's bars rising and falling, at the start and while a room loads | A.15 |
+| Alone in a direct chat's call | The call ends the moment the other person leaves | Stays **five minutes** with a countdown, *Stay* and *Leave now*, then leaves and says why; never in a room's call | A.15 |
+| A camera that cannot be used | Shown as off | The camera with a **red badge** when its permission was refused (a tap asks again or leads to the settings) or the phone has none | A.15 |
+| Connecting and speaking | "Connecting…"; a microphone beside the name | The icon's ring of dots while a call connects; three moving bars beside the name of who speaks | A.15 |
+| Release files | — | The APK as `Lattice-Android-…` and as `InterCom-Android-…`, which the versions before the new name look for; the updater takes either, from `c4g7-dev/InterCom` or `c4g7-dev/Lattice` | A.15 |
 | Call transport | Native calls (off by default) take the first advertised transport | Publishes on the advertised transport that has a JWT service (`livekit_service_url`) | A.7 |
 | Logs | — | Call logs mirrored to logcat without secrets (`adb logcat -s InterComCall matrix-rtc InterCom`); Developer options → *Share logs* | A.7 |
 

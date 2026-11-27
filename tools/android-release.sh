@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
-# Collects and publishes a release of InterCom for Android.
+# Collects and publishes a release of Lattice for Android (called InterCom for Android up to 26.11.1-intercom.14).
 #
 #   tools/android-release.sh <version> [--build] [--no-publish] [--prerelease] [--bridge <version>]
 #
-#   <version>      e.g. 26.11.1-intercom.14: the Element X version InterCom for Android is based
-#                  on, then the InterCom revision (1 to 79, the same as the desktop release of
-#                  the round). CHANGELOG.md must have a "## Android <version>" section.
+#   <version>      e.g. 26.11.1-intercom.15: the Element X version the app is based on, then the
+#                  revision (1 to 79, the same as the desktop release of the round; "intercom"
+#                  in it is part of the version's format, which the installed apps parse, and
+#                  stays). CHANGELOG.md must have a "## Android <version>" section.
 #   --build        build the app first (element-x-android, :app:assembleFdroidRelease). The RTC
 #                  core and the call library must already be in ~/.m2, see docs/BUILDING.md.
 #                  Without it, the APK that is already built is taken.
@@ -26,9 +27,12 @@
 #      signer, the same certificate as the release before (ANDROID_CERT_SHA256 below), arm64-v8a
 #      only, and no path of this machine in InterCom's own native library
 #   2. writes to release/android-<version>/:
-#        InterCom-Android-<version>-arm64-v8a.apk
+#        Lattice-Android-<version>-arm64-v8a.apk    the APK under the app's name
+#        InterCom-Android-<version>-arm64-v8a.apk   the same file under the name it had before:
+#                              26.11.1-intercom.14 and older take a release only if it has the
+#                              APK under exactly this name, and android-update.json naming it
 #        android-update.json   what the app's updater reads, see below
-#        SHA256SUMS            over both
+#        SHA256SUMS            over all three
 #        notes.md              the section of CHANGELOG.md
 #   3. commits the submodule pointers, tags this repository android-v<version> and the three
 #      forks intercom-android-v<version>, pushes branches and tags
@@ -44,11 +48,20 @@
 #     "versionName": "26.11.1-intercom.4",
 #     "abi": "arm64-v8a",
 #     "minSdk": 24,
-#     "apk": "InterCom-Android-26.11.1-intercom.4-arm64-v8a.apk",   a file of the same release
+#     "apk": "InterCom-Android-26.11.1-intercom.4-arm64-v8a.apk",   a file of the same release;
+#                                         the old name, which every version accepts: the ones
+#                                         from 26.11.1-intercom.15 on download whichever of the
+#                                         two names this states
 #     "size": 130000000,
 #     "sha256": "<of the APK, hex>",
 #     "notes": "<plain text shown in the app>"
 #   }
+# The releases stay in the repository c4g7-dev/InterCom, under its old name: the installed
+# apps up to 26.11.1-intercom.14 accept only download addresses below
+# https://github.com/c4g7-dev/InterCom/releases/download/, and GitHub's API gives a renamed
+# repository's files under its new name, so a rename would cut every one of them off from
+# updates. From 26.11.1-intercom.15 on the app also accepts c4g7-dev/Lattice.
+#
 # The app lists the repository's releases, takes the tags android-v<version> (not drafts; pre-
 # releases only on request), orders them by the version in the tag and reads this file of the
 # newest one that is newer than itself. The version code in the file is what counts; the one
@@ -118,7 +131,10 @@ FORK_TAG="intercom-android-v$VERSION"
 FORKS=(matrix-rust-rtc element-call-android element-x-android)
 REPO="${INTERCOM_REPO:-$(git remote get-url origin | sed -E 's#(git@github.com:|https://github.com/)##; s#\.git$##')}"
 OUT="$ROOT/release/android-$VERSION"
+# The name the manifest states, and the only one 26.11.1-intercom.14 and older look for.
 APK_NAME="InterCom-Android-$VERSION-$ABI.apk"
+# The same file under the app's name, for people who download it.
+LATTICE_APK_NAME="Lattice-Android-$VERSION-$ABI.apk"
 BUILT_APK="element-x-android/app/build/outputs/apk/fdroid/release/app-fdroid-$ABI-release.apk"
 
 # The section of CHANGELOG.md for this version, without its heading
@@ -173,6 +189,7 @@ echo "== Collecting the files in $OUT"
 rm -rf "$OUT"
 mkdir -p "$OUT"
 cp "$BUILT_APK" "$OUT/$APK_NAME"
+cp "$BUILT_APK" "$OUT/$LATTICE_APK_NAME"
 notes >"$OUT/notes.md"
 VERSION="$VERSION" VERSION_CODE="$VERSION_CODE" MIN_SDK="$MIN_SDK" PACKAGE="$PACKAGE" ABI="$ABI" APK_NAME="$APK_NAME" OUT="$OUT" python3 - <<'PY'
 import hashlib, json, os, re
@@ -213,7 +230,15 @@ with open(os.path.join(out, "android-update.json"), "w", encoding="utf-8") as f:
     json.dump(manifest, f, indent=2, ensure_ascii=False)
     f.write("\n")
 PY
-(cd "$OUT" && sha256sum "$APK_NAME" android-update.json >SHA256SUMS)
+(cd "$OUT" && sha256sum "$LATTICE_APK_NAME" "$APK_NAME" android-update.json >SHA256SUMS)
+cmp -s "$OUT/$APK_NAME" "$OUT/$LATTICE_APK_NAME" || die "the two names are not the same APK"
+# What 26.11.1-intercom.14 and older require of a release, which no later change may break.
+python3 - "$OUT/android-update.json" "$APK_NAME" <<'PY'
+import json, sys
+manifest = json.load(open(sys.argv[1], encoding="utf-8"))
+if manifest["apk"] != sys.argv[2]:
+    sys.exit(f"android-update.json names {manifest['apk']}, the installed apps need {sys.argv[2]}")
+PY
 ls -l "$OUT"
 cat "$OUT/SHA256SUMS"
 
@@ -232,15 +257,15 @@ version, bridge = os.environ["VERSION"], os.environ["BRIDGE"]
 # The version code, the size and the checksum stay those of the real APK.
 manifest["versionName"] = bridge
 manifest["apk"] = os.environ["BRIDGE_APK"]
-manifest["notes"] = f"This installs InterCom {version}.\n\n" + manifest["notes"]
+manifest["notes"] = f"This installs Lattice {version}.\n\n" + manifest["notes"]
 with open(os.path.join(os.environ["BRIDGE_OUT"], "android-update.json"), "w", encoding="utf-8") as f:
     json.dump(manifest, f, indent=2, ensure_ascii=False)
     f.write("\n")
 PY
     {
-        echo "**This is InterCom $VERSION** under a tag that InterCom for Android 26.11.1-intercom.7 and older can read:"
+        echo "**This is Lattice $VERSION** under a tag that InterCom for Android 26.11.1-intercom.7 and older can read:"
         echo "they understand a revision of one digit only, so they do not see \`$TAG\`. The APK is the same file as"
-        echo "[\`$APK_NAME\`](https://github.com/$REPO/releases/tag/$TAG); installing it gives $VERSION, which then"
+        echo "[\`$LATTICE_APK_NAME\`](https://github.com/$REPO/releases/tag/$TAG); installing it gives $VERSION, which then"
         echo "follows the ordinary releases. For a new installation take [$TAG](https://github.com/$REPO/releases/tag/$TAG)."
         echo
         cat "$OUT/notes.md"
@@ -276,13 +301,13 @@ git push origin HEAD:main "refs/tags/$TAG"
 
 echo "== Publishing $TAG on $REPO"
 if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
-    gh release edit "$TAG" --repo "$REPO" --title "[Android] InterCom $VERSION · arm64" --notes-file "$OUT/notes.md"
+    gh release edit "$TAG" --repo "$REPO" --title "[Android] Lattice $VERSION · arm64" --notes-file "$OUT/notes.md"
 else
     # A draft until its files are on it: the app must never find a release without them.
     gh release create "$TAG" --repo "$REPO" --verify-tag --draft --latest=false \
-        --title "[Android] InterCom $VERSION · arm64" --notes-file "$OUT/notes.md"
+        --title "[Android] Lattice $VERSION · arm64" --notes-file "$OUT/notes.md"
 fi
-gh release upload "$TAG" --repo "$REPO" --clobber "$OUT/$APK_NAME" "$OUT/android-update.json" "$OUT/SHA256SUMS"
+gh release upload "$TAG" --repo "$REPO" --clobber "$OUT/$LATTICE_APK_NAME" "$OUT/$APK_NAME" "$OUT/android-update.json" "$OUT/SHA256SUMS"
 if [[ $PRERELEASE == 1 ]]; then
     gh release edit "$TAG" --repo "$REPO" --draft=false --prerelease --latest=false
 else
@@ -294,7 +319,7 @@ if [[ -n "$BRIDGE" ]]; then
     echo "== Publishing the bridge $BRIDGE_TAG"
     git tag -f "$BRIDGE_TAG" "$TAG^{commit}"
     git push origin "refs/tags/$BRIDGE_TAG"
-    BRIDGE_TITLE="[Android] InterCom $VERSION · arm64 (for 26.11.1-intercom.7 and older)"
+    BRIDGE_TITLE="[Android] Lattice $VERSION · arm64 (for 26.11.1-intercom.7 and older)"
     if gh release view "$BRIDGE_TAG" --repo "$REPO" >/dev/null 2>&1; then
         gh release edit "$BRIDGE_TAG" --repo "$REPO" --title "$BRIDGE_TITLE" --notes-file "$BRIDGE_OUT/notes.md"
     else

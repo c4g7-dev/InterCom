@@ -3,6 +3,64 @@
 Versions are `<Element Web version>-intercom.<n>`: the upstream release InterCom is based on,
 followed by the InterCom revision.
 
+## Android 26.11.1-intercom.15
+
+| The new icon | Alone in a call | Loading |
+| --- | --- | --- |
+| ![The Lattice icon as a launcher icon, round, and as a themed icon: three bars between two rows of dots](https://raw.githubusercontent.com/c4g7-dev/InterCom/android-v26.11.1-intercom.15/docs/images/android-lattice-icon.png) | ![A call with the notice "You're alone in this call · disconnecting in 5:00" and the buttons Stay and Leave now; the camera button carries a red badge](https://raw.githubusercontent.com/c4g7-dev/InterCom/android-v26.11.1-intercom.15/docs/images/android-call-alone.png) | ![The loading animation standing still, dark and light, and below it the ring of dots of a connecting call and the bars of somebody speaking](https://raw.githubusercontent.com/c4g7-dev/InterCom/android-v26.11.1-intercom.15/docs/images/android-lattice-loading.png) |
+
+<sub>The icon is drawn from the icon set, the rest from the app's own previews, with made-up people.</sub>
+
+`android-v26.11.1-intercom.15`, based on Element X Android 26.11.1. Call library 0.1.2-intercom.7, RTC core
+0.5.0-intercom.5. Released together with the desktop's 1.12.35-intercom.15.
+
+- **InterCom is now called Lattice.** The app has a new name and a new icon: three bars between
+  two rows of dots, on near-black. It is the same app: this update installs over InterCom, you
+  stay signed in, and your chats, settings and notifications are as they were. The name, the
+  launcher icon (also round, and as a themed icon on Android 13 or newer), the small icon of
+  notifications, the first screens, the settings ("Lattice updates"), the About page and the
+  ringtone's name ("Lattice ringtone") changed. The version still reads `26.11.1-intercom.15`,
+  and the releases are still at `github.com/c4g7-dev/InterCom`.
+- **A loading animation of its own.** The icon's bars rise and fall while Lattice starts: on the
+  splash screen (Android 12 or newer move it, older versions show it still), while your session
+  is restored, where there was an empty screen, and while a room is being opened. With Android's
+  animations turned off it stands still.
+- **Alone in a private call, you are not thrown out at once.** When the other person left a call
+  in a direct chat, the call ended on the spot. Now you stay for 5 minutes, with "You're alone in
+  this call · disconnecting in 4:59" on the call screen, and can tap *Stay* to start the time
+  over or *Leave now*. If the other person comes back the countdown goes away; if nobody does
+  you are disconnected, and Lattice tells you so the next time you look at it: "You were
+  disconnected because you were alone in the call." This is for calls in direct chats only: in
+  a room's call or a voice channel you can stay alone for as long as you like, and a call that
+  nobody has answered yet rings as before. The time cannot be changed on Android yet.
+- **A camera that cannot be used says so.** The camera button showed "off" also when Android had
+  refused the camera. Now it shows the camera with a small red badge when the permission was
+  refused (a tap asks again, or leads to the settings where Android no longer asks; back from
+  the settings the button is usable at once) and when the phone has no camera, where it does
+  nothing and says "No camera found".
+- **While a call connects**, the icon's ring of dots turns above "Connecting…", and somebody who
+  is speaking has three moving bars beside their name in place of the microphone.
+- **Updates keep working across the new name.** The APK is published twice, as
+  `Lattice-Android-<version>-arm64-v8a.apk` and under its old name
+  `InterCom-Android-<version>-arm64-v8a.apk`: InterCom 26.11.1-intercom.14 and older look for
+  the old name only, and find this release as they found the ones before. From this version on
+  the app takes either name, and is prepared for the repository being renamed later. InterCom
+  26.11.1-intercom.7 and older still reach 26.11.1-intercom.14 through
+  `android-v26.11.1-intercom.9` first, and this release from there.
+- **Not tested on a phone.** Nothing of this release was tried on a phone or in a real call
+  before it was published. Unit tests cover which files and addresses the updater accepts
+  (with the rules of 26.11.1-intercom.14 written out as a test of their own), the countdown
+  when alone, what ends and restarts it and that a room's call is never left, the camera's
+  states, and the timing of the animations; the RTC core's change has a test of its own. The
+  APK was checked for the unchanged package name, version code 2026110135 and signing
+  certificate, which is what lets it install over InterCom. How the new icon and the splash
+  animation look on a real launcher, and the countdown in a real call, are the least certain.
+- Known limitations: a refused microphone still ends the call with a way to the settings (a
+  call without a microphone needs a different kind of background service on Android 14, which
+  is not done yet). With another device of your own in the same call, being alone is noticed
+  once the call's media shows only your devices. The logcat tags (`InterCom`, `InterComCall`)
+  and the package name `com.c4g7.intercom.android` keep the old name.
+
 ## 1.12.35-intercom.14
 
 | The share dialog over the whole window | The connection card of the call strip |

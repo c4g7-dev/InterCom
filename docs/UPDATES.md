@@ -183,3 +183,19 @@ hour, and read a revision of one digit only: they find 26.11.1-intercom.14 as th
 `android-v26.11.1-intercom.9`, which is the same APK under a tag they can read.
 Every release is signed with the same key, so a newer APK also installs over the old one by
 hand.
+
+**From InterCom to Lattice on Android.** 26.11.1-intercom.15 is the first Android release under
+the new name, and installs over InterCom as any update does: the package name
+(`com.c4g7.intercom.android`), the signing key, the accounts and the data are the same. A
+release carries the APK twice, as `Lattice-Android-<version>-arm64-v8a.apk` and as
+`InterCom-Android-<version>-arm64-v8a.apk`, both in `SHA256SUMS`, and `android-update.json`
+names the second: InterCom 26.11.1-intercom.14 and older take a release only if it has the APK
+under the old name, named by that file, at an address below
+`https://github.com/c4g7-dev/InterCom/releases/download/`. That last rule is why this repository
+keeps its name: GitHub's API gives the files of a renamed repository under its new name, and
+those versions would refuse every one of them and never find a release again. From
+26.11.1-intercom.15 on the app takes the APK under either name (the one `android-update.json`
+states, otherwise the first that `SHA256SUMS` lists) and files below `c4g7-dev/InterCom` or
+`c4g7-dev/Lattice`, so the repository can be renamed once the installs are 26.11.1-intercom.15
+or newer. Both rules are tests of the updater (`ReleaseSelectorTest`), the old versions' among
+them.

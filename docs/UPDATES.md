@@ -17,9 +17,9 @@ it comes from, which catches a broken download but is no proof of who made it.
 | --- | --- |
 | ![A download arrow with a red dot above the settings, and its card: Lattice 1.12.35-intercom.13, Ready to install, What's new](images/update-rail.png) | ![The dialog "What's new in Lattice 1.12.35-intercom.13"](images/whats-new.png) |
 
-| Settings → Lattice | The status bar over the user panel |
+| Settings → Lattice | The update card over the user panel |
 | --- | --- |
-| ![The Lattice settings tab: the four switches, Restart to update, and what is new in the update](images/settings-updates.png) | ![Downloading 1.12.35-intercom.11 · 41 %](images/update-bar.png) |
+| ![The Lattice settings tab: the four switches, Restart to update, and what is new in the update](images/settings-updates.png) | ![The update card over the user panel at four widths: Lattice 1.12.35-intercom.15 is ready with a line of what is new, Later and Update; a download with its bar; the same narrower; the mark and Update alone](images/update-card.png) |
 
 **When it looks.** At every start, before the window opens, and 30 seconds after the start.
 While it runs: every five minutes, and when you come back to the window, the computer wakes up
@@ -61,12 +61,16 @@ the update stands and what is new in it. A click:
 - after a failure, tries again;
 - for an install that cannot replace itself, opens the release page.
 
-Nothing is installed without that click (or *Restart to update* in the status bar, the toast,
-the settings or the tray menu, which do the same for a ready update). The status bar over the
-user panel shows each step ("Downloading 1.12.35-intercom.11 · 42 % · 78 MB / 186 MB · 12 MB/s",
-"Verifying checksum…", "Unpacking…", "… is ready" with *Restart*); a click on it lists the last
-steps with their times. An error stays, with *Retry* and *Details*. A dot on the settings button
-of the user panel says that an update is ready.
+Nothing is installed without that click (or *Update* on the card over the user panel, *Restart
+to update* in the settings or the tray menu, which do the same for a ready update). The **card
+over the user panel** is the one notice of an update besides the button: while something is on
+its way it shows the step ("Downloading 1.12.35-intercom.15 · 42 % · 78 MB / 186 MB · 12 MB/s",
+"Verifying checksum…", "Unpacking…") with a bar that fills, and at the end "Lattice … is ready"
+with a line of what is new, *Later* and *Update*. A click on its line lists the last steps with
+their times. *Later* puts the card away until another release is offered or Lattice starts
+again; the button in the rail stays. An error stays, with *Retry* and *Details*. A dot on the
+settings button of the user panel says that an update is ready. Up to 1.12.35-intercom.14 a
+toast at the top left said the same a second time; it is gone.
 
 **What's new.** The update button's card and Settings → Lattice show the notes of the release
 that is offered, and of every release between it and the one that runs, newest first. After an

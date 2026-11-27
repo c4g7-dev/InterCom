@@ -138,7 +138,10 @@ stand-in, as there is no media server behind it. More, with every change:
 
 - Updates itself from these releases, before the window opens or with one click on the update
   button in the rail; a new release shows up within minutes, with what is new in it
+- One quiet card over the user panel says that an update is ready, with *Later* and *Update*
 - A near-black theme in layers and a light one; own profile, installs next to Element
+
+<p><img src="docs/images/update-card.png" width="760" alt="The update card at four widths: ready with Later and Update, downloading with its bar, narrower, and the mark with Update alone"></p>
 
 </details>
 

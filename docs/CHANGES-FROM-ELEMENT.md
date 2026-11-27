@@ -161,9 +161,9 @@ Why it looks like this: [DESIGN.md](DESIGN.md).
 | --- | --- |
 | ![A download arrow with a red dot above the settings, and its card: Lattice 1.12.35-intercom.13, Ready to install, What's new](images/update-rail.png) | ![The dialog "What's new in Lattice 1.12.35-intercom.13" with the release notes and Got it](images/whats-new.png) |
 
-| Settings → Lattice | While an update downloads |
+| Settings → Lattice | The update card over the user panel |
 | --- | --- |
-| ![The Lattice settings tab: version, the four switches, Restart to update, Check now, and what is new in the update](images/settings-updates.png) | ![The status bar over the user panel: Downloading 1.12.35-intercom.11, 41 %](images/update-bar.png) |
+| ![The Lattice settings tab: version, the four switches, Restart to update, Check now, and what is new in the update](images/settings-updates.png) | ![The update card over the user panel at four widths: Lattice 1.12.35-intercom.15 is ready with a line of what is new, Later and Update; a download with its bar; the same narrower; the mark and Update alone](images/update-card.png) |
 
 | Change | Element | Lattice | Since |
 | --- | --- | --- | --- |
@@ -173,6 +173,8 @@ Why it looks like this: [DESIGN.md](DESIGN.md).
 | Updates | Element Desktop updates on Windows and macOS; on Linux not at all | **Updates itself** from this repository's GitHub releases, checked against `SHA256SUMS`: before the window opens, and while it runs, with a status bar and *Restart to update* (also in the tray). Linux swaps the install directory; Windows runs the installer silently. See [UPDATES.md](UPDATES.md) | .5 – .10 |
 | How soon an update arrives | Squirrel's schedule, hourly | **Within minutes**: every five minutes, and when the window is focused again, the computer wakes or the network returns, one conditional request asks whether the releases feed changed; the GitHub API is asked only when it did, and every six hours. A rate limit is waited out. *Check for updates every few minutes* turns it off | .13 |
 | Update button | A toast | In the **rail of spaces**, above the settings, while an update is available, downloading or ready: a download arrow with a red dot and a ring for the download. **One click** installs and restarts, at once or as soon as the download is verified | .13 |
+| Notice of an update | A toast | **One card over the user panel**, on the panel's surface: the mark, "Lattice … is ready" with a line of what is new, *Later* and *Update*, and the download's progress in the same card. No toast as well (.5 to .14 had both a toast and a bar). Narrow, it is the mark and the button | .15 |
+| Toasts and a call | A toast is drawn under a widget where they meet | Toasts are over calls and widgets; dialogs and menus are over both, whichever was opened first | .15 |
 | Release notes | A link in the toast | **What's new** in the update button's card and in Settings → Lattice (every release that was skipped, newest first), and once in a dialog after an update. Shown as text: no HTML, no pictures loaded, links open in the browser. *Show what's new after updates* turns the dialog off | .13 |
 | Hardware video on Linux | Chromium's defaults | VA-API decoding, and encoding where the driver has it (Intel, AMD; not NVIDIA). `--no-hw-video` leaves it to Chromium | .1 |
 | Diagnostics log | Logs for bug reports | A JSON-lines log per run in `<profile>/logs/` (200 MB at most), *Open diagnostics folder* in the Help menu and the tray, and `tools/diag-summary.py`, which turns logs into a verdict per feature. Nothing is uploaded | .1 |

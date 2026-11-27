@@ -41,6 +41,18 @@ numbers keep that name; the entries below say what the app was called when they 
   of an update at the start and while the app loads and signs in; a light goes round a ring of
   dots while a call is being joined; and three moving bars stand beside the name of whoever
   talks in a voice channel's list of people. With reduced motion they stand still.
+- **One notice of an update, where the call's panel is.** An update used to be told twice: by a
+  toast at the top left, half of which could lie under a call, and by a bar with a blue line and
+  a blue button over the user panel. Now there is one card over the user panel, drawn as the
+  panel is: the mark, "Lattice … is ready" with a line of what is new, **Later** and
+  **Update**; while it downloads, the same card shows the progress in a bar of its own. In a
+  narrow room list it leaves out the line of what is new, and at the width of the rail it is
+  the mark and the button. *Later* puts it away until the next release or the next start; the
+  update button in the rail, with its red dot, stays.
+- **Toasts are never under a call.** Other notices at the top left (an incoming call, a
+  verification request) were drawn under the call where the two met. They are over it now, and
+  dialogs and menus are over both, whichever was opened first.
+- **The Expand button on a large tile works again after clicking a tile.**
 - **Tray icon on Linux**: the mark alone, in white. Start with `INTERCOM_TRAY_ICON=colour` for
   the app's icon on a light panel.
 - **Release files under both names.** `Lattice-<version>-linux-x64.tar.gz` and
@@ -52,7 +64,8 @@ numbers keep that name; the entries below say what the app was called when they 
   accepts `github.com/c4g7-dev/Lattice`, so the repository can move once installs are this new.
   The forks with the code are `lattice-element-web`, `lattice-element-call` and so on already.
 
-Checked: the unit tests of the updater (both file names, both repository names), of the tray
+Checked: the unit tests of the updater (both file names, both repository names), of the update card (Later, the line
+of what is new, the progress), of the order in which toasts, calls and dialogs are drawn, of the tray
 (what Enter sends for pictures, files and both, removing, the size limit, progress, one tray
 per room and thread) and of the marks; the desktop, call and web test suites that the changes
 touch; `SHA256SUMS` on a fresh download of all four files; the version, the name and the

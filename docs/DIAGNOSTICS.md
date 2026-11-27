@@ -18,6 +18,21 @@ quality limitations, packet loss and round-trip time, together with a few checks
 The overlay can also save the frame currently shown as a PNG ("Snapshot") and show a sharpness
 test pattern.
 
+## Connection details
+
+The signal bars in the call strip at the bottom left show how good the connection is: three green
+bars for good (round trip under 120 ms and under 2 % of packets lost), two amber ones for fair
+(under 250 ms and under 6 %), one red one for poor, or while the call reconnects. Both figures are
+taken over the last six seconds, so that one bad reading does not flip the bars. A click on the
+bars or on "Voice connected" opens the details: ping now, its average and a graph of the last
+minute, packet loss in both directions, jitter, the media server's name, the transport (UDP, TCP or
+a TURN relay), whether the call is end-to-end encrypted, the microphone's codec and bitrate and,
+while you share, the share's size, frame rate and bitrate. "Open diagnostics" shows the overlay.
+
+The figures come from the readings the call takes for the log anyway. While the details are
+closed, the call tells the app only the quality with rounded figures, when they change and at most
+every four seconds; while they are open, readings are taken every second instead of every two.
+
 ## Logs
 
 Every run of the desktop app writes one file:
@@ -51,6 +66,18 @@ Every run of the desktop app writes one file:
   a tile). It also says which timeline drew it (`panel`: `legacy`, or `new` for the labs
   "New timeline") and, where pictures are never grouped (search results, notifications, …), why
   (`groupingOff`). No text, file name, URL, user or event ID is written; senders are numbered
+- `call_overlay` records (app) when the call asks for the whole window for one of its dialogs
+  or gives it back (`op`: `open`, `close`; `open`: whether it has it), and `host_overlay`
+  records (call) when the call view is pinned to its place in that window or let go (`pinned`,
+  `phase`)
+- a `quick_share` record for every press of the share button, wherever it was pressed (`do`:
+  `start`, `stop` or `dialog`; `source`: `button`, `action` for the user panel, the keyboard
+  and the command line), and `quick_share_missing` with the number of saved audio sources a
+  share was started without. The sources' names are not written
+- a `conn_quality` record when the quality of the connection changes, and once when it is first
+  known: `level` (`good`, `fair`, `poor`), `from` (the level before, if there was one), and the
+  figures it was judged by, `rttMs` and `lossPct` (the worse of the two directions), both taken
+  over the last six seconds. No server name and no address
 - `voice_state` records when mute or deafen changed, with where the change came from (`panel`,
   `hotkey`, `cli`, `call`, `tray`)
 - an `update_check` record for every look for an update: what asked for it (`reason`: `launch`,

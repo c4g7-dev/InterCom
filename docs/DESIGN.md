@@ -44,14 +44,43 @@ Discord:
   call, the call's own controls and a way back to it.
 - **The call above the chat**, so a shared screen and the conversation about it are on screen
   together.
+- **Dialogs of the call over the whole window.** The call has a part of the window; what it
+  asks (what to share, its settings) is laid over all of it, the app dimmed behind, drawn as
+  the app's own dialogs are.
+- **Buttons in two parts** where an action has settings: the button does it at once (mute,
+  camera, share with the settings of the last time), the chevron beside it opens the choices.
 
 ## Sound
 
 The sounds are InterCom's own: short chimes for joining and leaving and cues for mute and
 deafen, made from sine waves by a script in each fork (`apps/desktop/intercom/gen-sounds.py` in
 the web fork, `scripts/intercom-sounds.py` in the call fork). None is taken from another product.
-The mute and deafen cues are low and soft, so that they are heard but do not intrude. Your own files can replace them; see the
-[changes list](CHANGES-FROM-ELEMENT.md#audio).
+The mute and deafen cues are low and soft, so that they are heard but do not intrude.
+
+Joining is two soft notes a major third apart going up (C, E), leaving the same two coming down
+and quieter (about -18 dBFS against -15). Each is a third of a second: the second note begins in
+the tail of the first, the attacks are rounded (some 12 ms), a note is a sine with very little of
+its octave, and nothing is left above 4 kHz. They are of one family with the ringtone below.
+
+Every coming and going is heard once. Your own join and leave are played by the app, also while
+you are deafened; those of the others by the call. The end of a call is one sound whichever side
+hung up: the call is quiet from the moment you leave, and where it has just played somebody
+else's leave (or the sound of a call that was declined or not answered) the app keeps yours back
+for two seconds. A change in who is in the call has to stand for 0.6 seconds before it is a
+sound, so a membership that flaps makes none; nor do your own other devices, a second device of
+somebody who is already there, or what your own reconnect does to the list. Several people
+arriving within 1.5 seconds are one chime.
+
+A call that is not answered yet has two more, made by the same scripts. The ringtone of a call
+coming in is four soft notes going up (G, B, D, G) and a rest, 2.4 seconds a round. The ringback
+you hear while your own call rings the other side is two slower notes (A, C sharp) and a longer
+rest, 3 seconds a round, and quieter. Both are warm rather than bright: a sine with a little of
+the octave below and above, rounded attacks, nothing above 4 kHz, and silence at both ends of
+the file so that the loop has no click. They replace Element's ring and ringback, and whatever
+silenced those silences these.
+
+Your own files can replace any of them; see the [changes list](CHANGES-FROM-ELEMENT.md#audio).
+The Android app takes its copies from `element-web/apps/web/res/media/intercom/`.
 
 ## Tokens
 

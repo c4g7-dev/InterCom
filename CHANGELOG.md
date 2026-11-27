@@ -3,6 +3,137 @@
 Versions are `<Element Web version>-intercom.<n>`: the upstream release InterCom is based on,
 followed by the InterCom revision.
 
+## 1.12.35-intercom.14
+
+| The share dialog over the whole window | The connection card of the call strip |
+| --- | --- |
+| ![The dialog "Share your screen" in two columns over the dimmed app: presets as cards, resolution and frame rate, and the audio sources in groups with a search](https://raw.githubusercontent.com/c4g7-dev/InterCom/v1.12.35-intercom.14/docs/images/share-dialog.png) | ![A card over the user panel: Voice connection, Good, ping 30 ms with a graph, packet loss, jitter, server, transport, encryption, microphone, screen share, Open diagnostics](https://raw.githubusercontent.com/c4g7-dev/InterCom/v1.12.35-intercom.14/docs/images/connection-card.png) |
+
+| Calls in the timeline | The share button, in two parts |
+| --- | --- |
+| ![Four call tiles: a running call with faces, a clock and Join; a ringing one with Decline and Accept; Call ended · 6 s; Missed call with Call back](https://raw.githubusercontent.com/c4g7-dev/InterCom/v1.12.35-intercom.14/docs/images/call-tiles.png) | ![The call's controls: microphone, camera, the share button with the chevron of its settings beside it, leave](https://raw.githubusercontent.com/c4g7-dev/InterCom/v1.12.35-intercom.14/docs/images/share-button.png) |
+
+<sub>Taken against a made-up homeserver: the people and messages do not exist.</sub>
+
+- **The call's dialogs use the whole window.** The call is a frame in a part of the window, and
+  its dialogs were as small as that part: with the call above the chat, "Share your screen" was
+  a strip with a scrolling list inside a scrolling dialog. Now a dialog of the call (the share
+  dialog, the audio sources of a running share, the call's settings, the reactions and the
+  report dialog, and the menus of the microphone and the camera) is laid over the whole InterCom window, with the app dimmed behind it. The call
+  itself stays where it is and goes on: nothing is loaded again, and the video keeps its size.
+  Escape closes the dialog wherever the focus is, the keyboard stays inside it while it is open,
+  and the dialog follows the window when it is resized. A call in a window of its own (the
+  pop-out), in a browser tab or in another Matrix client shows its dialogs inside itself as
+  before.
+- **A new "Share your screen" dialog**, up to 880 × 680 and in two columns where there is room.
+  On the left, what to optimise for as three cards (*Text / sharp*, *Motion / smooth*, *Low
+  bandwidth*), the resolution, the frame rate (the preset's, or 15, 30, 60, 120), and *Advanced*
+  (codec, bitrate, any frame rate) folded away. On the right, *Share audio*: *No audio*, *System
+  audio* or *Chosen sources*. The sources are in groups (*Apps and outputs* with the
+  applications playing into each output, *Share inputs*, *Input devices*, and what was chosen
+  once and is not there now), with a search that also finds an output by an application
+  playing into it, *All* and *None*, and a volume and a mute for every chosen source. Only the
+  dialog scrolls, never a list inside it. A line at the bottom says what the share will be
+  ("Text / sharp · Auto (max 1440p) · 30 fps · 2 audio sources") next to **Share screen**. In a
+  narrow window the columns become one.
+- **The share button shares at once.** It has two parts now, like the microphone and the
+  camera: the button starts a share with the settings of the last one and goes straight to the
+  system's screen picker; the chevron beside it opens the dialog. The first time on a device
+  there is nothing to go by yet, so the button opens the dialog. While sharing, the button stops
+  the share and the chevron opens the audio sources of the share (the separate loudspeaker
+  button is gone). The same two parts are in the user panel's *Voice connected* strip.
+- **What is remembered**, in the app's profile on the device, over restarts: preset,
+  resolution, frame rate, codec and bitrate, where the audio comes from, and the chosen sources
+  with their volumes. Before anything was chosen the audio is the system's on Windows and macOS
+  and none on Linux, where the screen picker has no sound to give and the outputs are chosen in
+  the dialog.
+- **A chosen source that is gone does not stop a share.** If an output or input of the last
+  share is not there any more (a headset unplugged, a virtual output not created yet), the share
+  starts without it and a notice says "Sharing without …: not available right now". The source
+  stays chosen and is used again when it is back.
+- **Ctrl+Shift+S** starts or stops the share, in the call and in the app's window during a
+  call, and so does `intercom --toggle-screenshare` from the command line, next to
+  `--toggle-mute` and the others, for a key binding of the desktop.
+- **A ringtone and a ringback of InterCom's own.** A call coming in rings with four soft notes
+  going up and a rest; while your own call rings the other side you hear two slower, quieter
+  notes. Both are worked out from sine waves by the same script as the other sounds
+  (`apps/desktop/intercom/gen-sounds.py`), with nothing sampled from anywhere, and they replace
+  Element's ring and ringback. What silenced the ring before still silences it: the
+  notification settings and the silence button of the call. Your own `ringtone` and `ringback`
+  files (`.ogg`, `.mp3`, `.wav`, 2 MB at most) in `~/.config/InterCom/sounds/` (Windows
+  `%APPDATA%\InterCom\sounds\`) replace them after a restart. The files are in
+  `element-web/apps/web/res/media/intercom/`; the Android app will use the same ones.
+- **Alone in a private call, you are not thrown out at once.** When the other person left a
+  one-to-one call, the call ended on the spot. Now you stay for 5 minutes, with a countdown in
+  the call ("You're alone in this call · disconnecting in 4:59") and in the user panel, and can
+  press *Stay* to start it over or *Leave now*. If somebody comes back the countdown goes away;
+  if nobody does you are disconnected and told why. The time can be set to 3, 5 or 10 minutes or
+  never in Settings → InterCom → Calls. This is for the calls of private rooms (a conversation
+  with one person, an invite-only room). Voice channels and the calls of public rooms are not
+  affected: you can sit in one alone for as long as you like. Being alone before anybody
+  answered does not count. Checked with unit tests; not in a real call.
+- **Calls in the timeline are one tile each, in InterCom's look.** A call shows as a filled tile
+  with a coloured phone: green and gently pulsing while it runs, with who is in it (up to four
+  faces and "+N"), a running clock and a Join button ("In call" and Leave when you are in it);
+  shaking while it rings; grey with "Call ended · 4 min" afterwards; red for a missed or
+  declined call, with *Call back* on a missed one. A call that used to appear twice ("Voice
+  call" and right under it "Call started") is now a single tile: two tiles of one caller in one
+  room within 30 seconds are taken for the same call. The same in the labs "New timeline", in
+  both themes, and still with reduced motion.
+- **The signal bars say how good the connection is, and open its details.** The bars in the call
+  strip at the bottom left were all lit while connected and that was all. Now they show three
+  green bars for a good connection (ping under 120 ms and under 2 % of packets lost), two amber
+  ones for a fair one (under 250 ms and 6 %) and one red one for a poor one or while the call
+  reconnects. A click on the bars or on "Voice connected" opens a small card, as in Discord:
+  ping now, its average and a graph of the last minute, packet loss sent and received, jitter,
+  the media server's name, whether the media goes over UDP, TCP or a TURN relay, whether the call
+  is end-to-end encrypted, the microphone's codec and bitrate and, while you share, the share's
+  size, frame rate and bitrate. "Open diagnostics" shows the overlay of Ctrl+Alt+D. Escape, a
+  click elsewhere or another click on the bars closes the card; the room's name under it is still
+  the way back to the call. The figures are the ones the call reads for its log anyway: closed,
+  the call tells the app only the quality, when it changes; open, once a second. No address and
+  no identifier leaves the call for it. Checked with unit tests on both sides and in Storybook;
+  not yet against a real call, so the transport and server rows are the least certain.
+- **Leaving a call plays one sound.** In a private call the leave chime used to play twice,
+  once for you and once for the other person; now the end of a call is a single chime whichever
+  side hangs up. Your own other devices, someone joining from a second device and a connection
+  that drops and comes straight back no longer chime at all. A chime for somebody else now
+  comes 0.6 s after the change, so that a membership that flickers is silent.
+- **New join and leave sounds**: two soft notes going up when someone joins and the same two
+  coming down, a little quieter, when someone leaves. They are shorter and rounder than before
+  and match the ringtone. The Android app uses the same files.
+- **A microphone or camera that is not there says so, the same everywhere.** The call's controls
+  greyed out a microphone and a camera that the machine does not have, while the user panel still
+  offered a working "Camera" button and a normal microphone. Now there are four states, and the
+  call's buttons, the lobby, the device menus and the user panel show the same one: on, muted
+  (the struck-through icon), *no device* and *access blocked* (the device's own icon with a small
+  red no-entry badge). The button of a device that is not there can be focused and says why ("No
+  microphone found", "Camera access blocked — check system settings") and does nothing. The call
+  knows and tells the app; without a call the app looks for a microphone itself. A device that is
+  plugged in or allowed shows at once. Your mute is not touched by it: joining a call without a
+  microphone no longer leaves you muted. "Share screen" in the user panel is likewise off, with
+  the reason, where no screen can be captured, and the speaker can be picked in the call's
+  microphone menu without a microphone.
+- **The call strip of the user panel fits a narrow room list.** With the room list narrow the
+  words of its buttons were cut off ("Share scree"). Now the buttons are their icons there, as
+  high as before and as wide as each other, with their names in the tooltip, and the words come
+  back when there is room for them. "Voice connected" and the room under it end in an ellipsis
+  instead of pushing the leave button out, and the name beside the microphone and deafen
+  buttons gives way before the buttons do. Measured from 184 to 384 px of panel width.
+- The call's dialogs are drawn as the app's: one surface with a hairline and a 16 px radius
+  instead of the translucent frame, and a neutral backdrop.
+- How the overlay works: the call asks the app (`io.intercom.overlay`), the app gives the
+  call's frame the size of the window and says where the call was; the call draws itself at
+  that place and leaves the rest of its frame see-through. Diagnostics: `call_overlay` (app),
+  `host_overlay`, `quick_share`, `quick_share_missing` (call).
+- Checked with unit tests in both forks (the overlay's state on both sides, the share button's
+  decisions, the dialog's grouping, search and selection, the device states, the leave-sound
+  rules, the alone countdown, the call tiles), in Storybook, and on screenshots of the web app
+  in a headless browser against a made-up homeserver, with a stand-in for the call where a
+  media server would be needed. The desktop app itself was not started, and nothing was tried
+  in a real call: the system's screen picker after Ctrl+Shift+S or `--toggle-screenshare`
+  while the window is in the background, and the sounds by ear, are the least certain.
+
 ## Android 26.11.1-intercom.14
 
 | InterCom's look | Update available | What's new |

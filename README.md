@@ -27,7 +27,8 @@
 | ![The Share your screen dialog with presets and audio sources](docs/images/share-dialog.png) | ![Five pictures shown as one gallery](docs/images/gallery.png) |
 
 <sub>Screenshots of the real interface against a made-up homeserver: the people, rooms, pictures
-and screens in them do not exist. More, with every change: [docs/CHANGES-FROM-ELEMENT.md](docs/CHANGES-FROM-ELEMENT.md).</sub>
+and screens in them do not exist, and the call's tiles in the pictures of the whole app are a
+stand-in, as there is no media server behind it. More, with every change: [docs/CHANGES-FROM-ELEMENT.md](docs/CHANGES-FROM-ELEMENT.md).</sub>
 
 InterCom is a modified build of [Element Web / Desktop](https://github.com/element-hq/element-web),
 [Element Call](https://github.com/element-hq/element-call) and
@@ -40,21 +41,29 @@ project, not affiliated with or endorsed by Element.
 **Calls & screen share**
 - Screen share at the screen's own resolution, with presets for text, motion and low bandwidth,
   about 10 Mbit/s at 1080p and 15 Mbit/s at 1440p, codec, bitrate and frame rate to choose
-- The microphone stays on when you join; mute, deafen and camera on Ctrl+Shift+M / D / V and
-  from the command line
-- A diagnostics overlay (Ctrl+Alt+D) and a log per run that a script turns into a verdict
+- One click on the share button shares with the settings of the last time; its chevron opens
+  the dialog, which like every dialog of the call uses the whole window
+- The microphone stays on when you join; mute, deafen, camera and screen share on
+  Ctrl+Shift+M / D / V / S and from the command line
+- Signal bars that show the connection's quality and open its details (ping, loss, server,
+  transport); a diagnostics overlay (Ctrl+Alt+D) and a log per run that a script turns into a
+  verdict
+- A private call does not end the moment the other person leaves: five minutes to stay, with a
+  countdown
 
 **Audio**
 - Screen share audio in stereo, without voice processing
 - Linux: share any PipeWire / PulseAudio output and mix several sources live; Windows: the
   system's sound
 - Volume per person and per share from 0 to 200 %, with a limiter above 100 %, remembered
-- Mute and deafen for the whole app, with or without a call; InterCom's own sounds, or yours
+- Mute and deafen for the whole app, with or without a call; InterCom's own sounds, ringtone
+  included, or yours
 
 **Channels & layout**
 - Spaces as places: text channels, voice channels with the people in them (who speaks, who is
   muted, who is live), a user panel at the bottom left
 - One click drops you into a voice channel, without a lobby and without ringing anybody
+- Calls in the timeline as one tile each: who is in it, how long, Join, missed or declined
 - The call above the chat, an equal grid, one click to focus a tile, fullscreen and pop-out for
   every video tile
 
@@ -80,7 +89,7 @@ project, not affiliated with or endorsed by Element.
 
 | | Element | InterCom |
 | --- | --- | --- |
-| Screen share | 1080p at most, 5 Mbit/s, simulcast with a half-size layer | Native resolution (up to 1440p by default), presets, about 10–15 Mbit/s, egress budget |
+| Screen share | 1080p at most, 5 Mbit/s, simulcast with a half-size layer | Native resolution (up to 1440p by default), presets, about 10–15 Mbit/s, egress budget; one click shares with the last settings, the dialog uses the whole window |
 | Share audio (desktop) | None | Linux: PipeWire / PulseAudio outputs, mixed live; Windows: system sound |
 | Volume | 0–100 % in a menu, forgotten | 0–200 % on the tile, +12 dB through a limiter, remembered |
 | Layouts and windows | Grid and spotlight | Equal grid, click to focus, fullscreen and pop-out per tile, the call above the chat |
@@ -124,7 +133,7 @@ list `#101013`, the timeline `#151518`, with hairlines `#202025` between them in
 One accent, `#6875f5`, marks what is selected or unread; green marks who speaks. Surfaces are
 rounded, 8 px for rows and menus, 12 px for tiles, cards and the composer. The arrangement is the
 one people know from Discord: a rail of spaces, text and voice channels, grouped messages, the
-voice panel at the bottom left. The sounds are InterCom's own, made from sine waves. More, with
+voice panel at the bottom left. The sounds are InterCom's own, made from sine waves, the ringtone and the ringback too. More, with
 the full set of tokens: [docs/DESIGN.md](docs/DESIGN.md).
 
 ## Quick start
@@ -139,9 +148,10 @@ Sign in with any Matrix account; choose *Edit* on the sign-in screen for your ow
 Settings and sessions are kept in `~/.config/InterCom` (`%APPDATA%\InterCom` on Windows).
 
 - In a call: **Ctrl+Shift+M** mutes, **Ctrl+Shift+D** deafens, **Ctrl+Shift+V** toggles the
-  camera, **Ctrl+Alt+D** shows the diagnostics.
-- `intercom --toggle-mute` (also `--toggle-deafen`, `--toggle-camera`, `--leave-call`) does the
-  same from outside, for example from a Wayland compositor's key binding.
+  camera, **Ctrl+Shift+S** starts or stops the screen share, **Ctrl+Alt+D** shows the
+  diagnostics.
+- `intercom --toggle-mute` (also `--toggle-deafen`, `--toggle-camera`, `--toggle-screenshare`,
+  `--leave-call`) does the same from outside, for example from a Wayland compositor's key binding.
 - `--no-hw-video` turns off hardware video, `--enable-quic` turns HTTP/3 back on, `--profile
   <name>` uses a separate profile, `--help` lists the rest.
 

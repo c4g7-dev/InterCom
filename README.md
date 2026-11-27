@@ -196,6 +196,24 @@ Bugs in InterCom's changes belong in this repository's
 - [Releasing](docs/RELEASING.md): what belongs to a release besides the build
 - [Changelog](CHANGELOG.md)
 
+## Where the code is
+
+This repository holds the documentation, the release tooling and links (git submodules) to the
+forks that contain the app's code — GitHub's language bar above counts only this repository's
+own small helper scripts (Shell, Python), which never run inside the app. Each link points to a
+fork on its `intercom` branch:
+
+| Fork | What | Language |
+| --- | --- | --- |
+| [intercom-element-web](https://github.com/c4g7-dev/intercom-element-web) | Desktop app, chat, channels, theme, updater | TypeScript / React |
+| [intercom-element-call](https://github.com/c4g7-dev/intercom-element-call) | Calls, screen share, share audio, layouts | TypeScript / React |
+| [intercom-element-x-android](https://github.com/c4g7-dev/intercom-element-x-android) | Android app | Kotlin |
+| [intercom-element-call-android](https://github.com/c4g7-dev/intercom-element-call-android) | Android calls, phone screen share | Kotlin |
+| [intercom-matrix-rust-rtc](https://github.com/c4g7-dev/intercom-matrix-rust-rtc) | Android call core (MatrixRTC, LiveKit) | Rust |
+
+Media itself runs in native code: WebRTC inside Chromium on the desktop, the Rust core on
+Android. Clone with `--recurse-submodules` to get everything.
+
 ## License and trademarks
 
 InterCom is free software under the [GNU Affero General Public License v3.0](LICENSE).

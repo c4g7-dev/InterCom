@@ -292,7 +292,9 @@ git add "${FORKS[@]}"
 git diff --cached --quiet -- "${FORKS[@]}" || git commit -m "Android $VERSION: submodule pointers" -- "${FORKS[@]}"
 # The release notes are this version's section, which must be committed as it is here; the
 # desktop's sections of the same file may be in the middle of their own work.
-committed_notes="$(git show HEAD:CHANGELOG.md | awk -v h="## Android $VERSION" '$0 == h { on = 1; next } on && /^## / { exit } on { print }' | sed -e '/./,$!d')"
+# awk reads to the end: leaving at the next heading would end `git show` with a broken pipe, which pipefail takes
+# for a failure whenever the file is longer than the pipe holds.
+committed_notes="$(git show HEAD:CHANGELOG.md | awk -v h="## Android $VERSION" '$0 == h && !seen { on = 1; seen = 1; next } on && /^## / { on = 0 } on { print }' | sed -e '/./,$!d')"
 [[ "$committed_notes" == "$(notes)" ]] || die "the section '## Android $VERSION' of CHANGELOG.md is not committed as it is; the release notes come from it"
 # The desktop's releases are pushed to the same branch.
 git pull --rebase --autostash origin main

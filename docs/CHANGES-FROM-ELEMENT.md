@@ -97,6 +97,10 @@ sources in the share dialog above.
 <p><img src="images/batch-upload.png" width="460" alt="The Upload 3 images dialog with the gallery preview and a caption field"><br>
 <sub>Several pictures, one dialog</sub></p>
 
+| Far back: the bar on the composer | Unread above: the bar along the top |
+| --- | --- |
+| ![You're viewing older messages, with Jump to present, on the composer](images/jump-far.png) | ![24 new messages since 15:05, with Mark as read, along the top of the timeline](images/jump-unread.png) |
+
 | Change | Element | InterCom | Since |
 | --- | --- | --- | --- |
 | Pictures sent together | One tile per picture | **One gallery** of cropped previews, "+N" after nine. A click opens the lightbox with previous and next (also the arrow keys) and "2 of 5". In the classic timeline and in the labs *New timeline*. Every picture stays an ordinary image message for other clients | .4, .9 |
@@ -105,6 +109,9 @@ sources in the share dialog above.
 | Sending a picture | The thumbnail is made and uploaded first, then the picture | The picture's upload starts at once and the thumbnail is made beside it; the blurhash comes from a 64 px copy; decoding is off the main thread | .4 |
 | A failed upload | Fails | Tried once more after 1.5 s (no answer, 5xx, 408, 429); on servers with Matrix Authentication Service an upload renews an expiring sign-in token itself | .5, .6 |
 | HTTP/3 | On | Off by default, because uploads stalled over it behind some proxies; `--enable-quic` turns it on | .5 |
+| Back to the newest messages | A round button with a chevron and an unread badge | As in Discord: far back (more than one and a half screens, or the newest messages not loaded) a bar on the composer, *You're viewing older messages* or *N new messages*, with **Jump to present**; a little way up a small arrow with the count; nothing at the newest message. In the classic timeline and in the labs *New timeline* | .12 |
+| Unread messages above | A round button with a dot, a small ✕ under it to mark them read | A bar along the top: *12 new messages since 14:32*, which leads to the first, and **Mark as read** | .12 |
+| Escape and Shift+Page Up in the labs *New timeline* | Do nothing | Mark everything read and jump to the newest message; jump to the first unread one | .12 |
 | Labs *New timeline* after a sync with a gap | Stays on the old timeline: a sent message vanishes, nothing new is shown | Follows the new live timeline | .11 |
 | Account settings | Sections flash up and vanish on servers with Matrix Authentication Service | Drawn once the server has answered | .6 |
 

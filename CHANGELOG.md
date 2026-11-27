@@ -3,6 +3,44 @@
 Versions are `<Element Web version>-intercom.<n>`: the upstream release InterCom is based on,
 followed by the InterCom revision.
 
+## 1.12.35-intercom.12
+
+| Far back: the bar on the composer | Unread above: the bar along the top |
+| --- | --- |
+| ![You're viewing older messages, with Jump to present, on the composer](https://raw.githubusercontent.com/c4g7-dev/InterCom/v1.12.35-intercom.12/docs/images/jump-far.png) | ![24 new messages since 15:05, with Mark as read, along the top of the timeline](https://raw.githubusercontent.com/c4g7-dev/InterCom/v1.12.35-intercom.12/docs/images/jump-unread.png) |
+
+<sub>Taken against a made-up homeserver: the people and messages do not exist.</sub>
+
+- **The way back to the newest messages is Discord's.** Element's round button with a chevron,
+  its unread badge and the small ✕ under the button at the top are gone, in the classic timeline
+  and in the labs "New timeline" alike. Far back (more than one and a half screens above the
+  newest message, or when the newest messages are not loaded at all) a slim bar sits on the
+  composer: "You're viewing older messages", or "N new messages" when unread ones are below the
+  view, and **Jump to present**. A little way up there is only a small arrow at the edge, with
+  the count beside it when something unread is below. At the newest message there is nothing.
+- **Unread messages above are a bar along the top**: "12 new messages since 14:32", which leads
+  to the first of them, and **Mark as read**. Nothing is shown when nothing after the read marker
+  counts as unread (only your own messages, say).
+- **Escape works in the new timeline**: it marks everything read and jumps to the newest message,
+  and Shift+Page Up jumps to the first unread one, as in the classic timeline. Both did nothing
+  with the labs option on.
+- The bars are read out by screen readers when they appear and when their count changes, have
+  focus rings, and do not move with reduced motion.
+- **The avatar in the user panel loads.** It showed a broken picture while Settings → Account
+  showed it. Cause: the panel, and the list of people under a voice channel, drew Compound's bare
+  avatar from a URL made once. When that one request was refused (on a server with authenticated
+  media, by an access token that is renewed only after InterCom starts, or before the network is
+  up) the picture stayed broken for good, as nothing showed the initial instead or asked again.
+  Element's own avatars show the initial and load the picture again when the client reconnects,
+  which is why the rest came back and the account settings, opened later, had it. Both now draw
+  their avatars as Element does (`BaseAvatar`, the same media path), and a refused picture is in
+  addition asked for again after 3, 10 and 30 seconds and then every two minutes. Reproduced
+  against a made-up homeserver that requires authenticated media and refuses media for the first
+  seconds: 1.12.35-intercom.11 kept the broken picture after the reconnect, .12 shows the initial
+  and then the picture, with or without a reconnect.
+- Checked on screenshots of the web app against a made-up homeserver with a long history, in both
+  timelines; not tried in the desktop app itself.
+
 ## 1.12.35-intercom.11
 
 - **A message you send stays in the timeline.** With the labs option "New timeline" on, a

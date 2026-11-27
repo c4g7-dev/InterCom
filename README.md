@@ -61,6 +61,8 @@ project, not affiliated with or endorsed by Element.
 **Messages**
 - Pictures sent together are one gallery with a lightbox, sent from one dialog with a caption
 - Pictures start uploading at once; a failed upload is tried once more
+- Discord's way back: *You're viewing older messages* and **Jump to present** above the composer,
+  *12 new messages since 14:32* and **Mark as read** along the top
 
 **App & updates**
 - Updates itself from these releases, before the window opens or with one click

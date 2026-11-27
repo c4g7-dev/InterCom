@@ -97,9 +97,9 @@ sources in the share dialog above.
 <p><img src="images/batch-upload.png" width="460" alt="The Upload 3 images dialog with the gallery preview and a caption field"><br>
 <sub>Several pictures, one dialog</sub></p>
 
-| Far back: the bar on the composer | Unread above: the bar along the top |
+| Far back: the bar above the composer | Unread above: the bar along the top |
 | --- | --- |
-| ![You're viewing older messages, with Jump to present, on the composer](images/jump-far.png) | ![24 new messages since 15:05, with Mark as read, along the top of the timeline](images/jump-unread.png) |
+| ![You're viewing older messages, with Jump to present, a dark bar above the composer](images/jump-far.png) | ![12 new messages since 16:13, with Mark as read, a dark bar along the top of the timeline](images/jump-unread.png) |
 
 | Change | Element | InterCom | Since |
 | --- | --- | --- | --- |
@@ -109,8 +109,8 @@ sources in the share dialog above.
 | Sending a picture | The thumbnail is made and uploaded first, then the picture | The picture's upload starts at once and the thumbnail is made beside it; the blurhash comes from a 64 px copy; decoding is off the main thread | .4 |
 | A failed upload | Fails | Tried once more after 1.5 s (no answer, 5xx, 408, 429); on servers with Matrix Authentication Service an upload renews an expiring sign-in token itself | .5, .6 |
 | HTTP/3 | On | Off by default, because uploads stalled over it behind some proxies; `--enable-quic` turns it on | .5 |
-| Back to the newest messages | A round button with a chevron and an unread badge | As in Discord: far back (more than one and a half screens, or the newest messages not loaded) a bar on the composer, *You're viewing older messages* or *N new messages*, with **Jump to present**; a little way up a small arrow with the count; nothing at the newest message. In the classic timeline and in the labs *New timeline* | .12 |
-| Unread messages above | A round button with a dot, a small ✕ under it to mark them read | A bar along the top: *12 new messages since 14:32*, which leads to the first, and **Mark as read** | .12 |
+| Back to the newest messages | A round button with a chevron and an unread badge | As in Discord: far back (more than one and a half screens, or the newest messages not loaded) a bar above the composer, *You're viewing older messages* or *N new messages*, with **Jump to present**; a little way up a small arrow with the count; nothing at the newest message. The bar is the room list's dark surface with a hairline, the button a raised one with the accent in its words; in a narrow column the text gives way and the button stays. In the classic timeline and in the labs *New timeline* | .12, .13 |
+| Unread messages above | A round button with a dot, a small ✕ under it to mark them read | A dark bar along the top: *12 new messages since 14:32*, which leads to the first, and **Mark as read** in the accent | .12, .13 |
 | Escape and Shift+Page Up in the labs *New timeline* | Do nothing | Mark everything read and jump to the newest message; jump to the first unread one | .12 |
 | Labs *New timeline* after a sync with a gap | Stays on the old timeline: a sent message vanishes, nothing new is shown | Follows the new live timeline | .11 |
 | Account settings | Sections flash up and vanish on servers with Matrix Authentication Service | Drawn once the server has answered | .6 |
@@ -136,14 +136,21 @@ Why it looks like this: [DESIGN.md](DESIGN.md).
 
 ## App, updates & diagnostics
 
+| The update button in the rail, with what is new | After an update: what's new |
+| --- | --- |
+| ![A download arrow with a red dot above the settings, and its card: InterCom 1.12.35-intercom.13, Ready to install, What's new](images/update-rail.png) | ![The dialog "What's new in InterCom 1.12.35-intercom.13" with the release notes and Got it](images/whats-new.png) |
+
 | Settings → InterCom | While an update downloads |
 | --- | --- |
-| ![The InterCom settings tab: version, the two update switches, Restart to update, Check now](images/settings-updates.png) | ![The status bar over the user panel: Downloading 1.12.35-intercom.11, 41 %](images/update-bar.png) |
+| ![The InterCom settings tab: version, the four switches, Restart to update, Check now, and what is new in the update](images/settings-updates.png) | ![The status bar over the user panel: Downloading 1.12.35-intercom.11, 41 %](images/update-bar.png) |
 
 | Change | Element | InterCom | Since |
 | --- | --- | --- | --- |
 | Name and profile | Element's (`~/.config/Element`) | Own name, icon, profile directory (`~/.config/InterCom`, `%APPDATA%\InterCom`) and URL scheme: installs next to Element without sharing data with it | .1 |
-| Updates | Element Desktop updates on Windows and macOS; on Linux not at all | **Updates itself** from this repository's GitHub releases, checked against `SHA256SUMS`: before the window opens, and every six hours while it runs, with a status bar and *Restart to update* (also in the tray). Linux swaps the install directory; Windows runs the installer silently. See [UPDATES.md](UPDATES.md) | .5 – .10 |
+| Updates | Element Desktop updates on Windows and macOS; on Linux not at all | **Updates itself** from this repository's GitHub releases, checked against `SHA256SUMS`: before the window opens, and while it runs, with a status bar and *Restart to update* (also in the tray). Linux swaps the install directory; Windows runs the installer silently. See [UPDATES.md](UPDATES.md) | .5 – .10 |
+| How soon an update arrives | Squirrel's schedule, hourly | **Within minutes**: every five minutes, and when the window is focused again, the computer wakes or the network returns, one conditional request asks whether the releases feed changed; the GitHub API is asked only when it did, and every six hours. A rate limit is waited out. *Check for updates every few minutes* turns it off | .13 |
+| Update button | A toast | In the **rail of spaces**, above the settings, while an update is available, downloading or ready: a download arrow with a red dot and a ring for the download. **One click** installs and restarts, at once or as soon as the download is verified | .13 |
+| Release notes | A link in the toast | **What's new** in the update button's card and in Settings → InterCom (every release that was skipped, newest first), and once in a dialog after an update. Shown as text: no HTML, no pictures loaded, links open in the browser. *Show what's new after updates* turns the dialog off | .13 |
 | Hardware video on Linux | Chromium's defaults | VA-API decoding, and encoding where the driver has it (Intel, AMD; not NVIDIA). `--no-hw-video` leaves it to Chromium | .1 |
 | Diagnostics log | Logs for bug reports | A JSON-lines log per run in `<profile>/logs/` (200 MB at most), *Open diagnostics folder* in the Help menu and the tray, and `tools/diag-summary.py`, which turns logs into a verdict per feature. Nothing is uploaded | .1 |
 | Command line | `--profile`, `--hidden`, `--no-update` | Also the call shortcuts above, `--no-hw-video`, `--hw-video-zero-copy`, `--enable-quic`, `--no-global-shortcuts`, `--global-shortcuts-portal`; `--no-update` stops InterCom's updater too | .1 – .6 |

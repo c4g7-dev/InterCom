@@ -3,6 +3,65 @@
 Versions are `<Element Web version>-intercom.<n>`: the upstream release InterCom is based on,
 followed by the InterCom revision.
 
+## 1.12.35-intercom.13
+
+| The update button in the rail, with what is new | After the update |
+| --- | --- |
+| ![A download arrow with a red dot above the settings; beside it a card: InterCom 1.12.35-intercom.13, Ready to install, What's new, Click to restart and update](https://raw.githubusercontent.com/c4g7-dev/InterCom/v1.12.35-intercom.13/docs/images/update-rail.png) | ![The dialog "What's new in InterCom 1.12.35-intercom.13" with the release notes, All release notes and Got it](https://raw.githubusercontent.com/c4g7-dev/InterCom/v1.12.35-intercom.13/docs/images/whats-new.png) |
+
+<sub>Taken against a made-up homeserver: the people and messages do not exist.</sub>
+
+- **A release reaches a running InterCom within minutes.** It looks every five minutes, and when
+  you come back to the window, the computer wakes up or the network returns, instead of every
+  six hours. *Check for updates every few minutes* in Settings → InterCom (on by default) turns
+  this off.
+- **An update button in the rail of spaces**, above the settings: a download arrow with a red
+  dot while a newer release is available, downloading or ready, and nothing while InterCom is up
+  to date. A ring around it fills with the download. Pointing at it (or focusing it) opens a
+  card with the version, where the update stands, and what is new in it.
+- **One click updates.** On a ready update the click installs it and restarts InterCom. While it
+  is still downloading or being checked, the click is remembered: InterCom installs and restarts
+  by itself as soon as the file is verified, with no second click. After a failure the click
+  tries again; for an install that cannot replace itself it opens the release page. The status
+  bar, the dot in the user panel, the settings and the tray show the same state as before.
+- **What's new.** The card of the update button and Settings → InterCom show the release notes
+  of the update that is offered, of every release since the one that runs if several were
+  skipped, newest first. After an update, InterCom shows "What's new in InterCom" with the version
+  once, with *Got it* and a link to all release notes; *Show what's new after updates* in
+  Settings → InterCom turns that off. The notes are kept with the last check, so they are there
+  without a connection. They are shown as text and lists: no HTML of the notes reaches the
+  page, pictures are left out, and links open in the browser.
+- The tooltip of the settings in the rail names the InterCom version that runs.
+- **The "Jump to present" bar belongs to the dark interface.** It sat right on the composer in a
+  lighter grey with a solid accent button. Now there is a gap between it and the composer, its
+  surface is the room list's (darker than the timeline) with a hairline around it, the text is
+  the secondary grey, and the button is a raised dark surface with the accent only in its
+  words. The small arrow and the bar "N new messages since … · Mark as read" at the top are
+  drawn the same way; the top bar is no longer a solid accent block.
+- **The button of those bars is never cut off.** In a narrow column (a small window with the
+  right panel open) the text gave way too late and the button ran out of the bar. Now the text
+  goes first, then the button's words, and the arrow stays. The bars measure the timeline's
+  column, not the window. A cut-off button could be reproduced only in a column narrower than
+  about 140 px; it was measured from 600 px of window up, with the right panel open and closed.
+- How it asks: the releases feed of github.com with the ETag of the last answer, one small
+  request that is answered "304" with no body while nothing was released (once a minute at most
+  for the window, a wake-up and the network). Only when the feed changed, and every six hours
+  regardless, are the releases themselves asked for from GitHub's API.
+- Why the feed: the API allows an address without a login 60 requests an hour, and, measured,
+  counts an unchanged ("304") answer against that as well (its documentation exempts them only
+  for requests with a login). Polling the API every five minutes would use 12 of the 60, shared
+  by everything behind the same address. The feed is not part of that limit.
+- When GitHub refuses for too many requests (403 or 429), InterCom leaves it alone until the
+  time it names (`Retry-After`, or `x-ratelimit-reset`), a quarter of an hour if it names none
+  and two hours at most. *Check now* says "too many requests, try again in N min" instead of
+  "in an hour".
+- Diagnostics: `update_check` records say what asked (`reason`: `launch`, `startup`,
+  `interval`, `focus`, `online`, `resume`, `recheck`, `manual`, `click`), looks at the feed are
+  records with `probe: true`, and a refusal carries `rateLimitedForMs`.
+- Checked with unit tests and on screenshots of the web app in a headless browser, against a
+  made-up homeserver and a stand-in for the desktop app's updater; the desktop app itself was
+  not started.
+
 ## 1.12.35-intercom.12
 
 | Far back: the bar on the composer | Unread above: the bar along the top |

@@ -65,7 +65,8 @@ project, not affiliated with or endorsed by Element.
   *12 new messages since 14:32* and **Mark as read** along the top
 
 **App & updates**
-- Updates itself from these releases, before the window opens or with one click
+- Updates itself from these releases, before the window opens or with one click on the update
+  button in the rail; a new release shows up within minutes, with what is new in it
 - A near-black theme in layers and a light one; own profile, installs next to Element
 
 **Android**
@@ -83,7 +84,7 @@ project, not affiliated with or endorsed by Element.
 | Voice | Video rooms with a lobby; mute per call | Voice channels: one click, no ringing, who is in them; mute and deafen for the whole app, with shortcuts |
 | Pictures | One tile per picture | Galleries with a lightbox, one dialog for several, faster uploads |
 | Look | Element's themes | Near-black layers, one accent, no shadows, a Discord-like arrangement |
-| Desktop app | Squirrel updates on Windows and macOS | Self-updater on Linux and Windows, call diagnostics, VA-API video on Linux |
+| Desktop app | Squirrel updates on Windows and macOS | Self-updater on Linux and Windows that finds a release within minutes and shows what is new, call diagnostics, VA-API video on Linux |
 | Android | Calls in a web view; the native path (off) shares 1280 px / 15 fps without audio | Native calls, 1440p / 30 fps share with phone audio, per-tile volume, self-updater |
 
 Every change, with screenshots and the release that brought it:
@@ -183,6 +184,7 @@ Bugs in InterCom's changes belong in this repository's
 - [Sharing audio on Linux](docs/AUDIO-LINUX.md)
 - [Call diagnostics](docs/DIAGNOSTICS.md)
 - [Building](docs/BUILDING.md): desktop, Android and releases
+- [Releasing](docs/RELEASING.md): what belongs to a release besides the build
 - [Changelog](CHANGELOG.md)
 
 ## License and trademarks

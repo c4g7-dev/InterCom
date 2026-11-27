@@ -28,6 +28,10 @@
 # it needs the tag v<version>, the two files under the names given here and SHA256SUMS, and it
 # knows its own version from INTERCOM_VERSION, which this script sets for the build.
 #
+# Before a release, go through docs/RELEASING.md: the changelog, the README, the list of changes
+# and the screenshots are part of it. The script warns, and goes on, when README.md or
+# docs/CHANGES-FROM-ELEMENT.md did not change since the last release tag.
+#
 # Needs: git, node and gh (logged in); for a local build also pnpm 12, wine (Windows installer)
 # and sha256sum.
 # The built application is never started.
@@ -111,6 +115,27 @@ if ((PUBLISH)); then
     if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then die "tag $TAG exists already"; fi
     REPO="${INTERCOM_REPO:-$(git remote get-url origin | sed -E 's#^(https://github\.com/|git@github\.com:)##; s#\.git$##')}"
     [[ "$REPO" == */* ]] || die "cannot tell the GitHub repository; set INTERCOM_REPO=owner/name"
+fi
+
+# The public repository is part of a release (docs/RELEASING.md): a release that changes what a
+# user sees changes these two files as well. Not an error: some releases change neither.
+PREVIOUS="$(git tag --list 'v[0-9]*' --sort=-v:refname | grep -vxF "$TAG" | head -n 1 || true)"
+if [[ -n "$PREVIOUS" ]]; then
+    STALE=()
+    for doc in README.md docs/CHANGES-FROM-ELEMENT.md; do
+        if git diff --quiet "$PREVIOUS" HEAD -- "$doc"; then STALE+=("$doc"); fi
+    done
+    if ((${#STALE[@]})); then
+        {
+            echo "release.sh: warning: not changed since $PREVIOUS: ${STALE[*]}"
+            echo "  If this release changes what a user sees, check before going on (docs/RELEASING.md):"
+            echo "    - README.md: the highlights and the comparison table"
+            echo "    - docs/CHANGES-FROM-ELEMENT.md: a row for each change, with its version under \"Since\""
+            echo "    - docs/UPDATES.md, docs/ANDROID.md, docs/DESIGN.md, docs/DIAGNOSTICS.md: where affected"
+            echo "    - docs/images/: screenshots of what looks different, with made-up data"
+            echo "    - after the push: the links and pictures of the notes and the documents answer 200"
+        } >&2
+    fi
 fi
 
 export NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=6144}"

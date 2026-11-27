@@ -53,11 +53,16 @@ Every run of the desktop app writes one file:
   (`groupingOff`). No text, file name, URL, user or event ID is written; senders are numbered
 - `voice_state` records when mute or deafen changed, with where the change came from (`panel`,
   `hotkey`, `cli`, `call`, `tray`)
-- an `update_check` record for every look for an update: how long it took (`ms`, `headersMs`),
-  the HTTP status, whether GitHub answered "not modified" (`cached`) and the bytes read
+- an `update_check` record for every look for an update: what asked for it (`reason`: `launch`,
+  `startup`, `interval`, `focus`, `online`, `resume`, `recheck`, `manual`, `click`), how long it
+  took (`ms`, `headersMs`), the HTTP status, whether GitHub answered "not modified" (`cached`)
+  and the bytes read. A look at the releases feed is a record with `probe: true` and whether the
+  feed `changed`; a refusal for too many requests carries `rateLimitedForMs`
 - `updater` records for what the updater did: `check`, `up_to_date` or `update_found`,
   `download_start`, `download_verified` (with the SHA-256), `staged`, `ready`, `install_linux` or
-  `install_windows`, `manual` (the install cannot replace itself), `error`
+  `install_windows`, `manual` (the install cannot replace itself), `error`, `check_triggered`
+  (the focus, a wake-up or the network asked for a look), `check_rate_limited`,
+  `install_when_ready` (the update button was clicked before the update was ready)
 - an `update_on_launch` record for every start: `decision` (`skip`, `start`, `install`), `reason`,
   the `current` and `target` versions, the `ms` the start spent on it, `hidden`, `lastAttempt`
   (`none`, `installed`, `failed`) and `blocked` (a release no longer tried at a start). The

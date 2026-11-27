@@ -9,13 +9,34 @@ it comes from, which catches a broken download but is no proof of who made it.
 
 ## Desktop
 
+| The update button in the rail | After an update |
+| --- | --- |
+| ![A download arrow with a red dot above the settings, and its card: InterCom 1.12.35-intercom.13, Ready to install, What's new](images/update-rail.png) | ![The dialog "What's new in InterCom 1.12.35-intercom.13"](images/whats-new.png) |
+
 | Settings → InterCom | The status bar over the user panel |
 | --- | --- |
-| ![The InterCom settings tab with the update switches](images/settings-updates.png) | ![Downloading 1.12.35-intercom.11 · 41 %](images/update-bar.png) |
+| ![The InterCom settings tab: the four switches, Restart to update, and what is new in the update](images/settings-updates.png) | ![Downloading 1.12.35-intercom.11 · 41 %](images/update-bar.png) |
 
-**When it looks.** At every start, before the window opens, and 30 seconds after the start and
-every six hours while it runs. A check asks GitHub for the last five releases, sends the ETag of
-the last answer (an unchanged list costs no download) and gives up after 8 seconds.
+**When it looks.** At every start, before the window opens, and 30 seconds after the start.
+While it runs: every five minutes, and when you come back to the window, the computer wakes up
+or the network returns (once a minute at most). Nothing pushes a release to the app; it asks,
+often and cheaply:
+
+- The frequent look asks github.com for the releases feed (`releases.atom`) with the ETag of the
+  last answer. While nothing was released the answer is "304 Not Modified" without a body.
+- Only when the feed changed are the releases themselves asked for, from the GitHub API: the
+  last five, again with the ETag of the last answer, 8 seconds at most. This also happens every
+  six hours whatever the feed says, and a minute and a half after a changed feed that showed
+  nothing new (the API may answer from a copy that is a minute old).
+- The API allows an address without a login 60 requests an hour, and counts unchanged ("304")
+  answers too. That is why the frequent look goes to the feed, which is outside that limit: an
+  hour without a release costs the API nothing.
+- When GitHub refuses for too many requests (HTTP 403 or 429), nothing is asked until the time
+  it names (`Retry-After`, or `x-ratelimit-reset`): a quarter of an hour where it names none,
+  two hours at most. *Check now* then says how long.
+
+With *Check for updates every few minutes* off, the releases are asked for every six hours and
+nothing else is.
 
 **At a start.** If a newer release is out, it is downloaded, checked, installed, and InterCom
 comes up as the new version, with a small window saying what it is doing ("Checking for
@@ -23,18 +44,39 @@ updates…", "Downloading update · 42 %", "Installing…", "Starting…"). GitH
 start that finds nothing three at most. Offline, or when the download stalls (20 s without
 progress, 5 minutes in all), InterCom starts as it is and offers the update in the app. With
 `--hidden` it does the same without the window. A release that did not install at a start is
-not tried at a start again; it stays behind *Restart to update*.
+not tried at a start again; it stays behind the update button.
 
-**While it runs.** A new release is downloaded and checked, then the status bar over the user
-panel and a toast offer *Restart to update* (also in the tray menu, and as a dot on the settings
-button of the user panel). Nothing is installed before that click. The bar shows each step
-("Downloading 1.12.35-intercom.11 · 42 % · 78 MB / 186 MB · 12 MB/s", "Verifying checksum…",
-"Unpacking…", "… is ready" with *Restart*); a click on it lists the last steps with their times.
-An error stays, with *Retry* and *Details*.
+**While it runs.** A new release is downloaded and checked by itself. Meanwhile, and until it is
+installed, the rail of spaces has an **update button** above the settings: a download arrow with
+a red dot, and a ring that fills with the download. Pointing at it shows the version, where
+the update stands and what is new in it. A click:
+
+- on a ready update, installs it and starts InterCom again;
+- while it downloads or is checked, is remembered: InterCom installs it and starts again by
+  itself as soon as the file is verified;
+- after a failure, tries again;
+- for an install that cannot replace itself, opens the release page.
+
+Nothing is installed without that click (or *Restart to update* in the status bar, the toast,
+the settings or the tray menu, which do the same for a ready update). The status bar over the
+user panel shows each step ("Downloading 1.12.35-intercom.11 · 42 % · 78 MB / 186 MB · 12 MB/s",
+"Verifying checksum…", "Unpacking…", "… is ready" with *Restart*); a click on it lists the last
+steps with their times. An error stays, with *Retry* and *Details*. A dot on the settings button
+of the user panel says that an update is ready.
+
+**What's new.** The update button's card and Settings → InterCom show the notes of the release
+that is offered, and of every release between it and the one that runs, newest first. After an
+update InterCom shows "What's new in InterCom" with the version once, with every release the update
+brought; any way of closing it counts as seen. A first install shows nothing. The notes are the
+text of the GitHub release (the section of the [changelog](../CHANGELOG.md)), kept in the profile
+with the last check, so they are shown without a connection. They are drawn as text and lists:
+HTML in them is not interpreted, pictures are not loaded, and links open in the browser.
 
 **Settings → InterCom** has the version, *Check for updates automatically*, *Update
-automatically on launch* (it needs the first; both on by default), *Check now* and the release
-notes. Both switches are kept in `<profile>/intercom-updater.json`.
+automatically on launch* and *Check for updates every few minutes* (both need the first), *Show
+what's new after updates* (all on by default), *Check now*, and the notes of an update that is
+offered. The switches, and the release whose notes you have seen, are kept in
+`<profile>/intercom-updater.json`.
 
 **Linux** (the unpacked `tar.gz`). The new archive is unpacked beside the install directory as
 `<dir>.new`; on restart `<dir>` becomes `<dir>.old` (an older backup is deleted) and `<dir>.new`
@@ -63,12 +105,15 @@ updates comes back with its window shown.
 **Never updates:** a build that is not a release, an unpackaged run, and a run with
 `--no-update`.
 
-**Logged:** every check is an `update_check` record in the diagnostics log, every step of the
-updater an `updater` record, every start an `update_on_launch` record. See
+**Logged:** every check, and every look at the feed, is an `update_check` record in the
+diagnostics log with what asked for it, every step of the updater an `updater` record, every
+start an `update_on_launch` record. See
 [DIAGNOSTICS.md](DIAGNOSTICS.md).
 
 ### Old installs
 
+- 1.12.35-intercom.12 and older look every six hours, have no update button in the rail and
+  show no release notes; they update themselves to a newer release as before.
 - 1.12.35-intercom.4 and older have no updater: install a newer release by hand once.
 - On Linux, 1.12.35-intercom.5 to .9 cannot install updates by themselves (their updater failed
   on the install directory): install 1.12.35-intercom.10 or newer by hand once. Windows was not

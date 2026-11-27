@@ -123,13 +123,33 @@ start an `update_on_launch` record. See
 
 Settings → **InterCom updates**:
 
-- **Look for updates** (on): every time the app is opened, at most once in half an hour, on any
-  connection. The check is a request to GitHub for this repository's releases; nothing about you
-  or your account is in it.
+- **Look for updates** (on), on any connection. While the app is on screen it asks github.com
+  for the releases feed (`releases.atom`) with the ETag of the last answer: when the app is
+  opened or comes back, when the network returns (once a minute at most) and every half hour.
+  Only when the feed's Android releases changed are the releases themselves asked for, from the
+  GitHub API, and every six hours whatever the feed says; the API allows an address without a
+  login 60 requests an hour and counts unchanged answers too, the feed is outside that limit.
+  In the background the releases are asked for every twelve hours. Nothing about you or your
+  account is in these requests.
 - **Install updates automatically** (on): a release is downloaded as soon as it is found, on
   Wi-Fi unless **Use mobile data** is on, and installed right away. It never interrupts a call:
   it waits until the call is over.
-- **Offer pre-releases** (off), **Check now**, **Download and install**.
+- **Offer pre-releases** (off), **Show what's new after updates** (on), **Check now**,
+  **Download and install**.
+
+| The dot on the avatar | Settings | The dialog |
+| --- | --- | --- |
+| ![The chat list's top bar, a red dot on the avatar](images/android-update-dot.png) | ![The settings beginning with "Update available"](images/android-update-settings.png) | ![The dialog "InterCom 26.11.1-intercom.14 is available" with what is new](images/android-update-dialog.png) |
+
+While a newer release is known, the avatar at the top of the chat list, which leads to the
+settings, has a red dot, and the settings begin with **Update available**.
+
+**What's new.** The dialog and *InterCom updates* show the notes of the release that is
+offered and of every release between it and the one that runs, newest first. After an update
+InterCom shows "What's new in InterCom" with the version once, when it first opens as the new
+version; any way of closing it counts as seen, and a first install shows nothing. The notes are
+the text of the GitHub releases, drawn as text and lists: HTML in them is not interpreted,
+pictures are not loaded, and a link is its text.
 
 With *Install updates automatically* off, a dialog says "InterCom <version> is available", with
 *Update now*, *Later* (24 hours for that release) and *Release notes*. *Update now* downloads on
@@ -146,13 +166,20 @@ What happens on the phone:
 
 An APK is installed only if it has the SHA-256 the release names and is signed with the key of
 the installed app; anything else is deleted and the settings say why. When Android refuses an
-update, the screen shows which of its reasons it gave and the system's own message. An automatic
-installation that Android refused is not tried again by itself; the release is offered in the
-dialog instead.
+update, the screen shows which of its reasons it gave and the system's own message, and what
+can be done about it: free storage, a phone the release does not run on, another build being
+installed, or on a Samsung phone Auto Blocker, with a button to its settings. The same hint
+comes up when Android asked to confirm the update and you are back in InterCom ten seconds
+later with nothing installed. The installer's status code is written to the app's log. An
+automatic installation that Android refused is not tried again by itself; the release is
+offered in the dialog instead.
 
 On Samsung Galaxy phones, **Auto Blocker** stops these installs too: see
 [ANDROID.md](ANDROID.md#samsung-auto-blocker).
 
-The updater came with 26.11.1-intercom.4 and works as described here from 26.11.1-intercom.5.
+The updater came with 26.11.1-intercom.4; the feed, the dot, the notes and the hints came with
+26.11.1-intercom.14. 26.11.1-intercom.5 to .7 look when the app is opened, at most every half
+hour, and read a revision of one digit only: they find 26.11.1-intercom.14 as the release
+`android-v26.11.1-intercom.9`, which is the same APK under a tag they can read.
 Every release is signed with the same key, so a newer APK also installs over the old one by
 hand.

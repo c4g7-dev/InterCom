@@ -86,3 +86,13 @@ theme. The call (Element Call) takes the same values in `element-call/src/interc
 | 8 px | rows, buttons, menus |
 | 12 px | cards, call tiles, the composer |
 | 16 px | dialogs |
+
+## Android
+
+InterCom for Android has the same values as Compound's semantic colours
+(`element-x-android/libraries/compound/…/theme/InterComPalette.kt`), which every component of
+Element X reads: the canvas is the room list's surface (`#101013`), what is raised from it the
+timeline's (`#151518`), what is pressed or selected the hover and selected greys, separators
+the hairline, and Compound's accent roles the one accent. Text in the accent is a step lighter
+(`#8089f7`) for a contrast of 6:1 on the dark surfaces; a unit test holds text to WCAG AA on
+every surface. Material's corners are 6, 8, 12 and 16 dp.

@@ -71,7 +71,10 @@ project, not affiliated with or endorsed by Element.
 
 **Android**
 - Native calls with screen sharing up to 1440p at 30 fps and the phone's audio in stereo
-- Shared screens with sound, a volume for every tile, an equal grid; updates itself; no Firebase
+- Shared screens with sound, a volume for every tile, an equal grid; mute and deafen that are
+  kept across calls, with InterCom's own sounds and ringtone
+- InterCom's near-black look; pictures sent together as one gallery, several sent at once
+- Updates itself and finds a release within minutes, with what is new in it; no Firebase
 
 ## What InterCom changes compared to Element
 
@@ -85,16 +88,16 @@ project, not affiliated with or endorsed by Element.
 | Pictures | One tile per picture | Galleries with a lightbox, one dialog for several, faster uploads |
 | Look | Element's themes | Near-black layers, one accent, no shadows, a Discord-like arrangement |
 | Desktop app | Squirrel updates on Windows and macOS | Self-updater on Linux and Windows that finds a release within minutes and shows what is new, call diagnostics, VA-API video on Linux |
-| Android | Calls in a web view; the native path (off) shares 1280 px / 15 fps without audio | Native calls, 1440p / 30 fps share with phone audio, per-tile volume, self-updater |
+| Android | Calls in a web view; the native path (off) shares 1280 px / 15 fps without audio | Native calls, 1440p / 30 fps share with phone audio, per-tile volume, deafen, InterCom's look and sounds, galleries, a self-updater that finds a release within minutes |
 
 Every change, with screenshots and the release that brought it:
 [docs/CHANGES-FROM-ELEMENT.md](docs/CHANGES-FROM-ELEMENT.md).
 
 ## Download
 
-Desktop and Android are released separately, each with its own version number. On the
-[releases page](https://github.com/c4g7-dev/InterCom/releases) their titles start with
-**[Desktop]** or **[Android]**.
+Desktop and Android are released together, each as a release of its own with the same InterCom
+revision. On the [releases page](https://github.com/c4g7-dev/InterCom/releases) their titles
+start with **[Desktop]** or **[Android]**.
 
 [![Desktop](https://img.shields.io/github/v/release/c4g7-dev/InterCom?filter=v*&label=Desktop&color=6875f5)](https://github.com/c4g7-dev/InterCom/releases/latest)
 [![Android](https://img.shields.io/github/v/release/c4g7-dev/InterCom?filter=android-v*&label=Android&color=6875f5)](https://github.com/c4g7-dev/InterCom/releases?q=Android&expanded=true)
@@ -106,8 +109,8 @@ Desktop and Android are released separately, each with its own version number. O
 | Android | arm64 | `InterCom-Android-<version>-arm64-v8a.apk` | In the newest **[Android]** release; see [docs/ANDROID.md](docs/ANDROID.md) |
 
 Version numbers: desktop `1.12.35-intercom.N` (based on Element Web 1.12.35), Android
-`26.11.1-intercom.N` (based on Element X 26.11.1); the part after `intercom.` counts InterCom's
-own releases of that platform.
+`26.11.1-intercom.N` (based on Element X 26.11.1); the part after `intercom.` is InterCom's
+revision, the same on both from 14 on (Android went from 7 to 14).
 
 Check a download against `SHA256SUMS` from the same release with
 `sha256sum -c SHA256SUMS --ignore-missing`. Both apps then update themselves:

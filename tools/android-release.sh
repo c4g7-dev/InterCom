@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Collects and publishes a release of InterCom for Android.
 #
-#   tools/android-release.sh <version> [--build] [--no-publish] [--prerelease]
+#   tools/android-release.sh <version> [--build] [--no-publish] [--prerelease] [--bridge <version>]
 #
-#   <version>      e.g. 26.11.1-intercom.4: the Element X version InterCom for Android is based
-#                  on, then the InterCom revision. CHANGELOG.md must have a
-#                  "## Android <version>" section.
+#   <version>      e.g. 26.11.1-intercom.14: the Element X version InterCom for Android is based
+#                  on, then the InterCom revision (1 to 79, the same as the desktop release of
+#                  the round). CHANGELOG.md must have a "## Android <version>" section.
 #   --build        build the app first (element-x-android, :app:assembleFdroidRelease). The RTC
 #                  core and the call library must already be in ~/.m2, see docs/BUILDING.md.
 #                  Without it, the APK that is already built is taken.
@@ -13,6 +13,13 @@
 #                  no push, no GitHub release
 #   --prerelease   mark the GitHub release as a pre-release; the app offers it only to those
 #                  who turned on "Offer pre-releases"
+#   --bridge <v>   also publish the same APK as release android-v<v>, for the installs that
+#                  cannot read this release's tag: 26.11.1-intercom.7 and older understand a
+#                  revision of one digit only, so they do not see android-v26.11.1-intercom.14.
+#                  `--bridge 26.11.1-intercom.9` gives them a release they do see; its
+#                  android-update.json names the bridge's version and file but the version code
+#                  of the real APK, which is what they compare and check. Once on the new
+#                  version they follow the ordinary releases. <v> must sort below <version>.
 #
 # What it does:
 #   1. checks the APK: package, version name and version code as expected for <version>, one
@@ -46,7 +53,9 @@
 # releases only on request), orders them by the version in the tag and reads this file of the
 # newest one that is newer than itself. The version code in the file is what counts; the one
 # derived from the tag, ((2000+yy)*10000 + mm*100 + n)*100 + 20 + revision, only orders the
-# list. A release without this file is still understood through SHA256SUMS.
+# list. (20 is the ABI digit of arm64-v8a, the only APK there is; a revision of two digits runs
+# into it, which keeps the codes rising: 2026110127 for revision 7, 2026110134 for 14, up to
+# revision 79.) A release without this file is still understood through SHA256SUMS.
 #
 # Needs: git, gh (logged in), sha256sum, python3, and the Android SDK build tools (aapt2,
 # apksigner) under ANDROID_HOME. For --build also what docs/BUILDING.md lists, and the signing
@@ -72,19 +81,32 @@ VERSION=""
 BUILD=0
 PUBLISH=1
 PRERELEASE=0
-for arg in "$@"; do
-    case "$arg" in
+BRIDGE=""
+while [[ $# -gt 0 ]]; do
+    case "$1" in
         -h | --help) usage; exit 0 ;;
         --build) BUILD=1 ;;
         --no-publish) PUBLISH=0 ;;
         --prerelease) PRERELEASE=1 ;;
-        -*) echo "Unknown option: $arg" >&2; exit 2 ;;
-        *) VERSION="$arg" ;;
+        --bridge) BRIDGE="${2:-}"; shift ;;
+        -*) echo "Unknown option: $1" >&2; exit 2 ;;
+        *) VERSION="$1" ;;
     esac
+    shift
 done
-if [[ ! "$VERSION" =~ ^([0-9]{2})\.([0-9]{1,2})\.([0-9]{1,2})-intercom\.([0-9])$ ]]; then
-    echo "Usage: tools/android-release.sh <version> [--build] [--no-publish] [--prerelease]   (e.g. 26.11.1-intercom.4)" >&2
+VERSION_RE='^([0-9]{2})\.([0-9]{1,2})\.([0-9]{1,2})-intercom\.([1-9][0-9]?)$'
+if [[ -n "$BRIDGE" ]]; then
+    [[ "$BRIDGE" =~ $VERSION_RE ]] || { echo "--bridge needs a version, e.g. 26.11.1-intercom.9" >&2; exit 2; }
+    BRIDGE_REVISION="${BASH_REMATCH[4]}"
+    BRIDGE_BASE="${BRIDGE%-intercom.*}"
+fi
+if [[ ! "$VERSION" =~ $VERSION_RE ]] || ((BASH_REMATCH[4] > 79)); then
+    echo "Usage: tools/android-release.sh <version> [--build] [--no-publish] [--prerelease] [--bridge <version>]   (e.g. 26.11.1-intercom.14; the revision is 1 to 79)" >&2
     exit 2
+fi
+if [[ -n "$BRIDGE" ]]; then
+    [[ "$BRIDGE_BASE" == "${VERSION%-intercom.*}" ]] && ((BRIDGE_REVISION < BASH_REMATCH[4])) ||
+        { echo "--bridge $BRIDGE must be of the same Element X version as $VERSION and of a lower revision" >&2; exit 2; }
 fi
 # As plugins/src/main/kotlin/Versions.kt and app/build.gradle.kts of element-x-android compute it.
 EXPECTED_CODE=$(( ((2000 + 10#${BASH_REMATCH[1]}) * 10000 + 10#${BASH_REMATCH[2]} * 100 + 10#${BASH_REMATCH[3]}) * 100 + 20 + BASH_REMATCH[4] ))
@@ -195,6 +217,39 @@ PY
 ls -l "$OUT"
 cat "$OUT/SHA256SUMS"
 
+# The bridge: the same APK under the name an old install expects for the tag it can read.
+if [[ -n "$BRIDGE" ]]; then
+    BRIDGE_TAG="android-v$BRIDGE"
+    BRIDGE_OUT="$OUT/bridge-$BRIDGE"
+    BRIDGE_APK="InterCom-Android-$BRIDGE-$ABI.apk"
+    mkdir -p "$BRIDGE_OUT"
+    cp "$OUT/$APK_NAME" "$BRIDGE_OUT/$BRIDGE_APK"
+    VERSION="$VERSION" BRIDGE="$BRIDGE" BRIDGE_APK="$BRIDGE_APK" OUT="$OUT" BRIDGE_OUT="$BRIDGE_OUT" python3 - <<'PY'
+import json, os
+
+manifest = json.load(open(os.path.join(os.environ["OUT"], "android-update.json"), encoding="utf-8"))
+version, bridge = os.environ["VERSION"], os.environ["BRIDGE"]
+# The version code, the size and the checksum stay those of the real APK.
+manifest["versionName"] = bridge
+manifest["apk"] = os.environ["BRIDGE_APK"]
+manifest["notes"] = f"This installs InterCom {version}.\n\n" + manifest["notes"]
+with open(os.path.join(os.environ["BRIDGE_OUT"], "android-update.json"), "w", encoding="utf-8") as f:
+    json.dump(manifest, f, indent=2, ensure_ascii=False)
+    f.write("\n")
+PY
+    {
+        echo "**This is InterCom $VERSION** under a tag that InterCom for Android 26.11.1-intercom.7 and older can read:"
+        echo "they understand a revision of one digit only, so they do not see \`$TAG\`. The APK is the same file as"
+        echo "[\`$APK_NAME\`](https://github.com/$REPO/releases/tag/$TAG); installing it gives $VERSION, which then"
+        echo "follows the ordinary releases. For a new installation take [$TAG](https://github.com/$REPO/releases/tag/$TAG)."
+        echo
+        cat "$OUT/notes.md"
+    } >"$BRIDGE_OUT/notes.md"
+    (cd "$BRIDGE_OUT" && sha256sum "$BRIDGE_APK" android-update.json >SHA256SUMS)
+    cmp -s "$OUT/$APK_NAME" "$BRIDGE_OUT/$BRIDGE_APK" || die "the bridge's APK is not the release's"
+    ls -l "$BRIDGE_OUT"
+fi
+
 if [[ $PUBLISH == 0 ]]; then
     echo "== Not publishing (--no-publish)"
     exit 0
@@ -210,7 +265,10 @@ done
 # work in this checkout, which is also why the pull stashes what is not committed.
 git add "${FORKS[@]}"
 git diff --cached --quiet -- "${FORKS[@]}" || git commit -m "Android $VERSION: submodule pointers" -- "${FORKS[@]}"
-git diff --quiet HEAD -- CHANGELOG.md || die "CHANGELOG.md has uncommitted changes; the release notes come from it"
+# The release notes are this version's section, which must be committed as it is here; the
+# desktop's sections of the same file may be in the middle of their own work.
+committed_notes="$(git show HEAD:CHANGELOG.md | awk -v h="## Android $VERSION" '$0 == h { on = 1; next } on && /^## / { exit } on { print }' | sed -e '/./,$!d')"
+[[ "$committed_notes" == "$(notes)" ]] || die "the section '## Android $VERSION' of CHANGELOG.md is not committed as it is; the release notes come from it"
 # The desktop's releases are pushed to the same branch.
 git pull --rebase --autostash origin main
 git tag -f "$TAG"
@@ -231,3 +289,23 @@ else
     gh release edit "$TAG" --repo "$REPO" --draft=false --latest=false
 fi
 gh release view "$TAG" --repo "$REPO"
+
+if [[ -n "$BRIDGE" ]]; then
+    echo "== Publishing the bridge $BRIDGE_TAG"
+    git tag -f "$BRIDGE_TAG" "$TAG^{commit}"
+    git push origin "refs/tags/$BRIDGE_TAG"
+    BRIDGE_TITLE="[Android] InterCom $VERSION · arm64 (for 26.11.1-intercom.7 and older)"
+    if gh release view "$BRIDGE_TAG" --repo "$REPO" >/dev/null 2>&1; then
+        gh release edit "$BRIDGE_TAG" --repo "$REPO" --title "$BRIDGE_TITLE" --notes-file "$BRIDGE_OUT/notes.md"
+    else
+        gh release create "$BRIDGE_TAG" --repo "$REPO" --verify-tag --draft --latest=false \
+            --title "$BRIDGE_TITLE" --notes-file "$BRIDGE_OUT/notes.md"
+    fi
+    gh release upload "$BRIDGE_TAG" --repo "$REPO" --clobber "$BRIDGE_OUT/$BRIDGE_APK" "$BRIDGE_OUT/android-update.json" "$BRIDGE_OUT/SHA256SUMS"
+    if [[ $PRERELEASE == 1 ]]; then
+        gh release edit "$BRIDGE_TAG" --repo "$REPO" --draft=false --prerelease --latest=false
+    else
+        gh release edit "$BRIDGE_TAG" --repo "$REPO" --draft=false --latest=false
+    fi
+    gh release view "$BRIDGE_TAG" --repo "$REPO"
+fi

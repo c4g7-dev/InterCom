@@ -3,6 +3,96 @@
 Versions are `<Element Web version>-intercom.<n>`: the upstream release InterCom is based on,
 followed by the InterCom revision.
 
+## Android 26.11.1-intercom.14
+
+| InterCom's look | Update available | What's new |
+| --- | --- | --- |
+| ![The chat list in InterCom's dark theme: near-black, with the accent on the button for a new chat](https://raw.githubusercontent.com/c4g7-dev/InterCom/android-v26.11.1-intercom.14/docs/images/android-theme.png) | ![The settings beginning with "Update available, InterCom 26.11.1-intercom.14" and a red dot](https://raw.githubusercontent.com/c4g7-dev/InterCom/android-v26.11.1-intercom.14/docs/images/android-update-settings.png) | ![The dialog "InterCom 26.11.1-intercom.14 is available" with what is new in it and in the release before](https://raw.githubusercontent.com/c4g7-dev/InterCom/android-v26.11.1-intercom.14/docs/images/android-update-dialog.png) |
+
+<sub>Drawn from the app's own previews, with made-up people and text.</sub>
+
+`android-v26.11.1-intercom.14`, based on Element X Android 26.11.1. Call library 0.1.2-intercom.6, RTC core
+0.5.0-intercom.4. From this release on, Android and the desktop are released together and carry
+the same InterCom revision: this is revision 14 on both, and there is no Android
+26.11.1-intercom.8 to .13.
+
+- **Updates are found within minutes.** While InterCom is on screen it looks at the releases
+  feed of this repository: when the app is opened or comes back to the screen, when the network
+  returns (once a minute at most), and every half hour. The feed is asked for with the ETag of
+  its last answer, so nothing is downloaded while nothing was released. The releases themselves
+  are asked for from the GitHub API only when the feed's Android releases changed, and every
+  six hours whatever the feed says: the API allows an address without a login 60 requests an
+  hour and counts unchanged answers too. The check every twelve hours in the background stays.
+- **A red dot and "Update available".** While a newer release is known, your picture at the top
+  of the chat list, which leads to the settings, has a red dot, and the settings begin with
+  *Update available · InterCom <version>*, which opens *InterCom updates*.
+- **What's new.** The dialog that offers an update, and *InterCom updates*, show the notes of
+  the release and of every release between it and the one that runs, newest first. After an
+  update InterCom shows *What's new in InterCom <version>* once when it first opens as the new
+  version; *Show what's new after updates* (on) in *InterCom updates* turns that off. The notes
+  are the text of the GitHub releases, drawn as text and lists: HTML in them is not
+  interpreted, pictures are not loaded, and a link is its text.
+- **When an update does not install, InterCom says what to do.** On Samsung phones: "Samsung
+  Auto Blocker may be blocking app installs: Settings → Security and privacy → Auto Blocker →
+  off, then try again", with a button that opens Auto Blocker where the phone gives a way in,
+  and the security settings otherwise. This also comes up when Android asked to confirm the
+  update and you are back in InterCom ten seconds later with nothing installed, and for an
+  automatic installation that Android refused. Too little storage, a phone the release does not
+  run on and another build being installed have hints of their own. The installer's status code
+  and message are written to the app's log (`InterComUpdate`).
+- **InterCom's look.** The app is drawn in InterCom's colours: near-black neutral surfaces a
+  step apart (`#0a0a0c`, `#101013`, `#151518`), hairlines (`#202025`) and one accent,
+  `#6875f5`, for what is selected, unread or actionable, in place of Element's green; green
+  stays for "speaking" and success, red for muted, leave and errors. The light theme has the
+  desktop's light values. The colours are set where every screen reads them from, so nothing
+  was restyled screen by screen.
+- **Pictures sent together are one gallery**, as on the desktop: consecutive pictures of one
+  sender, within two minutes of each other or marked as one batch, with nothing between them,
+  are shown as one grid of up to five tiles with "+N" on the last. A tap opens the viewer, which
+  pages through the pictures of the gallery. A reply, a picture with a caption or with
+  reactions (other than the first), and a picture that failed to send stay messages of their
+  own. What you do to the gallery (a reaction, a reply, removing it) is done to its first
+  picture.
+- **Several pictures at once.** The picker lets you choose several items. They are sent as one
+  message each, so every client shows them, and pictures are marked as one batch
+  (`io.intercom.gallery`), which InterCom on the desktop and on Android shows as one gallery
+  however long the uploads took. A caption goes with the first.
+- **Deafen in calls**, next to the microphone: nobody is heard, voices and shared screens'
+  audio alike, and your microphone is muted with it. Undeafen brings the microphone back as it
+  was; unmuting while deafened also undeafens, as on the desktop.
+- **Mute and deafen are kept across calls.** The next call is joined as the last one was left:
+  muted, deafened or neither, shown from the first screen.
+- **InterCom's own sounds in calls**, the desktop's: the chimes for somebody joining and
+  leaving in place of Element's, cues for your own mute, unmute, deafen and undeafen, and the
+  ringback while a call you started rings. While you are deafened only your own cues are
+  played. Leaving, or a call ending, plays one leave chime, not one for you and one for the
+  other person.
+- **InterCom's own ringtone** for incoming calls, the same as on the desktop, in place of the
+  phone's. Settings → Notifications → *Call ringtone* offers *InterCom ringtone*, *System
+  default* and any other tone. It rings through the notification as before, so Do Not Disturb
+  and the silent mode are respected as they were.
+- **The buttons of the message field are on the line of the text.** The attachment button, the
+  send or voice button and the emoji button sat below the centre of the field where the phone's
+  font is larger, or has taller lines, than the default: they were lifted by a fixed distance
+  that fits the default font only. They are now centred on a field of one line whatever its
+  height, and stay on the last line when it grows; all three have a 48 dp touch target.
+- **26.11.1-intercom.7 and older find this release as "26.11.1-intercom.9".** They read a
+  revision of one digit only, so the same APK is also published as
+  `android-v26.11.1-intercom.9`; installing it gives 26.11.1-intercom.14, which then follows the ordinary
+  releases.
+- **Not tried on a phone before release.** Unit tests cover the feed and when the API is asked,
+  the notes, the hints, the palette and its contrast, how pictures are joined into galleries,
+  the batch mark and the encryption of its files, the ringtone's channel, the composer's
+  measures, and in the call library deafen, what is kept across calls and when a cue is
+  played. The pictures of a batch are uploaded by InterCom itself (the SDK's own sender has no
+  place for the mark): they appear in the chat when their upload is done, not while it runs,
+  and if one cannot be sent this way the rest is sent the ordinary way, unmarked. How Samsung's
+  Auto Blocker answers the installer is not known for certain, so the hint is shown for every
+  refusal on a Samsung phone that has no other explanation.
+- Still to come: distinct states for a microphone or camera that is missing or not permitted
+  (today a refused microphone ends the call with a way to the settings), and staying in a call
+  with one person for a while after they left.
+
 ## 1.12.35-intercom.13
 
 | The update button in the rail, with what is new | After the update |

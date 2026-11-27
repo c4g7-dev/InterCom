@@ -34,11 +34,29 @@ After that the app [updates itself](UPDATES.md#android).
 - **Equal grid**: in a call, settings → Preferences → Layout → *Equal grid* shows every tile at
   the same size, shared screens included and uncropped, as large as the screen allows in either
   orientation. A double tap still fills the screen with one tile.
+- **Deafen**, next to the microphone in a call: nobody is heard, voices and shared screens
+  alike, and the microphone is muted with it; undeafen brings it back as it was. Mute and deafen
+  are kept across calls: the next one is joined as the last was left.
+- **InterCom's own sounds**: the chimes for joining and leaving, cues for mute and deafen, the
+  ringback of a call you start, and the ringtone of one that comes in (Settings →
+  Notifications → *Call ringtone* also offers the phone's own). They are the desktop's.
+- **InterCom's look**: the desktop's near-black surfaces, hairlines and single accent, and a
+  light variant.
+- **Pictures sent together are one gallery**, as on the desktop: a grid of up to five tiles
+  with "+N", and a tap pages through them. Several pictures can be chosen at once; they are
+  sent as a message each, marked as one batch, so every client shows them and InterCom shows
+  them together.
 - **No Firebase, no analytics, no bug report upload.**
 - **Logs for calls**: warnings, errors and everything about calls are mirrored to logcat with
   access tokens and other secrets taken out, so a release build can be followed with
   `adb logcat -s InterComCall matrix-rtc InterCom`. Developer options → *Share logs* zips the
   app's logs for the share sheet; nothing is uploaded by the app.
+
+| InterCom's look | Pictures sent together | The message field |
+| --- | --- | --- |
+| ![The chat list in InterCom's dark theme](images/android-theme.png) | ![Three pictures as one grid in a message bubble](images/android-gallery.png) | ![The message field with one line and with several](images/android-composer.png) |
+
+<sub>Drawn from the app's own previews, with made-up people and text.</sub>
 
 Voice channels of the desktop app are rooms of the type `org.matrix.msc3417.call`; the Android
 app shows them as ordinary rooms with a call button. Joining works, without the channel view or
@@ -84,6 +102,12 @@ Galaxy Store and Play Store: the APK from the browser does not install, and neit
 InterCom's own updates. Turn it off under **Settings → Security and privacy → Auto Blocker**,
 install, and leave it off if InterCom should keep updating itself.
 
+From 26.11.1-intercom.14 the app says so itself when an update does not install on a Samsung
+phone, with a button that opens Auto Blocker where the phone gives a way in, and the security
+settings otherwise:
+
+<p><img src="images/android-auto-blocker.png" width="280" alt="The dialog InterCom update failed, with the hint about Samsung Auto Blocker and the button Open security settings"></p>
+
 ### Other reasons
 
 - **A 32-bit phone.** The APK is for 64-bit ARM (arm64-v8a) only. Some inexpensive phones run a
@@ -122,6 +146,11 @@ that line, the phone and its Android version into an
 ## Known limitations
 
 - arm64-v8a only.
+- A gallery made of several picture messages is its first picture for everything you do to it:
+  a reaction, a reply and removing it apply to that picture. The pictures of a batch appear in
+  the chat when their upload is done, not while it runs.
+- A microphone that is not permitted ends the call with a way to the settings; there is no
+  state of its own for a missing or refused microphone or camera yet.
 - A call joins without a "dead man's switch" (MSC4140 delayed events are not in the SDK's
   bindings): a phone that loses its connection mid-call stays listed in the call until its
   membership expires.

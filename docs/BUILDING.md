@@ -130,8 +130,13 @@ compile libwebrtc for it); `./gradlew test runQualityChecks` in `element-call-an
 in `element-x-android`.
 
 Versions: the app is `<Element X version>-intercom.<n>` (`INTERCOM_REVISION` in
-`element-x-android/plugins/src/main/kotlin/Versions.kt`, also the last digit of the version
-code); the library is `<upstream version>-intercom.<n>` (`VERSION_NAME` in
+`element-x-android/plugins/src/main/kotlin/Versions.kt`), with the `<n>` of the desktop release
+of the same round, 1 to 79. The version code is
+`((2000 + yy) * 10000 + mm * 100 + r) * 100 + 20 + n` for Element X `yy.mm.r`: 20 is the ABI
+digit of arm64-v8a, the one APK there is, and `<n>` is added to it, so 2026110127 for
+26.11.1-intercom.7 and 2026110134 for 26.11.1-intercom.14. A revision of two digits runs into
+the ABI's digit; the codes keep rising with `<n>` up to 79, where the next Element X version's
+begin; the library is `<upstream version>-intercom.<n>` (`VERSION_NAME` in
 `element-call-android/gradle.properties`); the core is `<upstream version>-intercom.<n>`
 (`INTERCOM_VERSION` in `matrix-rust-rtc/scripts/build-intercom-android.sh`). When the core's
 version changes, change `matrix_rtc` in the library's catalog with it, and when the library's
@@ -175,12 +180,19 @@ of the newest one that is newer than itself:
 ```
 
 `versionCode` is what the app compares with its own; the script reads it from the APK. The
-version code derived from the tag, `((2000 + yy) * 10000 + mm * 100 + n) * 100 + 20 + revision`
-(20 is the ABI digit of arm64-v8a), only orders the list, and stands in for a release without
+version code derived from the tag (see *Versions* above) only orders the list, and stands in for a release without
 the file, whose checksum the app then takes from `SHA256SUMS`. The app installs an APK only
 if it has that SHA-256 and the signing certificate of the running app, so **every release must
 be signed with the same key**; the script refuses an APK that is not. A release the app should
 not offer yet stays a draft or a pre-release.
+
+26.11.1-intercom.7 and older read a revision of one digit only: they do not see a tag such as
+`android-v26.11.1-intercom.14`. `tools/android-release.sh 26.11.1-intercom.14 --bridge
+26.11.1-intercom.9` also publishes the same APK as the release `android-v26.11.1-intercom.9`,
+whose `android-update.json` names the bridge's version and file and the version code of the
+real APK, which is what those versions compare and check. They install it and are then
+26.11.1-intercom.14. Newer versions order the bridge below the real release and ignore it. It
+is published once per Element X version at most, and 9 is the last tag the old versions read.
 
 ## Configuration
 

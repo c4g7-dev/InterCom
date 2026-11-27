@@ -158,7 +158,19 @@ Why it looks like this: [DESIGN.md](DESIGN.md).
 
 ## Android
 
-There are no screenshots of the Android app here yet.
+| InterCom's look | The dot that says "update" | Update available |
+| --- | --- | --- |
+| ![The chat list in InterCom's dark theme](images/android-theme.png) | ![The chat list's top bar, a red dot on the avatar](images/android-update-dot.png) | ![The settings beginning with "Update available"](images/android-update-settings.png) |
+
+| What is new, in the update dialog | After an update | When Android does not install it |
+| --- | --- | --- |
+| ![The dialog "InterCom 26.11.1-intercom.14 is available" with the notes of two releases](images/android-update-dialog.png) | ![The dialog "What's new in InterCom 26.11.1-intercom.14"](images/android-whats-new.png) | ![The dialog "InterCom update failed" with the hint about Samsung Auto Blocker and "Open security settings"](images/android-auto-blocker.png) |
+
+| Pictures sent together | The message field |
+| --- | --- |
+| ![Three pictures as one grid in a message bubble](images/android-gallery.png) | ![The message field with one line and with several: the buttons on the line of the text](images/android-composer.png) |
+
+The pictures are drawn from the app's own previews, with made-up people and text.
 
 | Change | Element X | InterCom for Android | Since |
 | --- | --- | --- | --- |
@@ -170,7 +182,19 @@ There are no screenshots of the Android app here yet.
 | Volume per tile | — | Press and hold a tile: **0–200 %** and *Mute for me*, per person and for their share, remembered; the desktop's curve and limiter | A.3 |
 | Equal grid | — | Call settings → Preferences → Layout → **Equal grid** | A.2 |
 | Push | Firebase or UnifiedPush, depending on the build | UnifiedPush only: a distributor such as ntfy is needed | A.1 |
-| Updates | Through the store | **Updates itself** from the GitHub releases: looks when opened (at most every half hour), downloads on Wi-Fi unless mobile data is allowed, never during a call, checks the SHA-256 and the signing key | A.4, A.5 |
+| Updates | Through the store | **Updates itself** from the GitHub releases: downloads on Wi-Fi unless mobile data is allowed, never during a call, checks the SHA-256 and the signing key | A.4, A.5 |
+| Finding an update | — | Within minutes: the releases feed with its ETag when the app is opened, the network returns and every half hour; the GitHub API only when the feed changed | A.14 |
+| Knowing of an update | — | A **red dot** on the avatar that leads to the settings, and **Update available** at their top | A.14 |
+| What's new | — | The notes of the release and of those it skips, in the update dialog and once after an update; text and lists only, nothing loaded | A.14 |
+| An update that does not install | — | Says what to do: **Samsung Auto Blocker** (with a button to the security settings), storage, an unsupported phone, another build | A.14 |
+| Look | Compound: Element's greys and green | **InterCom's palette**: near-black neutral surfaces, hairlines, one accent (`#6875f5`), a light variant; green only for success and speaking | A.14 |
+| Pictures sent together | One bubble per picture; `m.gallery` messages as a grid | **One gallery** for consecutive pictures of one sender (within two minutes, or one batch), a tap pages through them; compatible with the desktop | A.14 |
+| Choosing several items | One at a time; behind a labs switch, one `m.gallery` message | Several at once, sent as a message each, pictures marked as one batch (`io.intercom.gallery`) | A.14 |
+| Deafen | — | A **deafen** button in the call: nobody is heard, the microphone is muted with it and comes back as it was | A.14 |
+| Mute across calls | Every call starts unmuted | Mute and deafen are **kept across calls** | A.14 |
+| Sounds | Element's chimes; the phone's ringtone | **InterCom's own**: join and leave, cues for mute and deafen, the ringback, and the ringtone for incoming calls (the phone's can be chosen) | A.14 |
+| The message field's buttons | Lifted by a fixed distance: below the text's line with a larger font | On the line of the text whatever the font, 48 dp each | A.14 |
+| Version | — | The same revision as the desktop release of the round, from 14 on | A.14 |
 | Call transport | Native calls (off by default) take the first advertised transport | Publishes on the advertised transport that has a JWT service (`livekit_service_url`) | A.7 |
 | Logs | — | Call logs mirrored to logcat without secrets (`adb logcat -s InterComCall matrix-rtc InterCom`); Developer options → *Share logs* | A.7 |
 

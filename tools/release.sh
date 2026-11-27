@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
-# Builds and publishes an InterCom release.
+# Builds and publishes a Lattice desktop release. (The app was called InterCom up to
+# 1.12.35-intercom.14; version numbers, tags, branches and this repository keep that name.)
 #
 #   tools/release.sh <version> --ci
 #   tools/release.sh <version> [--skip-build] [--no-publish]
 #
-#   <version>      e.g. 1.12.35-intercom.1: the Element Web version InterCom is based on, then
-#                  the InterCom revision. CHANGELOG.md must have a "## <version>" section.
+#   <version>      e.g. 1.12.35-intercom.15: the Element Web version Lattice is based on, then
+#                  Lattice's revision, still written "intercom.N": every install compares these
+#                  numbers and finds the releases by their tags, and the ones from before the
+#                  rename read nothing else. CHANGELOG.md must have a "## <version>" section.
 #   --ci           build nothing here: commit the submodule pointers, tag and push, and let the
 #                  release workflow (.github/workflows/release.yml) build both targets and
 #                  publish the GitHub release. Needs GitHub Actions to be usable for the account.
@@ -16,8 +19,9 @@
 # What it does without --ci:
 #   1. builds Element Call (embedded), the web app, the Linux app and the Windows installer,
 #      one heavy step at a time
-#   2. collects InterCom-<version>-linux-x64.tar.gz, InterCom-Setup-<version>-x64.exe and
-#      SHA256SUMS in release/<version>/
+#   2. collects Lattice-<version>-linux-x64.tar.gz and Lattice-Setup-<version>-x64.exe, the same
+#      two files under the names from before the rename (InterCom-<version>-linux-x64.tar.gz,
+#      InterCom-Setup-<version>-x64.exe), and SHA256SUMS of all four in release/<version>/
 #   3. commits the submodule pointers, tags this repository v<version> and the two forks
 #      intercom-v<version>, and pushes branches and tags
 #   4. creates or updates the GitHub release with the notes from CHANGELOG.md; files already
@@ -25,8 +29,10 @@
 #      files are on it.
 #
 # The app updates itself from these releases (element-web/apps/desktop/src/intercom-updater.ts):
-# it needs the tag v<version>, the two files under the names given here and SHA256SUMS, and it
-# knows its own version from INTERCOM_VERSION, which this script sets for the build.
+# it needs the tag v<version>, this platform's file under a name it knows and SHA256SUMS, and it
+# knows its own version from INTERCOM_VERSION, which this script sets for the build. Installs up
+# to 1.12.35-intercom.14 know only the InterCom-… names, newer ones take Lattice-… first: leave
+# the old names out (LATTICE_LEGACY_ASSETS=0) only when no install that old is to be updated.
 #
 # Before a release, go through docs/RELEASING.md: the changelog, the README, the list of changes
 # and the screenshots are part of it. The script warns, and goes on, when README.md or
@@ -38,6 +44,7 @@
 #
 # Environment:
 #   INTERCOM_REPO      GitHub repository of the release (default: taken from the origin remote)
+#   LATTICE_LEGACY_ASSETS  0 leaves out the copies under the InterCom-… names (default: 1)
 #   INTERCOM_WINEPREFIX  wine prefix for the Windows build
 #                        (default: ~/.cache/electron-builder/intercom-wine-prefix, never ~/.wine)
 #   WEBPACK_JOBS       caps the minifier's workers when memory is tight
@@ -167,16 +174,26 @@ fi
 if ((!CI)); then
     step "Assets"
     LINUX_SRC="$DESKTOP/dist-release/intercom-$BASE.tar.gz"
-    WIN_SRC="$DESKTOP/dist-win/InterCom-Setup-x64.exe"
+    WIN_SRC="$DESKTOP/dist-win/Lattice-Setup-x64.exe"
     [[ -f "$LINUX_SRC" ]] || die "missing $LINUX_SRC"
     [[ -f "$WIN_SRC" ]] || die "missing $WIN_SRC"
     rm -rf "$OUT"
     mkdir -p "$OUT"
-    LINUX_ASSET="InterCom-$VERSION-linux-x64.tar.gz"
-    WIN_ASSET="InterCom-Setup-$VERSION-x64.exe"
+    LINUX_ASSET="Lattice-$VERSION-linux-x64.tar.gz"
+    WIN_ASSET="Lattice-Setup-$VERSION-x64.exe"
     cp "$LINUX_SRC" "$OUT/$LINUX_ASSET"
     cp "$WIN_SRC" "$OUT/$WIN_ASSET"
-    (cd "$OUT" && sha256sum "$LINUX_ASSET" "$WIN_ASSET" >SHA256SUMS)
+    ASSETS=("$LINUX_ASSET" "$WIN_ASSET")
+    # The same files under the names the app had before it became Lattice: what the updater of
+    # an install up to 1.12.35-intercom.14 looks for, in the release and in SHA256SUMS
+    if [[ "${LATTICE_LEGACY_ASSETS:-1}" != "0" ]]; then
+        LEGACY_LINUX_ASSET="InterCom-$VERSION-linux-x64.tar.gz"
+        LEGACY_WIN_ASSET="InterCom-Setup-$VERSION-x64.exe"
+        cp "$LINUX_SRC" "$OUT/$LEGACY_LINUX_ASSET"
+        cp "$WIN_SRC" "$OUT/$LEGACY_WIN_ASSET"
+        ASSETS+=("$LEGACY_LINUX_ASSET" "$LEGACY_WIN_ASSET")
+    fi
+    (cd "$OUT" && sha256sum "${ASSETS[@]}" >SHA256SUMS)
     cat "$OUT/SHA256SUMS"
     ls -l "$OUT"
 
@@ -195,9 +212,9 @@ fi
 
 step "Tags"
 for fork in "${FORKS[@]}"; do
-    git -C "$fork" tag -a "$FORK_TAG" -m "InterCom $VERSION"
+    git -C "$fork" tag -a "$FORK_TAG" -m "Lattice $VERSION"
 done
-git tag -a "$TAG" -m "InterCom $VERSION"
+git tag -a "$TAG" -m "Lattice $VERSION"
 
 step "Push"
 for fork in "${FORKS[@]}"; do
@@ -223,13 +240,13 @@ notes >"$OUT/notes.md"
 # them would be offered as one to fetch by hand.
 DRAFT=0
 if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
-    gh release edit "$TAG" --repo "$REPO" --title "[Desktop] InterCom $VERSION · Linux & Windows" --notes-file "$OUT/notes.md"
+    gh release edit "$TAG" --repo "$REPO" --title "[Desktop] Lattice $VERSION · Linux & Windows" --notes-file "$OUT/notes.md"
 else
     gh release create "$TAG" --repo "$REPO" --verify-tag --draft \
-        --title "[Desktop] InterCom $VERSION · Linux & Windows" --notes-file "$OUT/notes.md"
+        --title "[Desktop] Lattice $VERSION · Linux & Windows" --notes-file "$OUT/notes.md"
     DRAFT=1
 fi
-for asset in "$LINUX_ASSET" "$WIN_ASSET"; do
+for asset in "${ASSETS[@]}"; do
     gh release upload "$TAG" --repo "$REPO" --clobber "$OUT/$asset"
 done
 ALL="$(mktemp -d)"

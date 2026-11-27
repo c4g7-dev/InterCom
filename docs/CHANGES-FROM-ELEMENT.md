@@ -1,12 +1,12 @@
-# What InterCom changes compared to Element
+# What Lattice changes compared to Element
 
-InterCom is Element Web / Desktop 1.12.35 with Element Call 0.29.0-rc.2, and Element X Android
+Lattice is Element Web / Desktop 1.12.35 with Element Call 0.29.0-rc.2, and Element X Android
 26.11.1 with element-call-android 0.1.2 and matrix-rust-rtc 0.5.0, changed in the places listed
 here. Everything else is Element as it is.
 
 - **Element** is what the upstream release does at that version. A dash means it has nothing of
   the kind.
-- **Since** is the InterCom release that brought the change: `.4` is desktop 1.12.35-intercom.4,
+- **Since** is the Lattice release that brought the change: `.4` is desktop 1.12.35-intercom.4,
   `A.2` is Android 26.11.1-intercom.2. The details are in the [changelog](../CHANGELOG.md).
 
 The screenshots were taken from the real interface against a made-up homeserver. The people,
@@ -31,7 +31,7 @@ button shown on its own) is the app itself.
 | --- | --- |
 | ![The call's controls with the share button in two parts](images/share-button.png) | ![The share dialog in one column in a narrow window](images/share-dialog-small.png) |
 
-| Change | Element | InterCom | Since |
+| Change | Element | Lattice | Since |
 | --- | --- | --- | --- |
 | Before a share | Straight to the system's picker. Quality only behind a developer setting, off by default | The share button has two parts. The button **shares at once** with the settings of the last share (the first time on a device it opens the dialog); the chevron opens **"Share your screen"**: *Optimise for* as cards, *Resolution*, *Frame rate*, *Advanced*, and *Share audio* with the sources in groups, a search, *All* / *None* and a volume per source. A line says what the share will be. Every choice is kept in the profile, over restarts | .1, .14 |
 | A saved audio source that is gone | — | The share starts without it and says so in a notice; the source stays chosen for when it is back | .14 |
@@ -45,7 +45,7 @@ button shown on its own) is the app itself.
 | Muted after joining | A failed first publication turns the microphone switch off: you show as muted | The switch stays on and publishing is tried again until it works; a microphone that drops out and comes back returns to what you chose | .1 |
 | Large calls | Joins muted from eight participants on | Joins as your microphone switch says | .1 |
 | Missing or blocked devices | The call greys out the microphone and camera button without saying why | **Four states, shown alike** in the call's controls, the lobby, the device menus and the user panel: on, muted, *no device*, *access blocked*. A device that is not there keeps its icon with a red no-entry badge, says why in its tooltip ("No microphone found", "Camera access blocked — check system settings") and cannot be pressed; your mute is left as it is. The call tells the app (`audio_state`, `video_state`, `can_share_screen`); without a call the app looks itself | .14 |
-| Alone in a private call | A one-to-one call ends the moment the other side leaves | You stay for **5 minutes** (3, 5, 10 or never, in Settings → InterCom → Calls), with a countdown in the call and in the user panel, *Stay* and *Leave now*; somebody coming back cancels it, and when it runs out a notice says why you were disconnected. Private rooms only: voice channels and public rooms never count down | .14 |
+| Alone in a private call | A one-to-one call ends the moment the other side leaves | You stay for **5 minutes** (3, 5, 10 or never, in Settings → Lattice → Calls), with a countdown in the call and in the user panel, *Stay* and *Leave now*; somebody coming back cancels it, and when it runs out a notice says why you were disconnected. Private rooms only: voice channels and public rooms never count down | .14 |
 | Deafen | — | Nothing of the call is heard (boosted tiles and shares included), the microphone is off, a banner says so | .1 |
 | Shortcuts | `m`, `v`, space and others inside the call view | In addition **Ctrl+Shift+M** (mute), **Ctrl+Shift+D** (deafen), **Ctrl+Shift+V** (camera), **Ctrl+Shift+S** (screen share), in the call and in the app's window (there all but mute only during a call); global on Windows during a call (M and D). The same from the command line: `--toggle-mute`, `--mute`, `--unmute`, `--toggle-deafen`, `--toggle-camera`, `--toggle-screenshare`, `--leave-call` | .1, .6, .14 |
 | Connection quality | — | The **signal bars** of the call strip show the quality (3 green / 2 amber / 1 red, from ping and packet loss: good under 120 ms and 2 %, fair under 250 ms and 6 %), and open a **connection card**: ping with a graph of the last minute, packet loss both ways, jitter, media server, transport (UDP / TCP / TURN relay), encryption, microphone codec and bitrate, the screen share's size, frame rate and bitrate, and "Open diagnostics". The call sends `io.intercom.conn_stats` (the quality on change; the details once a second only while the card is open, asked for with the call actions `connection-details-on` / `-off`); a call that does not send it shows plain connected bars. Level changes are logged as `conn_quality` | .14 |
@@ -56,7 +56,7 @@ button shown on its own) is the app itself.
 The tile volume is in the [Layouts & windows](#layouts--windows) screenshot, the share audio
 sources in the share dialog above.
 
-| Change | Element | InterCom | Since |
+| Change | Element | Lattice | Since |
 | --- | --- | --- | --- |
 | Share audio on the desktop | Element Desktop asks the system for video only: a share has no sound | **Linux:** any PipeWire / PulseAudio output, listed with the apps playing into it, plus inputs; several sources mixed live, each with 0–200 % and mute, changeable while sharing (*Share audio sources*). **Windows:** the system's sound, without the call's own where Electron supports that. See [AUDIO-LINUX.md](AUDIO-LINUX.md) | .1 |
 | Share audio quality | Where a browser adds audio: mono, 48 kbit/s, silence left out | Stereo, 192 kbit/s, nothing left out, no echo cancellation, noise suppression or gain control | .1 |
@@ -64,7 +64,7 @@ sources in the share dialog above.
 | The system's microphone volume | WebRTC may turn it down | Never changed by a call | .1 |
 | Automatic gain control | On | Off by default on the Linux desktop, where it lowers the input for every other app | .1 |
 | Mute and deafen | Mute belongs to the call | **One state for the whole app**, as in Discord: works with or without a call, kept over restarts, every call is joined with it. Changed from the user panel, the call, the shortcuts, the command line and the tray | .6 |
-| Sounds | Element Call's join and leave sounds; Element's ring and ringback | **InterCom's own**, made from sine waves: joining and leaving (you and others), mute, unmute, deafen, undeafen, and the ringtone of a call coming in and the ringback of a call going out, both soft loops. One chime for several arrivals within 1.5 s; deafened you hear only your own. Your own files `join`, `leave`, `mute`, `unmute`, `deafen`, `undeafen`, `ringtone`, `ringback` (.ogg, .mp3, .wav, up to 2 MB) in `<profile>/sounds/` replace them. The built-in files are in `element-web/apps/web/res/media/intercom/`, where the Android app takes them from | .7, .9, .14 |
+| Sounds | Element Call's join and leave sounds; Element's ring and ringback | **Lattice's own**, made from sine waves: joining and leaving (you and others), mute, unmute, deafen, undeafen, and the ringtone of a call coming in and the ringback of a call going out, both soft loops. One chime for several arrivals within 1.5 s; deafened you hear only your own. Your own files `join`, `leave`, `mute`, `unmute`, `deafen`, `undeafen`, `ringtone`, `ringback` (.ogg, .mp3, .wav, up to 2 MB) in `<profile>/sounds/` replace them. The built-in files are in `element-web/apps/web/res/media/intercom/`, where the Android app takes them from | .7, .9, .14 |
 
 ## Layouts & windows
 
@@ -76,7 +76,7 @@ sources in the share dialog above.
 | --- |
 | ![A room with its call above the timeline and a bar to resize it](images/call-over-chat.png) |
 
-| Change | Element | InterCom | Since |
+| Change | Element | Lattice | Since |
 | --- | --- | --- | --- |
 | Equal grid | Grid and Spotlight; a screen share switches the call to Spotlight | A third layout, **Equal grid**: every tile 16:9 and the same size, screen shares included and uncropped, nothing promoted. Kept for the next call | .1 |
 | Focus a tile | No click action on a tile | **One click** shows a tile large with the others in a strip; another click or Escape goes back | .4 |
@@ -95,12 +95,12 @@ sources in the share dialog above.
 | --- | --- |
 | ![The Lounge voice channel joined: its people under it, a LIVE badge, the Voice connected panel, the call](images/voice-channel.png) | ![The room list with text and voice channels and the menu with New text channel and New voice channel](images/channels-menu.png) |
 
-| Change | Element | InterCom | Since |
+| Change | Element | Lattice | Since |
 | --- | --- | --- | --- |
 | Room list | Rooms and people | **Text channels** and **Voice channels** sections; a room has a `#`, a voice channel a speaker, a person their avatar with presence | .5, .7 |
 | Voice channels | A video room opens its lobby | Rooms of the type `org.matrix.msc3417.call` (and video rooms) are voice channels: **one click joins**, without the lobby, and leaves the call you were in. Pointing at one says *Join voice* or *Connected* | .5, .7 |
 | Who is in a voice channel | — | Listed under the channel, whether or not you are in it. While you are: a ring for who speaks, who is muted, **LIVE** for a screen share, your own deafen. Arrivals slide in, leavers fade out | .5, .7 |
-| Ringing | The first to join sends a call notification; others get an incoming-call toast | A voice channel rings nobody: InterCom sends no notification and shows no toast for one (other clients still send it when they join first) | .7 |
+| Ringing | The first to join sends a call notification; others get an incoming-call toast | A voice channel rings nobody: Lattice sends no notification and shows no toast for one (other clients still send it when they join first) | .7 |
 | Creating | *New room*, *New video room* | In a space's "+" menu and context menu: **New text channel**, **New voice channel**, which every member of the space can join (anyone, if the space is public). Outside a space: *New voice room* | .7 |
 | User panel | — | Under the room list: your avatar, name, presence, microphone and deafen. In a call, a **Voice connected** strip with the room (a way back to the call), camera, screen share (share at once, and a chevron for its settings) and leave. A settings button with a dot appears only while an update waits | .5, .6, .9 |
 
@@ -113,18 +113,19 @@ sources in the share dialog above.
 <p><img src="images/call-tiles.png" width="560" alt="Call tiles in the timeline: a running call with Join, a ringing one, Call ended, Missed call"><br>
 <sub>Calls in the timeline</sub></p>
 
-<p><img src="images/batch-upload.png" width="460" alt="The Upload 3 images dialog with the gallery preview and a caption field"><br>
-<sub>Several pictures, one dialog</sub></p>
+| Attachments wait above the composer | While they upload |
+| --- | --- |
+| ![Three pictures and a file as cards above the composer, each with its name, size and a button to take it out, and a line of text being typed](images/attachment-tray.png) | ![The same cards, each with a bar that fills as it uploads](images/attachment-tray-progress.png) |
 
 | Far back: the bar above the composer | Unread above: the bar along the top |
 | --- | --- |
 | ![You're viewing older messages, with Jump to present, a dark bar above the composer](images/jump-far.png) | ![12 new messages since 16:13, with Mark as read, a dark bar along the top of the timeline](images/jump-unread.png) |
 
-| Change | Element | InterCom | Since |
+| Change | Element | Lattice | Since |
 | --- | --- | --- | --- |
 | Pictures sent together | One tile per picture | **One gallery** of cropped previews, "+N" after nine. A click opens the lightbox with previous and next (also the arrow keys) and "2 of 5". In the classic timeline and in the labs *New timeline*. Every picture stays an ordinary image message for other clients | .4, .9 |
 | What forms a gallery | — | Pictures confirmed together are marked as one batch (`io.intercom.gallery`, ignored by other clients) and grouped however long their uploads took; older pictures by time (one sender, within two minutes, nothing between) | .4, .5 |
-| Choosing several pictures | One confirmation per file | One dialog, **Upload N images**, showing the gallery to be, with an optional caption sent with the first | .4 |
+| Adding pictures and files | A confirmation dialog per file, before anything else can be typed | **A tray above the composer**: what is pasted, dropped on the room or added with **+** waits there as a card (a thumbnail for pictures and videos, name and size for other files), and you go on typing. **Enter** sends all of it: pictures as one gallery with the text as the caption of the first, other files (or a mix) first and the text as a message after them. ✕ takes one out, **Esc** empties the tray (and only then cancels a reply), Backspace in an empty composer takes the last one out. While it uploads each card shows how far it is; a failed one stays, to be sent again or taken out. A tray per room and per thread, kept while you look elsewhere, never written to disk. Files over the server's limit are refused as before; encryption is the room's, as before. .4 to .14 had one dialog, *Upload N images*, instead | .15 |
 | Sending a picture | The thumbnail is made and uploaded first, then the picture | The picture's upload starts at once and the thumbnail is made beside it; the blurhash comes from a 64 px copy; decoding is off the main thread | .4 |
 | A failed upload | Fails | Tried once more after 1.5 s (no answer, 5xx, 408, 429); on servers with Matrix Authentication Service an upload renews an expiring sign-in token itself | .5, .6 |
 | HTTP/3 | On | Off by default, because uploads stalled over it behind some proxies; `--enable-quic` turns it on | .5 |
@@ -137,13 +138,13 @@ sources in the share dialog above.
 
 ## Look
 
-| InterCom Dark | InterCom Light |
+| Lattice Dark | Lattice Light |
 | --- | --- |
-| ![A space with text and voice channels and a conversation in InterCom Dark](images/overview.png) | ![The same view in InterCom Light](images/light-theme.png) |
+| ![A space with text and voice channels and a conversation in Lattice Dark](images/overview.png) | ![The same view in Lattice Light](images/light-theme.png) |
 
-| Change | Element | InterCom | Since |
+| Change | Element | Lattice | Since |
 | --- | --- | --- | --- |
-| Themes | Light and Dark, following the system | **InterCom Dark** (the default) and **InterCom Light**; following the system is off | .1, .7 |
+| Themes | Light and Dark, following the system | **Lattice Dark** (the default) and **Lattice Light**; following the system is off | .1, .7 |
 | Surfaces | Element's palette, shadows on menus and dialogs | Near-black layers: rail `#0a0a0c`, room list `#101013`, timeline `#151518`, hairlines `#202025`, one accent `#6875f5`. No shadows; radii 6 / 8 / 12 / 16 px. The flat layer also applies to Element's own Light and Dark | .1, .7 |
 | Rail of spaces | Element's space icons | Round 40 px icons that turn into rounded squares for the open space, a marker at the edge for unread and open | .7 |
 | Room list | Element's rows | 34 px rows, small section labels, quiet filter chips; unread is a bold name and a marker at the edge | .7 |
@@ -158,33 +159,35 @@ Why it looks like this: [DESIGN.md](DESIGN.md).
 
 | The update button in the rail, with what is new | After an update: what's new |
 | --- | --- |
-| ![A download arrow with a red dot above the settings, and its card: InterCom 1.12.35-intercom.13, Ready to install, What's new](images/update-rail.png) | ![The dialog "What's new in InterCom 1.12.35-intercom.13" with the release notes and Got it](images/whats-new.png) |
+| ![A download arrow with a red dot above the settings, and its card: Lattice 1.12.35-intercom.13, Ready to install, What's new](images/update-rail.png) | ![The dialog "What's new in Lattice 1.12.35-intercom.13" with the release notes and Got it](images/whats-new.png) |
 
-| Settings → InterCom | While an update downloads |
+| Settings → Lattice | While an update downloads |
 | --- | --- |
-| ![The InterCom settings tab: version, the four switches, Restart to update, Check now, and what is new in the update](images/settings-updates.png) | ![The status bar over the user panel: Downloading 1.12.35-intercom.11, 41 %](images/update-bar.png) |
+| ![The Lattice settings tab: version, the four switches, Restart to update, Check now, and what is new in the update](images/settings-updates.png) | ![The status bar over the user panel: Downloading 1.12.35-intercom.11, 41 %](images/update-bar.png) |
 
-| Change | Element | InterCom | Since |
+| Change | Element | Lattice | Since |
 | --- | --- | --- | --- |
-| Name and profile | Element's (`~/.config/Element`) | Own name, icon, profile directory (`~/.config/InterCom`, `%APPDATA%\InterCom`) and URL scheme: installs next to Element without sharing data with it | .1 |
+| Name and profile | Element's (`~/.config/Element`) | Own name, icon, profile directory (`~/.config/InterCom`, `%APPDATA%\InterCom`) and URL scheme: installs next to Element without sharing data with it. The name is **Lattice** from .15 on (InterCom before), with a new icon; the profile directory, the program file and the version numbers kept the old name, so an update keeps the sign-in ([details](UPDATES.md#from-intercom-to-lattice)) | .1, .15 |
+| The mark, moving | A spinner | Lattice's mark is the sign that something is on its way: its bars rise and fall while an update is put in place at the start and while the app loads; a light goes round a ring of dots while a call is joined; three bars move beside the name of whoever talks in a voice channel's list. Still with reduced motion | .15 |
+| Tray icon on Linux | The app's icon | The mark alone in white, as panels show their other icons; `INTERCOM_TRAY_ICON=colour` for the app's icon | .15 |
 | Updates | Element Desktop updates on Windows and macOS; on Linux not at all | **Updates itself** from this repository's GitHub releases, checked against `SHA256SUMS`: before the window opens, and while it runs, with a status bar and *Restart to update* (also in the tray). Linux swaps the install directory; Windows runs the installer silently. See [UPDATES.md](UPDATES.md) | .5 – .10 |
 | How soon an update arrives | Squirrel's schedule, hourly | **Within minutes**: every five minutes, and when the window is focused again, the computer wakes or the network returns, one conditional request asks whether the releases feed changed; the GitHub API is asked only when it did, and every six hours. A rate limit is waited out. *Check for updates every few minutes* turns it off | .13 |
 | Update button | A toast | In the **rail of spaces**, above the settings, while an update is available, downloading or ready: a download arrow with a red dot and a ring for the download. **One click** installs and restarts, at once or as soon as the download is verified | .13 |
-| Release notes | A link in the toast | **What's new** in the update button's card and in Settings → InterCom (every release that was skipped, newest first), and once in a dialog after an update. Shown as text: no HTML, no pictures loaded, links open in the browser. *Show what's new after updates* turns the dialog off | .13 |
+| Release notes | A link in the toast | **What's new** in the update button's card and in Settings → Lattice (every release that was skipped, newest first), and once in a dialog after an update. Shown as text: no HTML, no pictures loaded, links open in the browser. *Show what's new after updates* turns the dialog off | .13 |
 | Hardware video on Linux | Chromium's defaults | VA-API decoding, and encoding where the driver has it (Intel, AMD; not NVIDIA). `--no-hw-video` leaves it to Chromium | .1 |
 | Diagnostics log | Logs for bug reports | A JSON-lines log per run in `<profile>/logs/` (200 MB at most), *Open diagnostics folder* in the Help menu and the tray, and `tools/diag-summary.py`, which turns logs into a verdict per feature. Nothing is uploaded | .1 |
-| Command line | `--profile`, `--hidden`, `--no-update` | Also the call shortcuts above, `--no-hw-video`, `--hw-video-zero-copy`, `--enable-quic`, `--no-global-shortcuts`, `--global-shortcuts-portal`; `--no-update` stops InterCom's updater too | .1 – .6 |
+| Command line | `--profile`, `--hidden`, `--no-update` | Also the call shortcuts above, `--no-hw-video`, `--hw-video-zero-copy`, `--enable-quic`, `--no-global-shortcuts`, `--global-shortcuts-portal`; `--no-update` stops Lattice's updater too | .1 – .6 |
 | Smaller things | | The window is dark while it loads; the Labs tab is shown; on Wayland only one screen picker opens at a time; on Windows a click on the tray icon hides the window | .1 |
 
 ## Android
 
-| InterCom's look | The dot that says "update" | Update available |
+| Lattice's look | The dot that says "update" | Update available |
 | --- | --- | --- |
-| ![The chat list in InterCom's dark theme](images/android-theme.png) | ![The chat list's top bar, a red dot on the avatar](images/android-update-dot.png) | ![The settings beginning with "Update available"](images/android-update-settings.png) |
+| ![The chat list in Lattice's dark theme](images/android-theme.png) | ![The chat list's top bar, a red dot on the avatar](images/android-update-dot.png) | ![The settings beginning with "Update available"](images/android-update-settings.png) |
 
 | What is new, in the update dialog | After an update | When Android does not install it |
 | --- | --- | --- |
-| ![The dialog "InterCom 26.11.1-intercom.14 is available" with the notes of two releases](images/android-update-dialog.png) | ![The dialog "What's new in InterCom 26.11.1-intercom.14"](images/android-whats-new.png) | ![The dialog "InterCom update failed" with the hint about Samsung Auto Blocker and "Open security settings"](images/android-auto-blocker.png) |
+| ![The dialog "Lattice 26.11.1-intercom.14 is available" with the notes of two releases](images/android-update-dialog.png) | ![The dialog "What's new in Lattice 26.11.1-intercom.14"](images/android-whats-new.png) | ![The dialog "Lattice update failed" with the hint about Samsung Auto Blocker and "Open security settings"](images/android-auto-blocker.png) |
 
 | Pictures sent together | The message field |
 | --- | --- |
@@ -192,7 +195,7 @@ Why it looks like this: [DESIGN.md](DESIGN.md).
 
 The pictures are drawn from the app's own previews, with made-up people and text.
 
-| Change | Element X | InterCom for Android | Since |
+| Change | Element X | Lattice for Android | Since |
 | --- | --- | --- | --- |
 | The app | Element X | Own name, icon and package (`com.c4g7.intercom.android`): installs next to Element X. No analytics, no bug report upload | A.1 |
 | Calls | Element Call in a web view; native calls and screen sharing off | **Native MatrixRTC calls**, with screen sharing | A.1 |
@@ -207,12 +210,12 @@ The pictures are drawn from the app's own previews, with made-up people and text
 | Knowing of an update | — | A **red dot** on the avatar that leads to the settings, and **Update available** at their top | A.14 |
 | What's new | — | The notes of the release and of those it skips, in the update dialog and once after an update; text and lists only, nothing loaded | A.14 |
 | An update that does not install | — | Says what to do: **Samsung Auto Blocker** (with a button to the security settings), storage, an unsupported phone, another build | A.14 |
-| Look | Compound: Element's greys and green | **InterCom's palette**: near-black neutral surfaces, hairlines, one accent (`#6875f5`), a light variant; green only for success and speaking | A.14 |
+| Look | Compound: Element's greys and green | **Lattice's palette**: near-black neutral surfaces, hairlines, one accent (`#6875f5`), a light variant; green only for success and speaking | A.14 |
 | Pictures sent together | One bubble per picture; `m.gallery` messages as a grid | **One gallery** for consecutive pictures of one sender (within two minutes, or one batch), a tap pages through them; compatible with the desktop | A.14 |
 | Choosing several items | One at a time; behind a labs switch, one `m.gallery` message | Several at once, sent as a message each, pictures marked as one batch (`io.intercom.gallery`) | A.14 |
 | Deafen | — | A **deafen** button in the call: nobody is heard, the microphone is muted with it and comes back as it was | A.14 |
 | Mute across calls | Every call starts unmuted | Mute and deafen are **kept across calls** | A.14 |
-| Sounds | Element's chimes; the phone's ringtone | **InterCom's own**: join and leave, cues for mute and deafen, the ringback, and the ringtone for incoming calls (the phone's can be chosen) | A.14 |
+| Sounds | Element's chimes; the phone's ringtone | **Lattice's own**: join and leave, cues for mute and deafen, the ringback, and the ringtone for incoming calls (the phone's can be chosen) | A.14 |
 | The message field's buttons | Lifted by a fixed distance: below the text's line with a larger font | On the line of the text whatever the font, 48 dp each | A.14 |
 | Version | — | The same revision as the desktop release of the round, from 14 on | A.14 |
 | Name and icon | Element X | **Lattice** (InterCom up to A.14): its own icon, also themed and as the notification's, an animated splash screen; the package and the sign-in are unchanged, so it updates in place | A.15 |

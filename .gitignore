@@ -12,3 +12,5 @@ node_modules/
 __pycache__/
 .env
 .env.*
+# Markers that agents working on a release leave for one another
+.lattice-*

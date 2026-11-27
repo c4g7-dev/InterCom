@@ -1,7 +1,66 @@
 # Changelog
 
-Versions are `<Element Web version>-intercom.<n>`: the upstream release InterCom is based on,
-followed by the InterCom revision.
+Versions are `<Element Web version>-intercom.<n>`: the upstream release Lattice is based on,
+followed by Lattice's revision. The app was called InterCom up to 1.12.35-intercom.14, and the
+numbers keep that name; the entries below say what the app was called when they were written.
+
+## 1.12.35-intercom.15
+
+| Attachments wait above the composer | The mark while it loads, connects, and beside who speaks |
+| --- | --- |
+| ![Three pictures and a file as cards above the composer, each with its name, size and a button to take it out, and a line of text being typed](https://raw.githubusercontent.com/c4g7-dev/InterCom/v1.12.35-intercom.15/docs/images/attachment-tray.png) | ![The Lattice icon and its three animations side by side](https://raw.githubusercontent.com/c4g7-dev/InterCom/v1.12.35-intercom.15/docs/images/lattice-marks.png) |
+
+<sub>The tray is the real component with made-up files; the marks are drawn from the icon set.</sub>
+
+- **InterCom is now Lattice.** A new name and a new icon: three bars between two rows of dots on
+  a near-black tile. The window, the tray, the settings tab, the update texts, the sign-in
+  screen, the installer and its shortcuts say Lattice. Nothing else changes with the update: you
+  stay signed in, and your settings, sessions and sound files stay where they are
+  (`~/.config/InterCom`, `%APPDATA%\InterCom`). The program file is still `intercom` on Linux (a
+  link `lattice` sits beside it) and `InterCom.exe` on Windows, in the same place, so launchers,
+  key bindings, pinned icons and autostart go on working. Version numbers still read
+  `1.12.35-intercom.N`, because every install compares them and older ones read nothing else.
+  The themes are shown as *Lattice Dark* and *Lattice Light*; a theme you chose stays chosen.
+- **Windows shortcuts.** The installer renames the Start menu shortcut and the desktop shortcut
+  (if you kept it) to "Lattice", and the entry under *Apps* reads "Lattice". An icon pinned to
+  the taskbar keeps working with the new icon; its tooltip says "InterCom" until you pin it
+  anew. The installer's script was read line by line and the installer was built, but it could
+  not be run where the release was made.
+- **Attachments wait above the composer.** Pictures and files that you paste, drop on the room
+  or add with **+** no longer open a dialog: they appear as cards above the composer, a
+  thumbnail for pictures and videos, name and size for other files, and you go on typing.
+  **Enter** sends them all. Pictures go as one gallery with your text as the caption; other
+  files, or pictures and files together, go first and your text follows as a message. ✕ takes
+  one out, **Esc** empties the tray (with an empty tray it cancels a reply, as before), and
+  Backspace in an empty composer takes out the last one. While they upload, each card shows how
+  far it is; one that failed stays, to be sent again or taken out. Each room and each thread
+  has its own tray, kept while you look at another room and gone when the app closes. Files
+  larger than the server takes are refused as before, and in an encrypted room the files are
+  encrypted as before.
+- **The mark moves where something is on its way**: its bars rise and fall in the small window
+  of an update at the start and while the app loads and signs in; a light goes round a ring of
+  dots while a call is being joined; and three moving bars stand beside the name of whoever
+  talks in a voice channel's list of people. With reduced motion they stand still.
+- **Tray icon on Linux**: the mark alone, in white. Start with `INTERCOM_TRAY_ICON=colour` for
+  the app's icon on a light panel.
+- **Release files under both names.** `Lattice-<version>-linux-x64.tar.gz` and
+  `Lattice-Setup-<version>-x64.exe`, and the same two as `InterCom-…`, which the updater of
+  1.12.35-intercom.14 and older looks for; all four are in `SHA256SUMS`. Lattice takes the
+  `Lattice-…` file and falls back to the other.
+- **Ready for the repository's new name.** The releases stay at `github.com/c4g7-dev/InterCom`
+  for now: older installs take files only from addresses under that name. This release also
+  accepts `github.com/c4g7-dev/Lattice`, so the repository can move once installs are this new.
+  The forks with the code are `lattice-element-web`, `lattice-element-call` and so on already.
+
+Checked: the unit tests of the updater (both file names, both repository names), of the tray
+(what Enter sends for pictures, files and both, removing, the size limit, progress, one tray
+per room and thread) and of the marks; the desktop, call and web test suites that the changes
+touch; `SHA256SUMS` on a fresh download of all four files; the version, the name and the
+absence of build paths in both archives. Not checked: the app and the Windows installer were
+not started, so the renamed shortcuts, the tray icon and the keyring on Linux are verified by
+reading the code only; the tray was not driven end to end against a homeserver (its Playwright
+specs were updated but not run); in the labs rich-text composer, Enter with files and no text
+is untested (the send button works).
 
 ## Android 26.11.1-intercom.15
 

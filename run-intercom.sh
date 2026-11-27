@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Launches the locally built InterCom desktop app.
+# Launches the locally built Lattice desktop app.
 # Profile: ~/.config/InterCom (separate from Element's ~/.config/Element).
 # Diagnostics: ~/.config/InterCom/logs/diag-*.jsonl, summarised by tools/diag-summary.py.
 # Extra arguments are passed through, e.g. --no-hw-video, --profile <name>, --help.
@@ -15,7 +15,7 @@ for dir in dist dist-next dist-next2; do
     fi
 done
 if [[ -z "$BIN" ]]; then
-    echo "InterCom is not built yet: $DESKTOP/dist/linux-unpacked/intercom is missing." >&2
+    echo "Lattice is not built yet: $DESKTOP/dist/linux-unpacked/intercom is missing." >&2
     echo "Build it with element-web/apps/desktop/intercom/build.sh" >&2
     exit 1
 fi

@@ -1,4 +1,4 @@
-# Builds InterCom for Linux and Windows and publishes the GitHub release.
+# Builds Lattice (formerly InterCom) for Linux and Windows and publishes the GitHub release.
 #
 # Runs when a tag v<version> is pushed (tools/release.sh <version> --ci does that), or by hand
 # for a version: `gh workflow run release.yml --ref v<version> -f version=<version>`
@@ -117,7 +117,10 @@ jobs:
                   fi
                   mkdir -p out webapp-out
                   cp "element-web/apps/desktop/dist-release/intercom-$base.tar.gz" \
-                      "out/InterCom-$VERSION-linux-x64.tar.gz"
+                      "out/Lattice-$VERSION-linux-x64.tar.gz"
+                  # The same file under the name from before the rename, for the updater of
+                  # installs up to 1.12.35-intercom.14
+                  cp "out/Lattice-$VERSION-linux-x64.tar.gz" "out/InterCom-$VERSION-linux-x64.tar.gz"
                   # The Windows job packages this same web app
                   tar -C element-web/apps/web -czf webapp-out/webapp.tar.gz webapp
                   ls -l out webapp-out
@@ -196,8 +199,9 @@ jobs:
                   VERSION: ${{ needs.linux.outputs.version }}
               run: |
                   mkdir -p out
-                  cp element-web/apps/desktop/dist-win/InterCom-Setup-x64.exe \
-                      "out/InterCom-Setup-$VERSION-x64.exe"
+                  cp element-web/apps/desktop/dist-win/Lattice-Setup-x64.exe \
+                      "out/Lattice-Setup-$VERSION-x64.exe"
+                  cp "out/Lattice-Setup-$VERSION-x64.exe" "out/InterCom-Setup-$VERSION-x64.exe"
                   ls -l out
 
             - uses: actions/upload-artifact@v7
@@ -248,11 +252,11 @@ jobs:
               run: |
                   tag="v$VERSION"
                   if gh release view "$tag" >/dev/null 2>&1; then
-                      gh release edit "$tag" --title "InterCom $VERSION" --notes-file notes.md
+                      gh release edit "$tag" --title "[Desktop] Lattice $VERSION · Linux & Windows" --notes-file notes.md
                   elif [[ "$GITHUB_REF" == "refs/tags/$tag" ]]; then
-                      gh release create "$tag" --verify-tag --title "InterCom $VERSION" --notes-file notes.md
+                      gh release create "$tag" --verify-tag --title "[Desktop] Lattice $VERSION · Linux & Windows" --notes-file notes.md
                   else
-                      gh release create "$tag" --target "$GITHUB_SHA" --title "InterCom $VERSION" --notes-file notes.md
+                      gh release create "$tag" --target "$GITHUB_SHA" --title "[Desktop] Lattice $VERSION · Linux & Windows" --notes-file notes.md
                   fi
 
             - name: Upload the builds

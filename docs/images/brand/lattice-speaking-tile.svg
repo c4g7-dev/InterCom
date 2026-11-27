@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <title>Lattice — speaking indicator, on the tile</title>
+  <style>
+    .v { fill:#129a78; transform-box: fill-box; transform-origin: 50% 50%; animation: v .7s ease-in-out infinite alternate; }
+    .a{animation-delay:-.2s}.c{animation-delay:-.45s}
+    @keyframes v { from { transform: scaleY(.35) } to { transform: scaleY(1) } }
+    @media (prefers-reduced-motion: reduce) { .v { animation: none } }
+  </style>
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="#101013"/>
+  <rect x="17.5" y="17.5" width="477" height="477" rx="110.5" fill="none" stroke="#26262d" stroke-width="3"/>
+  <rect class="v a" x="134" y="176" width="44" height="160" rx="22"/>
+  <rect class="v b" x="234" y="126" width="44" height="260" rx="22"/>
+  <rect class="v c" x="334" y="156" width="44" height="200" rx="22"/>
+</svg>

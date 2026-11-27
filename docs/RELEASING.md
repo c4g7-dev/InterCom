@@ -5,6 +5,15 @@ A release is the built apps and the public repository saying what they do. `tool
 through it before the tag: the release notes and the pictures in them are taken from the tagged
 commit.
 
+## Names
+
+The app is Lattice; it was InterCom up to desktop 1.12.35-intercom.14. Version numbers keep the
+form `<Element version>-intercom.<N>` and the tags `v…` / `android-v…`: every install compares
+them and finds the releases by them, and the ones from before the rename read nothing else. The
+release titles say "[Desktop] Lattice <version> · Linux & Windows". The repository keeps its
+name until the installs out there are 1.12.35-intercom.15 or newer
+([why](UPDATES.md#from-intercom-to-lattice)); the forks are `lattice-…`, their branch `intercom`.
+
 ## Before the tag
 
 1. **`CHANGELOG.md`** has a section `## <version>` (`## Android <version>` for Android): what
@@ -45,10 +54,14 @@ all its files on it (the script keeps it a draft until then).
 
 ## After the push
 
-1. The release has its files under their names (`InterCom-<version>-linux-x64.tar.gz`,
-   `InterCom-Setup-<version>-x64.exe`, `SHA256SUMS`), and `sha256sum -c SHA256SUMS` passes on a
-   fresh download.
+1. The release has its files under their names (`Lattice-<version>-linux-x64.tar.gz`,
+   `Lattice-Setup-<version>-x64.exe`, the same two as `InterCom-<version>-linux-x64.tar.gz` and
+   `InterCom-Setup-<version>-x64.exe` for the installs from before the rename, `SHA256SUMS` of
+   all four), and `sha256sum -c SHA256SUMS` passes on a fresh download.
 2. `intercomVersion` in the `package.json` inside `resources/app.asar` is the version, on both
-   platforms, and neither `app.asar` nor `webapp.asar` holds a path of the build machine.
+   platforms, `intercomBrand` is `Lattice` and `productName` is still `InterCom` (the profile
+   directory and the keyring entry are named after it, see
+   [UPDATES.md](UPDATES.md#from-intercom-to-lattice)), and neither `app.asar` nor `webapp.asar`
+   holds a path of the build machine.
 3. The links and pictures answer 200: the release page, the pictures of its notes, and the
    pictures of every document that changed, as GitHub shows them.

@@ -1,12 +1,12 @@
 # Design
 
-InterCom is meant to be calm to sit in for hours and easy to read when somebody shares text. The
+Lattice is meant to be calm to sit in for hours and easy to read when somebody shares text. The
 look follows from that: dark, quiet surfaces that stay out of the way of what is on them, one
 colour that means "this is active", and an arrangement people already know from Discord.
 
-| InterCom Dark | InterCom Light |
+| Lattice Dark | Lattice Light |
 | --- | --- |
-| ![A space in InterCom Dark](images/overview.png) | ![The same space in InterCom Light](images/light-theme.png) |
+| ![A space in Lattice Dark](images/overview.png) | ![The same space in Lattice Light](images/light-theme.png) |
 
 ## Principles
 
@@ -27,9 +27,40 @@ colour that means "this is active", and an arrangement people already know from 
 - **Quiet motion.** People joining a voice channel slide in, leavers fade; with reduced motion
   nothing moves.
 
+## The mark
+
+<p>
+  <img src="images/brand/lattice.svg" width="96" height="96" alt="The Lattice icon: three upright bars between two rows of dots, on a near-black tile">
+  &nbsp;
+  <img src="images/brand/lattice-loading.svg" width="96" height="96" alt="The mark while loading: the bars rise and fall">
+  &nbsp;
+  <img src="images/brand/lattice-connecting.svg" width="96" height="96" alt="The mark while connecting: a light goes round a ring of dots">
+  &nbsp;
+  <img src="images/brand/lattice-speaking-tile.svg" width="96" height="96" alt="The speaking indicator: three bars moving, in green">
+</p>
+
+A lattice is a grid of points: the rooms and people of a network. The three bars in it are a
+voice. The icon is the app's own surface with the one accent on it: the tile is the room list's
+`#101013` with a border of `#26262d`, the outer bars and the dots are the accent `#6875f5`, the
+middle bar is `#eef0ff`. At 32 px and below the dots are left out and only the bars remain; in
+the tray on Linux the bars stand alone in white.
+
+The mark moves in three places, and nowhere else:
+
+| | Where | What moves |
+| --- | --- | --- |
+| Loading | The small window of an update at the start, the app before it has loaded and while it signs in | The bars rise and fall out of step, the dots light up in turn |
+| Connecting | A call that is being joined | One light goes round a ring of dots |
+| Speaking | Beside the name of whoever talks, in a voice channel's list of people | The three bars alone, in the green of the speaker's ring |
+
+With reduced motion each of them is a still picture. The set, with the rasters and the Android
+adaptive icon, is in `element-web/apps/desktop/intercom/brand/`;
+`element-web/apps/desktop/intercom/gen-icons.sh` makes every icon of the desktop and web app
+from it. The app was called InterCom, with a speech bubble for an icon, up to 1.12.35-intercom.14.
+
 ## Arrangement
 
-InterCom keeps everything Matrix and Element do, and arranges it the way people know from
+Lattice keeps everything Matrix and Element do, and arranges it the way people know from
 Discord:
 
 - **A rail of spaces** on the far left: round icons that become rounded squares for the open
@@ -52,7 +83,7 @@ Discord:
 
 ## Sound
 
-The sounds are InterCom's own: short chimes for joining and leaving and cues for mute and
+The sounds are Lattice's own: short chimes for joining and leaving and cues for mute and
 deafen, made from sine waves by a script in each fork (`apps/desktop/intercom/gen-sounds.py` in
 the web fork, `scripts/intercom-sounds.py` in the call fork). None is taken from another product.
 The mute and deafen cues are low and soft, so that they are heard but do not intrude.
@@ -84,11 +115,16 @@ The Android app takes its copies from `element-web/apps/web/res/media/intercom/`
 
 ## Tokens
 
-InterCom Dark and InterCom Light are custom themes in the desktop configuration
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="images/brand/palette-dark.svg">
+  <img src="images/brand/palette-light.svg" alt="The colours of Lattice Dark as swatches: rail, room list, timeline, hairline, selected, text, secondary text, accent, speaking, leave">
+</picture>
+
+Lattice Dark and Lattice Light are custom themes in the desktop configuration
 (`element-web/apps/desktop/intercom/config.json`), on top of a flat layer of CSS shared by every
 theme. The call (Element Call) takes the same values in `element-call/src/intercom.css`.
 
-| Role | InterCom Dark | InterCom Light |
+| Role | Lattice Dark | Lattice Light |
 | --- | --- | --- |
 | Rail of spaces | `#0a0a0c` | `#eceef2` |
 | Room list | `#101013` | `#f6f7f9` |
@@ -118,7 +154,7 @@ theme. The call (Element Call) takes the same values in `element-call/src/interc
 
 ## Android
 
-InterCom for Android has the same values as Compound's semantic colours
+Lattice for Android has the same values as Compound's semantic colours
 (`element-x-android/libraries/compound/…/theme/InterComPalette.kt`), which every component of
 Element X reads: the canvas is the room list's surface (`#101013`), what is raised from it the
 timeline's (`#151518`), what is pressed or selected the hover and selected greys, separators

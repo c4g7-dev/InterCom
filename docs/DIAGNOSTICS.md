@@ -1,6 +1,6 @@
 # Call diagnostics
 
-InterCom records what happens in a call so that "the share looked blurry" or "nobody heard me" can
+Lattice records what happens in a call so that "the share looked blurry" or "nobody heard me" can
 be answered from data.
 
 ## Overlay
@@ -44,7 +44,7 @@ Every run of the desktop app writes one file:
 
 *Help > Open diagnostics folder* (also in the tray menu) opens it. Each line is one JSON record:
 
-- an `app_start` record: versions (also the InterCom release, `intercomVersion`), operating
+- an `app_start` record: versions (also the Lattice release, `intercomVersion`), operating
   system, Wayland or X11, feature switches, whether HTTP/3 was on (`quic`), GPU status
 - the statistics of every track, every 2 seconds, and the events of the call (join, share start
   and stop, pop-out, fullscreen, device changes)
@@ -107,7 +107,7 @@ the overlay are stored in `logs/snapshots/`.
 
 ### What the logs contain
 
-The logs stay on your machine; InterCom does not upload them. Anything that looks like an access
+The logs stay on your machine; Lattice does not upload them. Anything that looks like an access
 token is removed before a line is written. They do contain room and user identifiers, device
 names and, in snapshots, whatever was on screen. Read a log before you attach it to a public
 issue.

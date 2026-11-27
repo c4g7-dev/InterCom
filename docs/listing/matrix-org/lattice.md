@@ -1,8 +1,8 @@
 +++
-title = "InterCom"
+title = "Lattice"
 
 [extra]
-thumbnail = "intercom.svg"
+thumbnail = "lattice.svg"
 maintainer = "c4g7-dev"
 maturity = "Alpha"
 repo = "https://github.com/c4g7-dev/InterCom"

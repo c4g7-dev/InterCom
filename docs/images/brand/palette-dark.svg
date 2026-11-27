@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1068 112" width="1068" height="112" role="img" aria-label="Lattice Dark palette: Rail #0a0a0c, Room list #101013, Timeline #151518, Hairline #202025, Selected #27272d, Text #f0f0f3, Secondary #8d8d97, Accent #6875f5, Speaking #129a78, Leave #ff5b55">
+<g font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif">
+<rect x="0.5" y="0.5" width="95" height="63" rx="12" fill="#0a0a0c" stroke="#26262d"/>
+<text x="2" y="86" font-size="13" font-weight="600" fill="#f0f0f3">Rail</text>
+<text x="2" y="104" font-size="12" fill="#8d8d97" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">#0a0a0c</text>
+<rect x="108.5" y="0.5" width="95" height="63" rx="12" fill="#101013" stroke="#26262d"/>
+<text x="110" y="86" font-size="13" font-weight="600" fill="#f0f0f3">Room list</text>
+<text x="110" y="104" font-size="12" fill="#8d8d97" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">#101013</text>
+<rect x="216.5" y="0.5" width="95" height="63" rx="12" fill="#151518" stroke="#26262d"/>
+<text x="218" y="86" font-size="13" font-weight="600" fill="#f0f0f3">Timeline</text>
+<text x="218" y="104" font-size="12" fill="#8d8d97" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">#151518</text>
+<rect x="324.5" y="0.5" width="95" height="63" rx="12" fill="#202025" stroke="#26262d"/>
+<text x="326" y="86" font-size="13" font-weight="600" fill="#f0f0f3">Hairline</text>
+<text x="326" y="104" font-size="12" fill="#8d8d97" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">#202025</text>
+<rect x="432.5" y="0.5" width="95" height="63" rx="12" fill="#27272d" stroke="#26262d"/>
+<text x="434" y="86" font-size="13" font-weight="600" fill="#f0f0f3">Selected</text>
+<text x="434" y="104" font-size="12" fill="#8d8d97" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">#27272d</text>
+<rect x="540.5" y="0.5" width="95" height="63" rx="12" fill="#f0f0f3" stroke="#26262d"/>
+<text x="542" y="86" font-size="13" font-weight="600" fill="#f0f0f3">Text</text>
+<text x="542" y="104" font-size="12" fill="#8d8d97" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">#f0f0f3</text>
+<rect x="648.5" y="0.5" width="95" height="63" rx="12" fill="#8d8d97" stroke="#26262d"/>
+<text x="650" y="86" font-size="13" font-weight="600" fill="#f0f0f3">Secondary</text>
+<text x="650" y="104" font-size="12" fill="#8d8d97" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">#8d8d97</text>
+<rect x="756.5" y="0.5" width="95" height="63" rx="12" fill="#6875f5" stroke="#26262d"/>
+<text x="758" y="86" font-size="13" font-weight="600" fill="#f0f0f3">Accent</text>
+<text x="758" y="104" font-size="12" fill="#8d8d97" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">#6875f5</text>
+<rect x="864.5" y="0.5" width="95" height="63" rx="12" fill="#129a78" stroke="#26262d"/>
+<text x="866" y="86" font-size="13" font-weight="600" fill="#f0f0f3">Speaking</text>
+<text x="866" y="104" font-size="12" fill="#8d8d97" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">#129a78</text>
+<rect x="972.5" y="0.5" width="95" height="63" rx="12" fill="#ff5b55" stroke="#26262d"/>
+<text x="974" y="86" font-size="13" font-weight="600" fill="#f0f0f3">Leave</text>
+<text x="974" y="104" font-size="12" fill="#8d8d97" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">#ff5b55</text>
+</g></svg>

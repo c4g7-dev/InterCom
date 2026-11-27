@@ -1,7 +1,7 @@
-# Building InterCom
+# Building Lattice
 
-InterCom for the desktop is built from two forks, checked out as submodules of this repository
-(the three of InterCom for Android are under [Android](#android)):
+Lattice for the desktop is built from two forks, checked out as submodules of this repository
+(the three of Lattice for Android are under [Android](#android)):
 
 | Directory      | Fork of                                                       | Branch     |
 | -------------- | ------------------------------------------------------------- | ---------- |
@@ -23,7 +23,7 @@ must sit next to each other, as they do in this repository.
 
 ```sh
 git clone --recurse-submodules https://github.com/c4g7-dev/InterCom.git
-cd InterCom
+cd Lattice
 ```
 
 The upstream repositories are large. `git clone --recurse-submodules --filter=blob:none` keeps the
@@ -63,7 +63,14 @@ env -u DISPLAY -u WAYLAND_DISPLAY \
     element-web/apps/desktop/intercom/build.sh --skip-web
 ```
 
-This writes `element-web/apps/desktop/dist-win/InterCom-Setup-x64.exe` (NSIS, per user, x64).
+This writes `element-web/apps/desktop/dist-win/Lattice-Setup-x64.exe` (NSIS, per user, x64).
+Two names in the build are kept from before the rename on purpose, for the transition
+(`element-web/apps/desktop/intercom/build.json`, `electron-builder.ts`): `productName` in the
+packaged `package.json` stays `InterCom`, since the profile directory and the Linux keyring entry
+are named after it, with the name people see beside it as `brand` / `intercomBrand`; and the
+program file stays `InterCom.exe` (`intercom` on Linux) in the same install directory, so that
+shortcuts, pins and the autostart entry go on working. What the installer does about the
+shortcuts of an older install is in `element-web/apps/desktop/intercom/installer.nsh`.
 Unsetting `DISPLAY` and `WAYLAND_DISPLAY` keeps wine off the desktop, and the separate
 `WINEPREFIX` keeps it out of `~/.wine`.
 
@@ -74,7 +81,7 @@ Unsetting `DISPLAY` and `WAYLAND_DISPLAY` keeps wine off the desktop, and the se
 
 ## Android
 
-InterCom for Android is built from three submodules, each into the next: `matrix-rust-rtc` (the
+Lattice for Android is built from three submodules, each into the next: `matrix-rust-rtc` (the
 RTC core, a fork of element-hq/matrix-rust-rtc, in Rust), `element-call-android` (the native call
 library, a fork of element-hq/element-call-android) and `element-x-android` (the app, a fork of
 Element X Android). Neither fork of the first two is on Maven Central, so each is first published
@@ -224,8 +231,9 @@ tools/release.sh 1.12.35-intercom.2 --ci
 ```
 
 That commits the submodule pointers, tags the three repositories and pushes. The workflow then
-publishes the GitHub release with the notes from `CHANGELOG.md`, `InterCom-<version>-linux-x64.tar.gz`,
-`InterCom-Setup-<version>-x64.exe` and a `SHA256SUMS` over every file of the release; files
+publishes the GitHub release with the notes from `CHANGELOG.md`, `Lattice-<version>-linux-x64.tar.gz`,
+`Lattice-Setup-<version>-x64.exe`, both again under the names from before the rename
+(`InterCom-…`, for the installs that look for those) and a `SHA256SUMS` over every file of the release; files
 that were added to the release by other means are kept. To build a tag again:
 `gh workflow run release.yml --ref v<version> -f version=<version>`.
 

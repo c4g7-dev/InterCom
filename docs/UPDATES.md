@@ -1,5 +1,9 @@
 # Updates
 
+> Lattice was called **InterCom** up to desktop 1.12.35-intercom.14. An install of InterCom updates
+> itself to Lattice like to any other release and keeps its profile, its sign-in and its settings:
+> see [From InterCom to Lattice](#from-intercom-to-lattice).
+
 Both apps update themselves from the [releases of this repository](https://github.com/c4g7-dev/InterCom/releases).
 The desktop releases are tagged `v<version>`, the Android ones `android-v<version>`; each app
 takes only its own. Drafts are never offered, pre-releases only where asked for.
@@ -11,11 +15,11 @@ it comes from, which catches a broken download but is no proof of who made it.
 
 | The update button in the rail | After an update |
 | --- | --- |
-| ![A download arrow with a red dot above the settings, and its card: InterCom 1.12.35-intercom.13, Ready to install, What's new](images/update-rail.png) | ![The dialog "What's new in InterCom 1.12.35-intercom.13"](images/whats-new.png) |
+| ![A download arrow with a red dot above the settings, and its card: Lattice 1.12.35-intercom.13, Ready to install, What's new](images/update-rail.png) | ![The dialog "What's new in Lattice 1.12.35-intercom.13"](images/whats-new.png) |
 
-| Settings → InterCom | The status bar over the user panel |
+| Settings → Lattice | The status bar over the user panel |
 | --- | --- |
-| ![The InterCom settings tab: the four switches, Restart to update, and what is new in the update](images/settings-updates.png) | ![Downloading 1.12.35-intercom.11 · 41 %](images/update-bar.png) |
+| ![The Lattice settings tab: the four switches, Restart to update, and what is new in the update](images/settings-updates.png) | ![Downloading 1.12.35-intercom.11 · 41 %](images/update-bar.png) |
 
 **When it looks.** At every start, before the window opens, and 30 seconds after the start.
 While it runs: every five minutes, and when you come back to the window, the computer wakes up
@@ -38,11 +42,11 @@ often and cheaply:
 With *Check for updates every few minutes* off, the releases are asked for every six hours and
 nothing else is.
 
-**At a start.** If a newer release is out, it is downloaded, checked, installed, and InterCom
+**At a start.** If a newer release is out, it is downloaded, checked, installed, and Lattice
 comes up as the new version, with a small window saying what it is doing ("Checking for
 updates…", "Downloading update · 42 %", "Installing…", "Starting…"). GitHub gets two seconds, a
 start that finds nothing three at most. Offline, or when the download stalls (20 s without
-progress, 5 minutes in all), InterCom starts as it is and offers the update in the app. With
+progress, 5 minutes in all), Lattice starts as it is and offers the update in the app. With
 `--hidden` it does the same without the window. A release that did not install at a start is
 not tried at a start again; it stays behind the update button.
 
@@ -51,8 +55,8 @@ installed, the rail of spaces has an **update button** above the settings: a dow
 a red dot, and a ring that fills with the download. Pointing at it shows the version, where
 the update stands and what is new in it. A click:
 
-- on a ready update, installs it and starts InterCom again;
-- while it downloads or is checked, is remembered: InterCom installs it and starts again by
+- on a ready update, installs it and starts Lattice again;
+- while it downloads or is checked, is remembered: Lattice installs it and starts again by
   itself as soon as the file is verified;
 - after a failure, tries again;
 - for an install that cannot replace itself, opens the release page.
@@ -64,15 +68,15 @@ user panel shows each step ("Downloading 1.12.35-intercom.11 · 42 % · 78 MB / 
 steps with their times. An error stays, with *Retry* and *Details*. A dot on the settings button
 of the user panel says that an update is ready.
 
-**What's new.** The update button's card and Settings → InterCom show the notes of the release
+**What's new.** The update button's card and Settings → Lattice show the notes of the release
 that is offered, and of every release between it and the one that runs, newest first. After an
-update InterCom shows "What's new in InterCom" with the version once, with every release the update
+update Lattice shows "What's new in Lattice" with the version once, with every release the update
 brought; any way of closing it counts as seen. A first install shows nothing. The notes are the
 text of the GitHub release (the section of the [changelog](../CHANGELOG.md)), kept in the profile
 with the last check, so they are shown without a connection. They are drawn as text and lists:
 HTML in them is not interpreted, pictures are not loaded, and links open in the browser.
 
-**Settings → InterCom** has the version, *Check for updates automatically*, *Update
+**Settings → Lattice** has the version, *Check for updates automatically*, *Update
 automatically on launch* and *Check for updates every few minutes* (both need the first), *Show
 what's new after updates* (all on by default), *Check now*, and the notes of an update that is
 offered. The switches, and the release whose notes you have seen, are kept in
@@ -82,10 +86,10 @@ offered. The switches, and the release whose notes you have seen, are kept in
 `<dir>.new`; on restart `<dir>` becomes `<dir>.old` (an older backup is deleted) and `<dir>.new`
 becomes `<dir>`. To go back: quit, and rename `<dir>.old` to `<dir>`. The directory and the one
 above it must be writable; where they are not (a package under `/opt`, an AppImage), nothing is
-downloaded and the app points to the release page. InterCom then starts again with the options
+downloaded and the app points to the release page. Lattice then starts again with the options
 it was started with.
 
-If you start InterCom through a script of your own, let it export `INTERCOM_LAUNCHER` (its own
+If you start Lattice through a script of your own, let it export `INTERCOM_LAUNCHER` (its own
 path), so that an update starts the script again rather than the program behind it, and
 optionally its arguments, one per line, in `INTERCOM_LAUNCHER_ARGS`:
 
@@ -99,8 +103,14 @@ exec /path/to/intercom/intercom "$@"
 `run-intercom.sh` in this repository does this.
 
 **Windows** (the per-user installer). The installer is downloaded to `%APPDATA%\InterCom\updates`,
-checked, and run silently on restart; it starts InterCom again. A start with `--hidden` that
+checked, and run silently on restart; it starts Lattice again. A start with `--hidden` that
 updates comes back with its window shown.
+
+**Which file.** A release has this platform's file as `Lattice-<version>-linux-x64.tar.gz` or
+`Lattice-Setup-<version>-x64.exe`, and for now also under the names from before the rename
+(`InterCom-<version>-linux-x64.tar.gz`, `InterCom-Setup-<version>-x64.exe`): the same files, all
+four in `SHA256SUMS`. Lattice takes the `Lattice-…` file where a release has it and the
+`InterCom-…` one otherwise; installs up to 1.12.35-intercom.14 know only the old names.
 
 **Never updates:** a build that is not a release, an unpackaged run, and a run with
 `--no-update`.
@@ -110,8 +120,56 @@ diagnostics log with what asked for it, every step of the updater an `updater` r
 start an `update_on_launch` record. See
 [DIAGNOSTICS.md](DIAGNOSTICS.md).
 
+### From InterCom to Lattice
+
+1.12.35-intercom.15 is the first release under the new name. What an update from InterCom
+changes is what you see: the name, the icon, the shortcuts. What it leaves alone:
+
+- **The profile and the sign-in.** Settings and sessions stay in `~/.config/InterCom`
+  (`%APPDATA%\InterCom`), and nobody is signed out. Inside, the app still goes by its old name
+  where a name is an address: the profile directory, on Linux the keyring entry the stored
+  session is encrypted with, the app id `chat.intercom.desktop`, the URL schemes, the
+  `INTERCOM_…` environment variables, the files in the profile.
+- **The program file and where it is.** On Linux the executable in the archive is still
+  `intercom` (a link `lattice` sits beside it), so a launcher or key binding that starts it goes
+  on working, and the install directory is replaced in place as before. On Windows the installer
+  puts the new version into the same directory (`%LOCALAPPDATA%\Programs\intercom`), and the
+  program file is still `InterCom.exe`; the task manager and the list of apps show "Lattice".
+- **The version numbers.** They still read `1.12.35-intercom.N`: every install compares them and
+  finds the releases by their tags, and the ones from before the rename can read nothing else.
+
+**Shortcuts on Windows.** The installer renames the Start menu shortcut and, if you kept it,
+the desktop shortcut from "InterCom" to "Lattice", and the entry under *Apps* reads "Lattice".
+A desktop shortcut you deleted is not made again. An icon you pinned to the taskbar keeps
+working and shows the new icon, since the program file did not move; Windows knows a pin by its
+shortcut file, so its tooltip says "InterCom" until you unpin it and pin Lattice again. Switches
+you added to a shortcut (`--profile`, `--hidden`) are kept. The installer was built and its
+script read line by line, but it could not be run where the release was made: if a shortcut is
+left behind under the old name, delete it by hand and
+[say so](https://github.com/c4g7-dev/InterCom/issues).
+
+**Your own desktop entry on Linux.** The archive has no desktop entry; one you wrote keeps
+working. To see the new name and icon in your launcher, change its `Name=` and point `Icon=` to
+`resources/build/icon.png` in the install directory.
+
+**The tray icon on Linux** is the mark alone in white, as panels show their other icons. On a
+light panel, start Lattice with `INTERCOM_TRAY_ICON=colour` for the app's icon instead.
+
+**The repository** is still `github.com/c4g7-dev/InterCom`, and stays so for some releases:
+installs up to 1.12.35-intercom.14 take a release's files only from addresses under that name,
+and GitHub's API names them under the new name once a repository is renamed, redirects or not,
+so a rename now would cut every one of those installs off from updates. From
+1.12.35-intercom.15 on, the app takes a release's files and pages under
+`github.com/c4g7-dev/Lattice` as well (it goes on asking under the old name, which GitHub
+redirects after a rename). The rename is therefore safe once the installs out there are .15 or
+newer: after a few releases, not before. The same holds for the Android app. The forks with the
+code were renamed right away (`lattice-element-web` and so on, see the
+[README](../README.md#where-the-code-is)): nothing is downloaded from them.
+
 ### Old installs
 
+- 1.12.35-intercom.14 and older are InterCom. They update themselves to Lattice by the files
+  under the old names.
 - 1.12.35-intercom.12 and older look every six hours, have no update button in the rail and
   show no release notes; they update themselves to a newer release as before.
 - 1.12.35-intercom.4 and older have no updater: install a newer release by hand once.
@@ -121,7 +179,7 @@ start an `update_on_launch` record. See
 
 ## Android
 
-Settings → **InterCom updates**:
+Settings → **Lattice updates**:
 
 - **Look for updates** (on), on any connection. While the app is on screen it asks github.com
   for the releases feed (`releases.atom`) with the ETag of the last answer: when the app is
@@ -139,37 +197,37 @@ Settings → **InterCom updates**:
 
 | The dot on the avatar | Settings | The dialog |
 | --- | --- | --- |
-| ![The chat list's top bar, a red dot on the avatar](images/android-update-dot.png) | ![The settings beginning with "Update available"](images/android-update-settings.png) | ![The dialog "InterCom 26.11.1-intercom.14 is available" with what is new](images/android-update-dialog.png) |
+| ![The chat list's top bar, a red dot on the avatar](images/android-update-dot.png) | ![The settings beginning with "Update available"](images/android-update-settings.png) | ![The dialog "Lattice 26.11.1-intercom.14 is available" with what is new](images/android-update-dialog.png) |
 
 While a newer release is known, the avatar at the top of the chat list, which leads to the
 settings, has a red dot, and the settings begin with **Update available**.
 
-**What's new.** The dialog and *InterCom updates* show the notes of the release that is
+**What's new.** The dialog and *Lattice updates* show the notes of the release that is
 offered and of every release between it and the one that runs, newest first. After an update
-InterCom shows "What's new in InterCom" with the version once, when it first opens as the new
+Lattice shows "What's new in Lattice" with the version once, when it first opens as the new
 version; any way of closing it counts as seen, and a first install shows nothing. The notes are
 the text of the GitHub releases, drawn as text and lists: HTML in them is not interpreted,
 pictures are not loaded, and a link is its text.
 
-With *Install updates automatically* off, a dialog says "InterCom <version> is available", with
+With *Install updates automatically* off, a dialog says "Lattice <version> is available", with
 *Update now*, *Later* (24 hours for that release) and *Release notes*. *Update now* downloads on
 whatever connection there is, mobile data included.
 
 What happens on the phone:
 
-1. The first update needs you once: Android asks to allow InterCom to install apps
+1. The first update needs you once: Android asks to allow Lattice to install apps
    ("Install unknown apps"), and may ask to confirm.
 2. On Android 12 or newer, later updates install without a question; on older versions Android
-   asks for one tap (from a notification when InterCom is not on screen).
+   asks for one tap (from a notification when Lattice is not on screen).
 3. Android closes the app while it is replaced and does not let it reopen itself: a
-   notification says "InterCom was updated", and a tap on it opens the app.
+   notification says "Lattice was updated", and a tap on it opens the app.
 
 An APK is installed only if it has the SHA-256 the release names and is signed with the key of
 the installed app; anything else is deleted and the settings say why. When Android refuses an
 update, the screen shows which of its reasons it gave and the system's own message, and what
 can be done about it: free storage, a phone the release does not run on, another build being
 installed, or on a Samsung phone Auto Blocker, with a button to its settings. The same hint
-comes up when Android asked to confirm the update and you are back in InterCom ten seconds
+comes up when Android asked to confirm the update and you are back in Lattice ten seconds
 later with nothing installed. The installer's status code is written to the app's log. An
 automatic installation that Android refused is not tried again by itself; the release is
 offered in the dialog instead.

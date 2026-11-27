@@ -1,6 +1,6 @@
 # Sharing audio on Linux
 
-On Linux, InterCom can send the sound of any PipeWire or PulseAudio output with a screen share.
+On Linux, Lattice can send the sound of any PipeWire or PulseAudio output with a screen share.
 This page explains how that works and how to set up a dedicated output for it.
 
 ## Why outputs, and not "system audio"
@@ -9,13 +9,13 @@ Chromium offers microphones (*sources*) as audio inputs, but never the *monitor*
 (*sink*). Its own "system audio" on Linux is the monitor of the default output, which includes the
 call itself: the other participants would hear themselves back.
 
-InterCom therefore works on outputs. In the share dialog, **Share audio from** lists:
+Lattice therefore works on outputs. In the share dialog, **Share audio from** lists:
 
 - **Apps playing into…**: every output, with the applications playing into it right now
 - **Input devices**: ordinary inputs, for a mixer or a capture card
 - **None**
 
-When you pick an output, InterCom asks the sound server for a source that carries that output's
+When you pick an output, Lattice asks the sound server for a source that carries that output's
 monitor:
 
 ```sh
@@ -24,7 +24,7 @@ pactl load-module module-remap-source master=<sink>.monitor \
     source_properties="device.description='InterCom share: <sink description>'"
 ```
 
-The source exists while it is shared and is unloaded afterwards. InterCom only unloads modules it
+The source exists while it is shared and is unloaded afterwards. Lattice only unloads modules it
 loaded itself; a source left behind by a crash is recognised by its `intercom-share-` name, used
 again the next time that output is shared and removed afterwards. These sources are kept out of
 the microphone list.
@@ -88,8 +88,8 @@ pulse.cmd = [
 Apply it with `systemctl --user restart pipewire-pulse`.
 
 A source whose description starts with `InterCom-Share` or `InterCom-Screen` is treated like the
-ones InterCom makes itself: it is offered as share audio and hidden from the microphone list. If a
-remap of an output's monitor already exists, InterCom uses it as it is and leaves it alone.
+ones Lattice makes itself: it is offered as share audio and hidden from the microphone list. If a
+remap of an output's monitor already exists, Lattice uses it as it is and leaves it alone.
 
 ## Troubleshooting
 

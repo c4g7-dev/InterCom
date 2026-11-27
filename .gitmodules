@@ -1,20 +1,20 @@
 [submodule "element-web"]
 	path = element-web
-	url = https://github.com/c4g7-dev/intercom-element-web.git
+	url = https://github.com/c4g7-dev/lattice-element-web.git
 	branch = intercom
 [submodule "element-call"]
 	path = element-call
-	url = https://github.com/c4g7-dev/intercom-element-call.git
+	url = https://github.com/c4g7-dev/lattice-element-call.git
 	branch = intercom
 [submodule "element-x-android"]
 	path = element-x-android
-	url = https://github.com/c4g7-dev/intercom-element-x-android.git
+	url = https://github.com/c4g7-dev/lattice-element-x-android.git
 	branch = intercom
 [submodule "element-call-android"]
 	path = element-call-android
-	url = https://github.com/c4g7-dev/intercom-element-call-android.git
+	url = https://github.com/c4g7-dev/lattice-element-call-android.git
 	branch = intercom
 [submodule "matrix-rust-rtc"]
 	path = matrix-rust-rtc
-	url = https://github.com/c4g7-dev/intercom-matrix-rust-rtc.git
+	url = https://github.com/c4g7-dev/lattice-matrix-rust-rtc.git
 	branch = intercom

@@ -80,7 +80,7 @@ app is open.
 Sign-in through Matrix Authentication Service works on servers whose MAS accepts the redirect
 scheme `com.c4g7.intercom.android` for the client URI `https://c4g7.com`, which is MAS's default
 policy. To build the app for another domain, see the README of the
-[Android fork](https://github.com/c4g7-dev/intercom-element-x-android).
+[Android fork](https://github.com/c4g7-dev/lattice-element-x-android).
 
 ## Calls and the server
 
@@ -160,8 +160,8 @@ that line, the phone and its Android version into an
 
 ## Source
 
-The app is the fork [intercom-element-x-android](https://github.com/c4g7-dev/intercom-element-x-android),
-with the call library fork [intercom-element-call-android](https://github.com/c4g7-dev/intercom-element-call-android)
-and the RTC core fork [intercom-matrix-rust-rtc](https://github.com/c4g7-dev/intercom-matrix-rust-rtc),
+The app is the fork [lattice-element-x-android](https://github.com/c4g7-dev/lattice-element-x-android),
+with the call library fork [lattice-element-call-android](https://github.com/c4g7-dev/lattice-element-call-android)
+and the RTC core fork [lattice-matrix-rust-rtc](https://github.com/c4g7-dev/lattice-matrix-rust-rtc),
 all on branch `intercom` and included here as the submodules `element-x-android`,
 `element-call-android` and `matrix-rust-rtc`. Building: [BUILDING.md](BUILDING.md#android).

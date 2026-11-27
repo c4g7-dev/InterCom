@@ -223,10 +223,10 @@ notes >"$OUT/notes.md"
 # them would be offered as one to fetch by hand.
 DRAFT=0
 if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
-    gh release edit "$TAG" --repo "$REPO" --title "InterCom $VERSION" --notes-file "$OUT/notes.md"
+    gh release edit "$TAG" --repo "$REPO" --title "[Desktop] InterCom $VERSION · Linux & Windows" --notes-file "$OUT/notes.md"
 else
     gh release create "$TAG" --repo "$REPO" --verify-tag --draft \
-        --title "InterCom $VERSION" --notes-file "$OUT/notes.md"
+        --title "[Desktop] InterCom $VERSION · Linux & Windows" --notes-file "$OUT/notes.md"
     DRAFT=1
 fi
 for asset in "$LINUX_ASSET" "$WIN_ASSET"; do

@@ -92,13 +92,22 @@ Every change, with screenshots and the release that brought it:
 
 ## Download
 
-From the [releases page](https://github.com/c4g7-dev/InterCom/releases/latest):
+Desktop and Android are released separately, each with its own version number. On the
+[releases page](https://github.com/c4g7-dev/InterCom/releases) their titles start with
+**[Desktop]** or **[Android]**.
 
-| Platform | File | |
-| --- | --- | --- |
-| Linux x64 | `InterCom-<version>-linux-x64.tar.gz` | Unpack and run `./intercom` |
-| Windows x64 | `InterCom-Setup-<version>-x64.exe` | Per-user installer, not code signed: SmartScreen asks once (*More info* → *Run anyway*) |
-| Android (arm64) | `InterCom-Android-<version>-arm64-v8a.apk` | In the newest `android-v…` release; see [docs/ANDROID.md](docs/ANDROID.md) |
+[![Desktop](https://img.shields.io/github/v/release/c4g7-dev/InterCom?filter=v*&label=Desktop&color=6875f5)](https://github.com/c4g7-dev/InterCom/releases/latest)
+[![Android](https://img.shields.io/github/v/release/c4g7-dev/InterCom?filter=android-v*&label=Android&color=6875f5)](https://github.com/c4g7-dev/InterCom/releases?q=Android&expanded=true)
+
+| | Platform | File | |
+| --- | --- | --- | --- |
+| Desktop | Linux x64 | `InterCom-<version>-linux-x64.tar.gz` | Unpack and run `./intercom` |
+| Desktop | Windows x64 | `InterCom-Setup-<version>-x64.exe` | Per-user installer, not code signed: SmartScreen asks once (*More info* → *Run anyway*) |
+| Android | arm64 | `InterCom-Android-<version>-arm64-v8a.apk` | In the newest **[Android]** release; see [docs/ANDROID.md](docs/ANDROID.md) |
+
+Version numbers: desktop `1.12.35-intercom.N` (based on Element Web 1.12.35), Android
+`26.11.1-intercom.N` (based on Element X 26.11.1); the part after `intercom.` counts InterCom's
+own releases of that platform.
 
 Check a download against `SHA256SUMS` from the same release with
 `sha256sum -c SHA256SUMS --ignore-missing`. Both apps then update themselves:

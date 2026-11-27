@@ -218,11 +218,11 @@ git push origin HEAD:main "refs/tags/$TAG"
 
 echo "== Publishing $TAG on $REPO"
 if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
-    gh release edit "$TAG" --repo "$REPO" --title "InterCom for Android $VERSION" --notes-file "$OUT/notes.md"
+    gh release edit "$TAG" --repo "$REPO" --title "[Android] InterCom $VERSION · arm64" --notes-file "$OUT/notes.md"
 else
     # A draft until its files are on it: the app must never find a release without them.
     gh release create "$TAG" --repo "$REPO" --verify-tag --draft --latest=false \
-        --title "InterCom for Android $VERSION" --notes-file "$OUT/notes.md"
+        --title "[Android] InterCom $VERSION · arm64" --notes-file "$OUT/notes.md"
 fi
 gh release upload "$TAG" --repo "$REPO" --clobber "$OUT/$APK_NAME" "$OUT/android-update.json" "$OUT/SHA256SUMS"
 if [[ $PRERELEASE == 1 ]]; then
